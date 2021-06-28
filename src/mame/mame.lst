@@ -23221,8 +23221,10 @@ ultarctcup                      // (c) 2001 Midway Games
 @source:midtunit.cpp
 jdreddp                         // (c) 1993 Midway
 mk                              // (c) 1992 Midway
+mkp								// ??? Team Plus
 mk2                             // (c) 1993 Midway
 mk2chal                         // hack
+mk2p							// 2019 Team Plus
 mk2r11                          // (c) 1993 Midway
 mk2r14                          // (c) 1993 Midway
 mk2r20                          // (c) 1993 Midway
@@ -23288,6 +23290,7 @@ openicea                        // (c) 1995 Midway
 rmpgwt                          // (c) 1997 Midway
 rmpgwt11                        // (c) 1997 Midway
 umk3                            // (c) 1994 Midway
+umk3p							// 2019 Team Plus
 umk3r10                         // (c) 1994 Midway
 umk3r11                         // (c) 1994 Midway
 wwfmania                        // (c) 1995 Midway
