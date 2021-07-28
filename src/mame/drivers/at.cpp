@@ -2648,8 +2648,8 @@ ROM_END
 // CPU card W26361-D458-Z4-06-05, Piggyback MFM controller with WDC WD42C22A-JU PROTO chip W26361-D477-Z2-04-05
 // Chips: Intel N82230-2, Intel N82231-2, WDC WD37C65BJM, VLSI 8831AM/X12012/VL16C452-QC
 // VGA card: S26361-D463 GS3 using a Video Seven 458-0023
-	// ROM_LOAD( "vga_nmc27c256q_435-0029-04_1988_video7_arrow.bin", 0x8000, 0x8000, CRC(0d8d7dff) SHA(cb5b2ab78d480ec3164d16c9c75f1449fa81a0e7) ) // Video7 VGA card
-	// ROM_LOAD( "vga_nmc27c256q_435-0030-04_1988_video7_arrow.bin", 0x8000, 0x4000, CRC(0935c003) SHA(35ac571818f616b856da8bbf6a7a9172f68b3ab6) )
+	// ROM_LOAD( "vga_nmc27c256q_435-0029-04_1988_video7_arrow.bin", 0x8000, 0x8000, CRC(0d8d7dff) SHA1(cb5b2ab78d480ec3164d16c9c75f1449fa81a0e7) ) // Video7 VGA card
+	// ROM_LOAD( "vga_nmc27c256q_435-0030-04_1988_video7_arrow.bin", 0x8000, 0x4000, CRC(0935c003) SHA1(35ac571818f616b856da8bbf6a7a9172f68b3ab6) )
 ROM_START( pcd2 )
 	ROM_REGION16_LE(0x20000,"bios", 0)
 	ROM_LOAD16_BYTE( "bios_tandon_188782-032a_rev_5.21_low.bin", 0x10000, 0x8000, CRC(a8fbffd3) SHA1(8a3ad5bc7f86ff984be10a8b1ae4542be4c80e5f) )
@@ -2806,7 +2806,7 @@ ROM_START( comportiii )
 	ROM_SYSTEM_BIOS(0, "106779-002", "106779-002")
 	ROMX_LOAD( "cpiii_87c128_106779-002.bin", 0x18000, 0x4000, CRC(aef8f532) SHA1(b0374d5aa8766f11043cbaee007e6d311f792e44), ROM_SKIP(1) | ROM_BIOS(0) )
 	ROMX_LOAD( "cpiii_87c128_106778-002.bin", 0x18001, 0x4000, CRC(c259f628) SHA1(df0ca8aaead617114fbecb4ececbd1a3bb1d5f30), ROM_SKIP(1) | ROM_BIOS(0) )
-	// ROM_LOAD( "cpiii_106436-001.bin", 0x0000, 0x0800, CRC(5acc716b) SHA(afe166ecf99136d15269e44ebf2d66317945bf9c) ) // keyboard
+	// ROM_LOAD( "cpiii_106436-001.bin", 0x0000, 0x0800, CRC(5acc716b) SHA1(afe166ecf99136d15269e44ebf2d66317945bf9c) ) // keyboard
 	ROM_SYSTEM_BIOS(1, "109737-002", "109737-002")
 	ROMX_LOAD( "109738-002.bin", 0x10000, 0x8000, CRC(db131b8a) SHA1(6a8517a771272edf16870501fc1ed94c7555ef45), ROM_SKIP(1) | ROM_BIOS(1) )
 	ROMX_LOAD( "109737-002.bin", 0x10001, 0x8000, CRC(8463cc41) SHA1(cb9801591e4a2cd13bbcc40739c9e675ba84c079), ROM_SKIP(1) | ROM_BIOS(1) )
@@ -6075,7 +6075,7 @@ COMP( 198?, pccm216,   ibm5170, 0,       atturbo,   0,     at_state,     init_at
 COMP( 1986, pcd2,      ibm5170, 0,       ibm5170,   0,     at_state,     init_at,        "Siemens",     "PCD-2", MACHINE_NOT_WORKING )
 COMP( 1991, pcd204,    ibm5170, 0,       atturbo,   0,     at_state,     init_at,        "Philips",     "PCD204 (PCD200 series)", MACHINE_NOT_WORKING )
 COMP( 198?, pcd2m,     ibm5170, 0,       atturbo,   0,     at_state,     init_at,        "Siemens",     "PCD-2M", MACHINE_NOT_WORKING )
-COMP( 198?, peas286,   ibm5170, 0,       atturbo,   0,     at_state,     init_at,        "Peacock computer", "S-286 Rev A", MACHINE_NOT_WORKING )
+COMP( 198?, peas286,   ibm5170, 0,       atturbo,   0,     at_state,     init_at,        "Peacock Computer", "S-286 Rev A", MACHINE_NOT_WORKING )
 COMP( 1990, profpc33,  ibm5170, 0,       atturbo,   0,     at_state,     init_at,        "Profex", "PC 33", MACHINE_NOT_WORKING )
 COMP( 198?, prolite286,ibm5170, 0,       neat,      0,     at_state,     init_at,        "CAF", "Prolite 286/16", MACHINE_NOT_WORKING )
 COMP( 198?, pwb7270e,  ibm5170, 0,       neat,      0,     at_state,     init_at,        "Advanced Logic Research", "PWB 7270 REV E", MACHINE_NOT_WORKING )
@@ -6113,7 +6113,7 @@ COMP( 199?, dfi386sx,  ibm5170, 0,       at386sx,   0,     at_state,     init_at
 COMP( 199?, dvbslan,   ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "Datavan", "Book-Size LAN station", MACHINE_NOT_WORKING )
 COMP( 199?, ecs8517,   ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "Elitegroup", "ECS 8517 v3.3", MACHINE_NOT_WORKING )
 COMP( 199?, elt386sx,  ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "Elitegroup",  "ELT-386SX-160BE", MACHINE_NOT_WORKING )
-COMP( 198?, eltp9,     ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "Chaintech", "ELT-P9 / Most likely ELT-386SX-160D", MACHINE_NOT_WORKING )
+COMP( 198?, eltp9,     ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "Chaintech", "ELT-P9 / most likely ELT-386SX-160D", MACHINE_NOT_WORKING )
 COMP( 198?, epsax3,    ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "Epson",       "PC AX3", MACHINE_NOT_WORKING )
 COMP( 19??, ht18c,     ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "<unknown>",   "unknown 386sx AT clones (HT18/C chipset)", MACHINE_NOT_WORKING )
 COMP( 199?, ibm2121,   ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "International Business Machines",  "PS/1 2121", MACHINE_NOT_WORKING )
@@ -6124,7 +6124,7 @@ COMP( 198?, ktx20t02,  ibm5170, 0,       at386sx,   0,     at_state,     init_at
 COMP( 199?, mbc18nb,   ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "Sanyo",       "MBC-18NB", MACHINE_NOT_WORKING )
 COMP( 1992, mbc28,     ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "Sanyo",       "MBC-28", MACHINE_NOT_WORKING ) // Complains about missing mouse hardware
 COMP( 1993, megapc,    0,       0,       megapc,    0,     megapc_state, init_megapc,    "Amstrad plc", "MegaPC", MACHINE_NOT_WORKING )
-COMP( 199?, mmbo4088,  ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "<unknown>",   "486MMBO4088 (TI TX486SLC/E", MACHINE_NOT_WORKING )
+COMP( 199?, mmbo4088,  ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "<unknown>",   "486MMBO4088 (TI TX486SLC/E)", MACHINE_NOT_WORKING )
 COMP( 199?, mokp386sx, ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "Morse",       "KP 386SX V2.21", MACHINE_NOT_WORKING )
 COMP( 199?, ocpanii,   ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "Octek",       "Panther II", MACHINE_NOT_WORKING )
 COMP( 199?, op82c283,  ibm5170, 0,       at386sx,   0,     at_state,     init_at,        "<unknown>",   "386sx motherboards using the OPTi 82C283 chipset", MACHINE_NOT_WORKING )

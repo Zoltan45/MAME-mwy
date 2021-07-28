@@ -1484,6 +1484,9 @@ f2                              //
 @source:apricotp.cpp
 fp                              //
 
+@source:apxen.cpp
+apxen                           // 1985 ACT
+
 @source:aquarium.cpp
 aquarium                        // (c) 1996 Excellent System
 aquariumj                       // (c) 1996 Excellent System
@@ -12558,6 +12561,9 @@ dpb7000                         //
 @source:dps1.cpp
 dps1                            //
 
+@source:dpsv55.cpp
+dpsv55                          //
+
 @source:dragon.cpp
 d64plus                         // Dragon 64 + Compusense Plus addon
 dgnalpha                        // Dragon Alpha
@@ -16280,6 +16286,7 @@ eturtles                        // Entex
 gckong                          // Gakken
 gdigdug                         // Gakken
 ghalien                         // Gakken
+gscobra                         // Gakken
 kingman                         // Tomy
 machiman                        // Bandai
 msthawk                         // Mattel
@@ -16435,6 +16442,7 @@ trobocop3                       // Tiger
 trockteer                       // Tiger
 trshutvoy                       // Tronica
 trspacmis                       // Tronica
+trspider                        // Tronica
 trsrescue                       // Tronica
 tsddragon                       // Tiger
 tsf2010                         // Tiger
@@ -16468,7 +16476,6 @@ bigtrak                         // Milton Bradley
 bship                           // Milton Bradley
 bshipb                          // Milton Bradley
 cmsport                         // Conic
-cmulti8                         // Canon
 cnbaskb                         // Conic
 cnfball                         // Conic
 cnfball2                        // Conic
@@ -16515,6 +16522,8 @@ mdndclab                        // Mattel
 merlin                          // Parker Bros
 mmerlin                         // Parker Bros
 monkeysee                       // Tandy Corporation
+palmf31                         // Canon
+palmmd8                         // Canon
 pbmastm                         // Parker Bros
 phpball                         // Tomy
 qfire                           // Electroplay
@@ -31590,6 +31599,7 @@ danceyes                        // 1996.10 Dancing Eyes (US, DC3/VER.C)
 danceyesj                       // 1996.09 Dancing Eyes (Japan, DC1/VER.A)
 dunkmnia                        // 1996.05 Dunk Mania (World, DM2/VER.C)
 dunkmniajc                      // 1996.05 Dunk Mania (Japan, DM1/VER.C)
+gunbarla                        // 1999.?? Gunbarl (Japan, GNB1/VER.A)
 myangel3                        // 1998.03 Kosodate Quiz My Angel 3 (Japan, KQT1/VER.A)
 pocketrc                        // 1997.03 Pocket Racer (Japan, PKR1/VER.B)
 primglex                        // 1996.03 Prime Goal EX (Japan, PG1/VER.A)
@@ -32585,7 +32595,7 @@ rbffspeck                       // 0124 (c) 1996 SNK
 ridhero                         // 0006 (c) 1990 SNK
 ridheroh                        // 0006 (c) 1990 SNK
 roboarmy                        // 0032 (c) 1991 SNK
-roboarma                        // 0032 (c) 1991 SNK
+roboarmya                       // 0032 (c) 1991 SNK
 rotd                            // 0264 (c) 2002 Evoga
 rotdh                           // 0264 (c) 2002 Evoga
 s1945p                          // 0254 (c) 1999 Psikyo
@@ -34708,6 +34718,7 @@ puzzli2s                        // (c) 2001 Puzzli 2 Super
 py2k2                           // (c) 2001 Photo Y2K2 (M101XX)
 py2k2100                        // (c) 2000 Photo Y2K2 (ver. 100)
 svg                             // (c) 2003 Spectral vs Generation
+svghk                           //
 svgpcb                          //
 svgtw                           //
 theglad                         // (c) 2003 The Gladiator
@@ -39851,7 +39862,8 @@ nprincesu                       // 834-5677 (c) 1985 (S1)
 pitfall2                        // 834-5627 [1985?] reprogrammed, (c) 1984 Activision (S1)
 pitfall2a                       // 834-5627 [1985?] reprogrammed, (c) 1984 Activision (S1)
 pitfall2u                       // 834-5627 [1985?] reprogrammed, (c) 1984 Activision (S1)
-raflesia                        // 834-5753 (c) 1985 Coreland / Sega (S1)
+raflesia                        // 834-5753 (c) 1986 Coreland / Sega (S1)
+raflesiau                       // 834-5191 (c) 1986 Coreland / Sega (S1)
 regulus                         // 834-5328?(c) 1983 (S1)
 reguluso                        // 834-5328?(c) 1983 (S1)
 regulusu                        // 834-5328?(c) 1983 (S1)
@@ -40587,6 +40599,7 @@ tek4109a                        //
 tek4404                         // (c) 1984 Tektronix
 
 @source:tekigw.cpp
+tek4132                         // Tektronix 4132
 tek6130                         // Tektronix 6130
 
 @source:tekxp33x.cpp
