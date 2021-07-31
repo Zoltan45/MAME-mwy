@@ -237,7 +237,7 @@ DEFINE_DEVICE_TYPE(MIDWAY_SERIAL_PIC_EMU, midway_serial_pic_emu_device, "midway_
 
 midway_serial_pic_emu_device::midway_serial_pic_emu_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock) :
 	device_t(mconfig, MIDWAY_SERIAL_PIC_EMU, tag, owner, clock)
-	, m_pic(*this, "pic")
+//	, m_pic(*this, "pic")
 {
 }
 
@@ -247,62 +247,104 @@ midway_serial_pic_emu_device::midway_serial_pic_emu_device(const machine_config 
 
 void midway_serial_pic_emu_device::device_start()
 {
-	save_item(NAME(m_command));
-	save_item(NAME(m_data_out));
-	save_item(NAME(m_clk));
-	save_item(NAME(m_status));
+//	save_item(NAME(m_command));
+//	save_item(NAME(m_data_out));
+//	save_item(NAME(m_clk));
+//	save_item(NAME(m_status));
 
-	m_command = 0;
-	m_data_out = 0;
-	m_clk = 0;
-	m_status = 0;
+//	m_command = 0;
+//	m_data_out = 0;
+//	m_clk = 0;
+//	m_status = 0;
 }
 
-WRITE_LINE_MEMBER(midway_serial_pic_emu_device::reset_w)
+uint8_t midway_serial_pic_emu_device::read_a()
+
+// WRITE_LINE_MEMBER(midway_serial_pic_emu_device::reset_w)
 {
-	if (!state) // fixme, PIC should be stopped while 0 and start running at 0->1 transition
-		m_pic->reset();
+
+	//  printf("%s: read_a\n", machine().describe_context().c_str());
+		return 0x00;
+//	if (!state) // fixme, PIC should be stopped while 0 and start running at 0->1 transition
+//		m_pic->reset();
 }
 
-u8 midway_serial_pic_emu_device::status_r()
+uint8_t midway_serial_pic_emu_device::read_b()
+
+// u8 midway_serial_pic_emu_device::status_r()
 {
-	return m_status;
+
+	//  printf("%s: read_b\n", machine().describe_context().c_str());
+		return 0x00;
+
+//	return m_status;
 }
 
-u8 midway_serial_pic_emu_device::read()
+uint8_t midway_serial_pic_emu_device::read_c()
+
+// u8 midway_serial_pic_emu_device::read()
 {
-	return m_data_out;
+
+//  used
+//  printf("%s: read_c\n", machine().describe_context().c_str());
+		return 0x00;
+
+//	return m_data_out;
 }
 
-void midway_serial_pic_emu_device::write(u8 data)
+void midway_serial_pic_emu_device::write_a(uint8_t data)
+
+// void midway_serial_pic_emu_device::write(u8 data)
 {
+
+//  printf("%s: write_a %02x\n", machine().describe_context().c_str(), data);
+
 	// perhaps this should be split in 2 handlers ?
-	m_command = data & 0x0f;
-	m_clk = BIT(data, 4);
+//	m_command = data & 0x0f;
+//	m_clk = BIT(data, 4);
 }
 
-u8 midway_serial_pic_emu_device::read_c()
+void midway_serial_pic_emu_device::write_b(uint8_t data)
+
+// u8 midway_serial_pic_emu_device::read_c()
 {
-	u8 data = 0;
-	data |= m_clk << 7;
+
+//  printf("%s: write_b %02x\n", machine().describe_context().c_str(), data);
+
+
+//	u8 data = 0;
+//	data |= m_clk << 7;
 	// bit 2 RTC Data
-	return data;
+//	return data;
 }
 
-void midway_serial_pic_emu_device::write_c(u8 data)
+void midway_serial_pic_emu_device::write_c(uint8_t data)
+
+// void midway_serial_pic_emu_device::write_c(u8 data)
 {
-	m_status = BIT(data, 6);
+
+//  used
+
+//	m_status = BIT(data, 6);
 	// bits 1 and 2 is RTC Clock and Data
 //  printf("%s: write_c %02x\n", machine().describe_context().c_str(), data);
 }
 
 void midway_serial_pic_emu_device::device_add_mconfig(machine_config &config)
 {
-	PIC16C57(config, m_pic, 4000000);    /* ? Mhz */
-	m_pic->read_a().set([this]() { return m_command; });
-	m_pic->write_b().set([this](u8 data) { m_data_out = data; });
-	m_pic->read_c().set(FUNC(midway_serial_pic_emu_device::read_c));
-	m_pic->write_c().set(FUNC(midway_serial_pic_emu_device::write_c));
+
+	pic16c57_device &pic(PIC16C57(config, "pic", 12000000));    /* ? Mhz */
+	pic.write_a().set(FUNC(midway_serial_pic_emu_device::write_a));
+	pic.read_b().set(FUNC(midway_serial_pic_emu_device::read_b));
+	pic.write_b().set(FUNC(midway_serial_pic_emu_device::write_b));
+	pic.read_c().set(FUNC(midway_serial_pic_emu_device::read_c));
+	pic.write_c().set(FUNC(midway_serial_pic_emu_device::write_c));
+
+//	PIC16C57(config, m_pic, 4000000);    /* ? Mhz */
+//	m_pic->read_a().set([this]() { return m_command; });
+//	m_pic->write_b().set([this](u8 data) { m_data_out = data; });
+//	m_pic->read_c().set(FUNC(midway_serial_pic_emu_device::read_c));
+//	m_pic->write_c().set(FUNC(midway_serial_pic_emu_device::write_c));
 }
 
 
