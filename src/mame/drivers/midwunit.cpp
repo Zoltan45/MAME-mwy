@@ -663,6 +663,12 @@ void midwunit_state::wunit_picemu(machine_config &config)
 {
 	wunit(config);
 	MIDWAY_SERIAL_PIC_EMU(config, m_midway_serial_pic_emu, 0);
+
+	// todo, REMOVE once the emulated PIC above works!
+	// this just allows it to fall through to the simulation for now
+	MIDWAY_SERIAL_PIC(config, m_midway_serial_pic, 0);
+	m_midway_serial_pic->set_upper(528);
+
 }
 
 
