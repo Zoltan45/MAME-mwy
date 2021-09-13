@@ -669,15 +669,10 @@ class lchicken_state : public hh_cop400_state
 {
 public:
 	lchicken_state(const machine_config &mconfig, device_type type, const char *tag) :
-		hh_cop400_state(mconfig, type, tag),
-		m_motor_pos_out(*this, "motor_pos"),
-		m_motor_on_out(*this, "motor_on")
+		hh_cop400_state(mconfig, type, tag)
 	{ }
 
-	output_finder<> m_motor_pos_out;
-	output_finder<> m_motor_on_out;
-
-	u8 m_motor_pos = 0;
+	u8 m_motor_pos;
 	TIMER_DEVICE_CALLBACK_MEMBER(motor_sim_tick);
 	DECLARE_READ_LINE_MEMBER(motor_switch_r);
 
@@ -697,10 +692,8 @@ void lchicken_state::machine_start()
 {
 	hh_cop400_state::machine_start();
 
-	m_motor_pos_out.resolve();
-	m_motor_on_out.resolve();
-
-	// register for savestates
+	// zerofill, register for savestates
+	m_motor_pos = 0;
 	save_item(NAME(m_motor_pos));
 }
 
@@ -716,7 +709,7 @@ TIMER_DEVICE_CALLBACK_MEMBER(lchicken_state::motor_sim_tick)
 	if (~m_inp_mux & 8)
 	{
 		m_motor_pos++;
-		m_motor_pos_out = 100 * (m_motor_pos / (float)0x100);
+		output().set_value("motor_pos", 100 * (m_motor_pos / (float)0x100));
 	}
 }
 
@@ -733,7 +726,7 @@ void lchicken_state::write_d(u8 data)
 	// D0-D3: input mux
 	// D3: motor on
 	m_inp_mux = data & 0xf;
-	m_motor_on_out = ~data >> 3 & 1;
+	output().set_value("motor_on", ~data >> 3 & 1);
 }
 
 void lchicken_state::write_g(u8 data)

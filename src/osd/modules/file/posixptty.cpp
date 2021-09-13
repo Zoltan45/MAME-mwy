@@ -52,7 +52,7 @@ public:
 	posix_osd_ptty& operator=(posix_osd_ptty const &) = delete;
 	posix_osd_ptty& operator=(posix_osd_ptty &&) = delete;
 
-	posix_osd_ptty(int fd) noexcept : m_fd(fd)
+	posix_osd_ptty(int fd) : m_fd(fd)
 	{
 		assert(m_fd >= 0);
 	}
@@ -62,36 +62,36 @@ public:
 		::close(m_fd);
 	}
 
-	virtual std::error_condition read(void *buffer, std::uint64_t offset, std::uint32_t count, std::uint32_t &actual) noexcept override
+	virtual error read(void *buffer, std::uint64_t offset, std::uint32_t count, std::uint32_t &actual) override
 	{
 		ssize_t const result = ::read(m_fd, buffer, count);
 		if (result < 0)
-			return std::error_condition(errno, std::generic_category());
+			return errno_to_file_error(errno);
 
 		actual = std::uint32_t(size_t(result));
-		return std::error_condition();
+		return error::NONE;
 	}
 
-	virtual std::error_condition write(void const *buffer, std::uint64_t offset, std::uint32_t count, std::uint32_t &actual) noexcept override
+	virtual error write(void const *buffer, std::uint64_t offset, std::uint32_t count, std::uint32_t &actual) override
 	{
 		ssize_t const result = ::write(m_fd, buffer, count);
 		if (result < 0)
-			return std::error_condition(errno, std::generic_category());
+			return errno_to_file_error(errno);
 
 		actual = std::uint32_t(size_t(result));
-		return std::error_condition();
+		return error::NONE;
 	}
 
-	virtual std::error_condition truncate(std::uint64_t offset) noexcept override
+	virtual error truncate(std::uint64_t offset) override
 	{
 		// doesn't make sense on ptty
-		return std::errc::bad_file_descriptor;
+		return error::INVALID_ACCESS;
 	}
 
-	virtual std::error_condition flush() noexcept override
+	virtual error flush() override
 	{
 		// no userspace buffers on read/write
-		return std::error_condition();
+		return error::NONE;
 	}
 
 private:
@@ -101,18 +101,17 @@ private:
 } // anonymous namespace
 
 
-bool posix_check_ptty_path(std::string const &path) noexcept
+bool posix_check_ptty_path(std::string const &path)
 {
 	return strncmp(path.c_str(), posix_ptty_identifier, strlen(posix_ptty_identifier)) == 0;
 }
 
 
-std::error_condition posix_open_ptty(std::uint32_t openflags, osd_file::ptr &file, std::uint64_t &filesize, std::string &name) noexcept
+osd_file::error posix_open_ptty(std::uint32_t openflags, osd_file::ptr &file, std::uint64_t &filesize, std::string &name)
 {
 #if defined(__ANDROID__)
-	return std::errc::not_supported; // TODO: revisit this error code
+	return osd_file::error::FAILURE;
 #else // defined(__ANDROID__)
-	// TODO: handling of the slave path is insecure - should use ptsname_r/ttyname_r in a loop
 #if (defined(sun) || defined(__sun)) && (defined(__SVR4) || defined(__svr4__))
 	int access = O_NOCTTY;
 	if (openflags & OPEN_FLAG_WRITE)
@@ -120,11 +119,11 @@ std::error_condition posix_open_ptty(std::uint32_t openflags, osd_file::ptr &fil
 	else if (openflags & OPEN_FLAG_READ)
 		access |= O_RDONLY;
 	else
-		return std::errc::invalid_argument;
+		return osd_file::error::INVALID_ACCESS;
 
 	int const masterfd = ::posix_openpt(access);
 	if (masterfd < 0)
-		return std::error_condition(errno, std::generic_category());
+		return errno_to_file_error(errno);
 
 	// grant access to slave device and check that it can be opened
 	char const *slavepath;
@@ -134,9 +133,9 @@ std::error_condition posix_open_ptty(std::uint32_t openflags, osd_file::ptr &fil
 		((slavepath = ::ptsname(masterfd)) == nullptr) ||
 		((slavefd = ::open(slavepath, O_RDWR | O_NOCTTY)) < 0))
 	{
-		std::error_condition err(errno, std::generic_category());
+		int const err = errno;
 		::close(masterfd);
-		return err;
+		return errno_to_file_error(err);
 	}
 
 	// check that it's possible to stack BSD-compatibility STREAMS modules
@@ -144,20 +143,20 @@ std::error_condition posix_open_ptty(std::uint32_t openflags, osd_file::ptr &fil
 		(::ioctl(slavefd, I_PUSH, "ldterm") < 0) ||
 		(::ioctl(slavefd, I_PUSH, "ttcompat") < 0))
 	{
-		std::error_condition err(errno, std::generic_category());
+		int const err = errno;
 		::close(slavefd);
 		::close(masterfd);
-		return err;
+		return errno_to_file_error(err);
 	}
 #else
 	struct termios tios;
 	std::memset(&tios, 0, sizeof(tios));
-	::cfmakeraw(&tios); // TODO: this is a non-standard BSDism - should set flags some other way
+	::cfmakeraw(&tios);
 
 	int masterfd = -1, slavefd = -1;
 	char slavepath[PATH_MAX];
 	if (::openpty(&masterfd, &slavefd, slavepath, &tios, nullptr) < 0)
-		return std::error_condition(errno, std::generic_category());
+		return errno_to_file_error(errno);
 #endif
 
 	::close(slavefd);
@@ -165,16 +164,16 @@ std::error_condition posix_open_ptty(std::uint32_t openflags, osd_file::ptr &fil
 	int const oldflags = ::fcntl(masterfd, F_GETFL, 0);
 	if (oldflags < 0)
 	{
-		std::error_condition err(errno, std::generic_category());
+		int const err = errno;
 		::close(masterfd);
-		return err;
+		return errno_to_file_error(err);
 	}
 
 	if (::fcntl(masterfd, F_SETFL, oldflags | O_NONBLOCK) < 0)
 	{
-		std::error_condition err(errno, std::generic_category());
+		int const err = errno;
 		::close(masterfd);
-		return err;
+		return errno_to_file_error(err);
 	}
 
 	try
@@ -182,12 +181,12 @@ std::error_condition posix_open_ptty(std::uint32_t openflags, osd_file::ptr &fil
 		name = slavepath;
 		file = std::make_unique<posix_osd_ptty>(masterfd);
 		filesize = 0;
-		return std::error_condition();
+		return osd_file::error::NONE;
 	}
 	catch (...)
 	{
 		::close(masterfd);
-		return std::errc::not_enough_memory;
+		return osd_file::error::OUT_OF_MEMORY;
 	}
 #endif // defined(__ANDROID__)
 }

@@ -10,15 +10,14 @@
 
 #include "emu.h"
 
+#include "corestr.h"
 #include "emuopts.h"
 #include "romload.h"
+#include "ui/uimain.h"
+#include "zippath.h"
 #include "softlist.h"
 #include "softlist_dev.h"
-
-#include "ui/uimain.h"
-
-#include "corestr.h"
-#include "zippath.h"
+#include "formats/ioprocs.h"
 
 #include <algorithm>
 #include <cctype>
@@ -271,8 +270,11 @@ void device_image_interface::add_format(std::string &&name, std::string &&descri
 
 void device_image_interface::clear_error()
 {
-	m_err.clear();
-	m_err_message.clear();
+	m_err = IMAGE_ERROR_SUCCESS;
+	if (!m_err_message.empty())
+	{
+		m_err_message.clear();
+	}
 }
 
 
@@ -282,38 +284,21 @@ void device_image_interface::clear_error()
 //  error
 //-------------------------------------------------
 
-std::error_category const &image_category() noexcept
+static std::string_view messages[] =
 {
-	class image_category_impl : public std::error_category
-	{
-	public:
-		virtual char const *name() const noexcept override { return "image"; }
-
-		virtual std::string message(int condition) const override
-		{
-			using namespace std::literals;
-			static std::string_view const s_messages[] = {
-					"No error"sv,
-					"Internal error"sv,
-					"Unsupported operation"sv,
-					"Invalid image"sv,
-					"File already open"sv,
-					"Unspecified error"sv };
-			if ((0 <= condition) && (std::size(s_messages) > condition))
-				return std::string(s_messages[condition]);
-			else
-				return "Unknown error"s;
-		}
-	};
-	static image_category_impl const s_image_category_instance;
-	return s_image_category_instance;
-}
+	"",
+	"Internal error",
+	"Unsupported operation",
+	"Out of memory",
+	"File not found",
+	"Invalid image",
+	"File already open",
+	"Unspecified error"
+};
 
 std::string_view device_image_interface::error()
 {
-	if (m_err && m_err_message.empty())
-		m_err_message = m_err.message();
-	return m_err_message;
+	return (!m_err_message.empty()) ? m_err_message : messages[m_err];
 }
 
 
@@ -322,12 +307,14 @@ std::string_view device_image_interface::error()
 //  seterror - specifies an error on an image
 //-------------------------------------------------
 
-void device_image_interface::seterror(std::error_condition err, const char *message)
+void device_image_interface::seterror(image_error_t err, const char *message)
 {
 	clear_error();
 	m_err = err;
-	if (message)
+	if (message != nullptr)
+	{
 		m_err_message = message;
+	}
 }
 
 
@@ -557,13 +544,14 @@ void device_image_interface::battery_load(void *buffer, int length, int fill)
 	if (!buffer || (length <= 0))
 		throw emu_fatalerror("device_image_interface::battery_load: Must specify sensical buffer/length");
 
-	std::string const fname = std::string(device().machine().system().name).append(PATH_SEPARATOR).append(m_basename_noext).append(".nv");
+	osd_file::error filerr;
+	int bytes_read = 0;
+	std::string fname = std::string(device().machine().system().name).append(PATH_SEPARATOR).append(m_basename_noext).append(".nv");
 
 	/* try to open the battery file and read it in, if possible */
 	emu_file file(device().machine().options().nvram_directory(), OPEN_FLAG_READ);
-	std::error_condition const filerr = file.open(fname);
-	int bytes_read = 0;
-	if (!filerr)
+	filerr = file.open(fname);
+	if (filerr == osd_file::error::NONE)
 		bytes_read = file.read(buffer, length);
 
 	// fill remaining bytes (if necessary)
@@ -575,13 +563,14 @@ void device_image_interface::battery_load(void *buffer, int length, const void *
 	if (!buffer || (length <= 0))
 		throw emu_fatalerror("device_image_interface::battery_load: Must specify sensical buffer/length");
 
-	std::string const fname = std::string(device().machine().system().name).append(PATH_SEPARATOR).append(m_basename_noext).append(".nv");
+	osd_file::error filerr;
+	int bytes_read = 0;
+	std::string fname = std::string(device().machine().system().name).append(PATH_SEPARATOR).append(m_basename_noext).append(".nv");
 
 	// try to open the battery file and read it in, if possible
 	emu_file file(device().machine().options().nvram_directory(), OPEN_FLAG_READ);
-	std::error_condition const filerr = file.open(fname);
-	int bytes_read = 0;
-	if (!filerr)
+	filerr = file.open(fname);
+	if (filerr == osd_file::error::NONE)
 		bytes_read = file.read(buffer, length);
 
 	// if no file was present, copy the default contents
@@ -609,8 +598,8 @@ void device_image_interface::battery_save(const void *buffer, int length)
 
 	// try to open the battery file and write it out, if possible
 	emu_file file(device().machine().options().nvram_directory(), OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS);
-	std::error_condition const filerr = file.open(fname);
-	if (!filerr)
+	osd_file::error filerr = file.open(fname);
+	if (filerr == osd_file::error::NONE)
 		file.write(buffer, length);
 }
 
@@ -648,30 +637,58 @@ bool device_image_interface::uses_file_extension(const char *file_extension) con
 // ***************************************************************************
 
 //-------------------------------------------------
+//  image_error_from_file_error - converts an image
+//  error to a file error
+//-------------------------------------------------
+
+image_error_t device_image_interface::image_error_from_file_error(osd_file::error filerr)
+{
+	switch (filerr)
+	{
+	case osd_file::error::NONE:
+		return IMAGE_ERROR_SUCCESS;
+
+	case osd_file::error::NOT_FOUND:
+	case osd_file::error::ACCESS_DENIED:
+		// file not found (or otherwise cannot open)
+		return IMAGE_ERROR_FILENOTFOUND;
+
+	case osd_file::error::OUT_OF_MEMORY:
+		// out of memory
+		return IMAGE_ERROR_OUTOFMEMORY;
+
+	case osd_file::error::ALREADY_OPEN:
+		// this shouldn't happen
+		return IMAGE_ERROR_ALREADYOPEN;
+
+	case osd_file::error::FAILURE:
+	case osd_file::error::TOO_MANY_FILES:
+	case osd_file::error::INVALID_DATA:
+	default:
+		// other errors
+		return IMAGE_ERROR_INTERNAL;
+	}
+}
+
+
+//-------------------------------------------------
 //  load_image_by_path - loads an image with a
 //  specific path
 //-------------------------------------------------
 
-std::error_condition device_image_interface::load_image_by_path(u32 open_flags, std::string_view path)
+image_error_t device_image_interface::load_image_by_path(u32 open_flags, std::string_view path)
 {
 	std::string revised_path;
 
 	// attempt to read the file
-	auto filerr = util::zippath_fopen(path, open_flags, m_file, revised_path);
-	if (filerr)
-	{
-		osd_printf_verbose("%s: error opening image file %s with flags=%08X (%s:%d %s)\n", device().tag(), path, open_flags, filerr.category().name(), filerr.value(), filerr.message());
-		return filerr;
-	}
-	else
-	{
-		osd_printf_verbose("%s: opened image file %s with flags=%08X\n", device().tag(), path, open_flags);
-	}
+	auto const filerr = util::zippath_fopen(path, open_flags, m_file, revised_path);
+	if (filerr != osd_file::error::NONE)
+		return image_error_from_file_error(filerr);
 
 	m_readonly = (open_flags & OPEN_FLAG_WRITE) ? 0 : 1;
 	m_created = (open_flags & OPEN_FLAG_CREATE) ? 1 : 0;
 	set_image_filename(revised_path);
-	return std::error_condition();
+	return IMAGE_ERROR_SUCCESS;
 }
 
 
@@ -679,7 +696,7 @@ std::error_condition device_image_interface::load_image_by_path(u32 open_flags, 
 //  reopen_for_write
 //-------------------------------------------------
 
-std::error_condition device_image_interface::reopen_for_write(std::string_view path)
+int device_image_interface::reopen_for_write(std::string_view path)
 {
 	m_file.reset();
 
@@ -687,15 +704,15 @@ std::error_condition device_image_interface::reopen_for_write(std::string_view p
 
 	// attempt to open the file for writing
 	auto const filerr = util::zippath_fopen(path, OPEN_FLAG_READ|OPEN_FLAG_WRITE|OPEN_FLAG_CREATE, m_file, revised_path);
-	if (filerr)
-		return filerr;
+	if (filerr != osd_file::error::NONE)
+		return image_error_from_file_error(filerr);
 
 	// success!
 	m_readonly = 0;
 	m_created = 1;
 	set_image_filename(revised_path);
 
-	return std::error_condition();
+	return IMAGE_ERROR_SUCCESS;
 }
 
 
@@ -806,19 +823,19 @@ bool device_image_interface::load_software(software_list_device &swlist, std::st
 				// try to load the file
 				m_mame_file.reset(new emu_file(device().machine().options().media_path(), searchpath, OPEN_FLAG_READ));
 				m_mame_file->set_restrict_to_mediapath(1);
-				std::error_condition filerr;
+				osd_file::error filerr;
 				if (has_crc)
 					filerr = m_mame_file->open(romp->name(), crc);
 				else
 					filerr = m_mame_file->open(romp->name());
-				if (filerr)
+				if (filerr != osd_file::error::NONE)
 					m_mame_file.reset();
 
 				warningcount += verify_length_and_hash(m_mame_file.get(), romp->name(), romp->get_length(), util::hash_collection(romp->hashdata()));
 
-				if (!filerr)
+				if (filerr == osd_file::error::NONE)
 					filerr = util::core_file::open_proxy(*m_mame_file, m_file);
-				if (!filerr)
+				if (filerr == osd_file::error::NONE)
 					retval = true;
 
 				break; // load first item for start
@@ -861,14 +878,14 @@ image_init_result device_image_interface::load_internal(std::string_view path, b
 		{
 			// open the file
 			m_err = load_image_by_path(*iter, path);
-			if (m_err && (m_err != std::errc::no_such_file_or_directory) && (m_err != std::errc::permission_denied))
+			if (m_err && (m_err != IMAGE_ERROR_FILENOTFOUND))
 				goto done;
 		}
 
 		// did we fail to find the file?
 		if (!m_file)
 		{
-			m_err = std::errc::no_such_file_or_directory;
+			m_err = IMAGE_ERROR_FILENOTFOUND;
 			goto done;
 		}
 	}
@@ -877,17 +894,15 @@ image_init_result device_image_interface::load_internal(std::string_view path, b
 	m_create_format = create_format;
 	m_create_args = create_args;
 
-	if (!init_phase())
-	{
-		m_err = (finish_load() == image_init_result::PASS) ? std::error_condition() : image_error::INTERNAL;
+	if (init_phase()==false) {
+		m_err = (finish_load() == image_init_result::PASS) ? IMAGE_ERROR_SUCCESS : IMAGE_ERROR_INTERNAL;
 		if (m_err)
 			goto done;
 	}
 	// success!
 
 done:
-	if (m_err)
-	{
+	if (m_err!=0) {
 		if (!init_phase())
 		{
 			if (device().machine().phase() == machine_phase::RUNNING)
@@ -989,7 +1004,7 @@ image_init_result device_image_interface::finish_load()
 	{
 		if (!image_checkhash())
 		{
-			m_err = image_error::INVALIDIMAGE;
+			m_err = IMAGE_ERROR_INVALIDIMAGE;
 			err = image_init_result::FAIL;
 		}
 
@@ -1001,7 +1016,7 @@ image_init_result device_image_interface::finish_load()
 				if (err != image_init_result::PASS)
 				{
 					if (!m_err)
-						m_err = image_error::UNSPECIFIED;
+						m_err = IMAGE_ERROR_UNSPECIFIED;
 				}
 			}
 			else
@@ -1011,7 +1026,7 @@ image_init_result device_image_interface::finish_load()
 				if (err != image_init_result::PASS)
 				{
 					if (!m_err)
-						m_err = image_error::UNSPECIFIED;
+						m_err = IMAGE_ERROR_UNSPECIFIED;
 				}
 			}
 		}
@@ -1339,3 +1354,41 @@ bool device_image_interface::init_phase() const
 	return !device().has_running_machine()
 		|| device().machine().phase() == machine_phase::INIT;
 }
+
+
+//----------------------------------------------------------------------------
+
+static int image_fseek_thunk(void *file, s64 offset, int whence)
+{
+	device_image_interface *image = (device_image_interface *) file;
+	return image->fseek(offset, whence);
+}
+
+static size_t image_fread_thunk(void *file, void *buffer, size_t length)
+{
+	device_image_interface *image = (device_image_interface *) file;
+	return image->fread(buffer, length);
+}
+
+static size_t image_fwrite_thunk(void *file, const void *buffer, size_t length)
+{
+	device_image_interface *image = (device_image_interface *) file;
+	return image->fwrite(buffer, length);
+}
+
+static u64 image_fsize_thunk(void *file)
+{
+	device_image_interface *image = (device_image_interface *) file;
+	return image->length();
+}
+
+//----------------------------------------------------------------------------
+
+struct io_procs image_ioprocs =
+{
+	nullptr,
+	image_fseek_thunk,
+	image_fread_thunk,
+	image_fwrite_thunk,
+	image_fsize_thunk
+};

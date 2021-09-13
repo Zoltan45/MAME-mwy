@@ -16,7 +16,6 @@
 #include <cstdint>
 #include <memory>
 #include <string>
-#include <system_error>
 #include <vector>
 
 
@@ -62,6 +61,47 @@ constexpr uint32_t OPEN_FLAG_NO_PRELOAD     = 0x0010;
 class osd_file
 {
 public:
+	/// \brief Result of a file operation
+	///
+	/// Returned by most members of osd_file, and also used by other
+	/// classes that access files or other file-like resources.
+	enum class error
+	{
+		/// Operation completed successfully.
+		NONE,
+
+		/// Operation failed, but there is no more specific code to
+		/// describe the failure.
+		FAILURE,
+
+		/// Operation failed due to an error allocating memory.
+		OUT_OF_MEMORY,
+
+		/// The requested file, path or resource was not found.
+		NOT_FOUND,
+
+		/// Current permissions do not allow the requested access.
+		ACCESS_DENIED,
+
+		/// Requested access is not permitted because the file or
+		/// resource is currently open for exclusive access.
+		ALREADY_OPEN,
+
+		/// Request cannot be completed due to resource exhaustion
+		/// (maximum number of open files or other objects has been
+		/// reached).
+		TOO_MANY_FILES,
+
+		/// The request cannot be completed because invalid data was
+		/// encountered (for example an inconsistent filesystem, or a
+		/// corrupt archive file).
+		INVALID_DATA,
+
+		/// The requested access mode is invalid, or not appropriate for
+		/// the file or resource.
+		INVALID_ACCESS
+	};
+
 	/// \brief Smart pointer to a file handle
 	typedef std::unique_ptr<osd_file> ptr;
 
@@ -89,7 +129,7 @@ public:
 	///   Will be zero for stream-like objects (e.g. TCP sockets or
 	///   named pipes).
 	/// \return Result of the operation.
-	static std::error_condition open(std::string const &path, std::uint32_t openflags, ptr &file, std::uint64_t &filesize) noexcept;
+	static error open(std::string const &path, std::uint32_t openflags, ptr &file, std::uint64_t &filesize);
 
 	/// \brief Create a new pseudo-terminal (PTY) pair
 	///
@@ -100,7 +140,7 @@ public:
 	///   pseudo-terminal if the operation succeeds.  Not valid if the
 	///   operation fails.
 	/// \return Result of the operation.
-	static std::error_condition openpty(ptr &file, std::string &name) noexcept;
+	static error openpty(ptr &file, std::string &name);
 
 	/// \brief Close an open file
 	virtual ~osd_file() { }
@@ -121,7 +161,7 @@ public:
 	/// \param [out] actual Receives the number of bytes read if the
 	///   operation succeeds.  Not valid if the operation fails.
 	/// \return Result of the operation.
-	virtual std::error_condition read(void *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) noexcept = 0;
+	virtual error read(void *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) = 0;
 
 	/// \brief Write to an open file
 	///
@@ -136,26 +176,26 @@ public:
 	/// \param [out] actual Receives the number of bytes written if the
 	///   operation succeeds.  Not valid if the operation fails.
 	/// \return Result of the operation.
-	virtual std::error_condition write(void const *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) noexcept = 0;
+	virtual error write(void const *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) = 0;
 
 	/// \brief Change the size of an open file
 	///
 	/// \param [in] offset Desired size of the file.
 	/// \return Result of the operation.
-	virtual std::error_condition truncate(std::uint64_t offset) noexcept = 0;
+	virtual error truncate(std::uint64_t offset) = 0;
 
 	/// \brief Flush file buffers
 	///
 	/// This flushes any data cached by the application, but does not
 	/// guarantee that all prior writes have reached persistent storage.
 	/// \return Result of the operation.
-	virtual std::error_condition flush() noexcept = 0;
+	virtual error flush() = 0;
 
 	/// \brief Delete a file
 	///
 	/// \param [in] filename Path to the file to delete.
 	/// \return Result of the operation.
-	static std::error_condition remove(std::string const &filename) noexcept;
+	static error remove(std::string const &filename);
 };
 
 
@@ -177,21 +217,21 @@ public:
 /// \return true if the filename points to a physical drive and if the
 ///   values pointed to by cylinders, heads, sectors, and bps are valid;
 ///   false in any other case
-bool osd_get_physical_drive_geometry(const char *filename, uint32_t *cylinders, uint32_t *heads, uint32_t *sectors, uint32_t *bps) noexcept;
+bool osd_get_physical_drive_geometry(const char *filename, uint32_t *cylinders, uint32_t *heads, uint32_t *sectors, uint32_t *bps);
 
 
 /// \brief Is the given character legal for filenames?
 ///
 /// \param [in] uchar The character to check.
 /// \return Whether this character is legal in a filename.
-bool osd_is_valid_filename_char(char32_t uchar) noexcept;
+bool osd_is_valid_filename_char(char32_t uchar);
 
 
 /// \brief Is the given character legal for paths?
 ///
 /// \param [in] uchar The character to check.
 /// \return Whether this character is legal in a file path.
-bool osd_is_valid_filepath_char(char32_t uchar) noexcept;
+bool osd_is_valid_filepath_char(char32_t uchar);
 
 
 /***************************************************************************
@@ -261,14 +301,14 @@ std::unique_ptr<osd::directory::entry> osd_stat(std::string const &path);
 ///
 /// \param [in] path The path in question.
 /// \return true if the path is absolute, false otherwise.
-bool osd_is_absolute_path(const std::string &path) noexcept;
+bool osd_is_absolute_path(const std::string &path);
 
 
 /// \brief Retrieves the full path.
 /// \param [in] path The path in question.
 /// \param [out] dst Reference to receive new path.
 /// \return File error.
-std::error_condition osd_get_full_path(std::string &dst, std::string const &path) noexcept;
+osd_file::error osd_get_full_path(std::string &dst, std::string const &path);
 
 
 /// \brief Retrieves the volume name.

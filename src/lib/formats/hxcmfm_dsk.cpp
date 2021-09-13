@@ -1,10 +1,9 @@
 // license:BSD-3-Clause
 // copyright-holders:Olivier Galibert
 
+#include <cassert>
+
 #include "hxcmfm_dsk.h"
-
-#include "ioprocs.h"
-
 
 #define MFM_FORMAT_HEADER   "HXCMFM"
 
@@ -58,26 +57,24 @@ bool mfm_format::supports_save() const
 	return true;
 }
 
-int mfm_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int mfm_format::identify(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
 	uint8_t header[7];
 
-	size_t actual;
-	io.read_at(0, &header, sizeof(header), actual);
+	io_generic_read(io, &header, 0, sizeof(header));
 	if ( memcmp( header, MFM_FORMAT_HEADER, 6 ) ==0) {
 		return 100;
 	}
 	return 0;
 }
 
-bool mfm_format::load(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
+bool mfm_format::load(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
 {
-	size_t actual;
 	MFMIMG header;
 	MFMTRACKIMG trackdesc;
 
 	// read header
-	io.read_at(0, &header, sizeof(header), actual);
+	io_generic_read(io, &header, 0, sizeof(header));
 
 	int drivecyl, driveheads;
 	image->get_maximal_geometry(drivecyl, driveheads);
@@ -89,12 +86,12 @@ bool mfm_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 		for(int side=0; side < header.number_of_side; side++) {
 			if (!skip_odd || track%2 == 0) {
 				// read location of
-				io.read_at((header.mfmtracklistoffset)+( counter *sizeof(trackdesc)), &trackdesc, sizeof(trackdesc), actual);
+				io_generic_read(io, &trackdesc,(header.mfmtracklistoffset)+( counter *sizeof(trackdesc)),sizeof(trackdesc));
 
 				trackbuf.resize(trackdesc.mfmtracksize);
 
 				// actual data read
-				io.read_at(trackdesc.mfmtrackoffset, &trackbuf[0], trackdesc.mfmtracksize, actual);
+				io_generic_read(io, &trackbuf[0], trackdesc.mfmtrackoffset, trackdesc.mfmtracksize);
 
 				if (skip_odd) {
 					generate_track_from_bitstream(track/2, side, &trackbuf[0], trackdesc.mfmtracksize*8, image);
@@ -112,10 +109,9 @@ bool mfm_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 	return true;
 }
 
-bool mfm_format::save(util::random_read_write &io, const std::vector<uint32_t> &variants, floppy_image *image)
+bool mfm_format::save(io_generic *io, const std::vector<uint32_t> &variants, floppy_image *image)
 {
 	// TODO: HD support
-	size_t actual;
 	MFMIMG header;
 	int track_count, head_count;
 	image->get_actual_geometry(track_count, head_count);
@@ -128,7 +124,7 @@ bool mfm_format::save(util::random_read_write &io, const std::vector<uint32_t> &
 	header.floppyiftype = 4;
 	header.mfmtracklistoffset = sizeof(MFMIMG);
 
-	io.write_at(0, &header, sizeof(MFMIMG), actual);
+	io_generic_write(io, &header, 0, sizeof(MFMIMG));
 
 	int tpos = sizeof(MFMIMG);
 	int dpos = tpos + track_count*head_count*sizeof(MFMTRACKIMG);
@@ -147,8 +143,8 @@ bool mfm_format::save(util::random_read_write &io, const std::vector<uint32_t> &
 			trackdesc.mfmtracksize = packed.size();
 			trackdesc.mfmtrackoffset = dpos;
 
-			io.write_at(tpos, &trackdesc, sizeof(MFMTRACKIMG), actual);
-			io.write_at(dpos, packed.data(), packed.size(), actual);
+			io_generic_write(io, &trackdesc, tpos, sizeof(MFMTRACKIMG));
+			io_generic_write(io, packed.data(), dpos, packed.size());
 
 			tpos += sizeof(MFMTRACKIMG);
 			dpos += packed.size();

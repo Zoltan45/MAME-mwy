@@ -2,7 +2,7 @@
 // copyright-holders:Couriersud
 
 ///
-/// \file test_pfunction.cpp
+/// \file pfunction_test.cpp
 ///
 /// tests for pfunction
 ///

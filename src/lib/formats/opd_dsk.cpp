@@ -30,13 +30,12 @@ const char *opd_format::extensions() const
 	return "opd,opu";
 }
 
-int opd_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int opd_format::identify(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
-	int const type = find_size(io, form_factor, variants);
+	int type = find_size(io, form_factor, variants);
 
 	if (type != -1)
 		return 90;
-
 	return 0;
 }
 

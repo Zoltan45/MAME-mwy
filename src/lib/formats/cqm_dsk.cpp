@@ -8,12 +8,9 @@
 
 *********************************************************************/
 
-#include "cqm_dsk.h"
-
-#include "ioprocs.h"
-
 #include <cstring>
-
+#include <cassert>
+#include "flopimg.h"
 
 #define CQM_HEADER_SIZE 133
 
@@ -234,6 +231,17 @@ FLOPPY_CONSTRUCT( cqm_dsk_construct )
 
 
 
+
+/*********************************************************************
+
+    formats/cqm_dsk.c
+
+    CopyQM disk images
+
+*********************************************************************/
+
+#include "cqm_dsk.h"
+
 cqm_format::cqm_format()
 {
 }
@@ -253,11 +261,10 @@ const char *cqm_format::extensions() const
 	return "cqm,cqi,dsk";
 }
 
-int cqm_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int cqm_format::identify(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
 	uint8_t h[3];
-	size_t actual;
-	io.read_at(0, h, 3, actual);
+	io_generic_read(io, h, 0, 3);
 
 	if (h[0] == 'C' && h[1] == 'Q' && h[2] == 0x14)
 		return 100;
@@ -265,13 +272,12 @@ int cqm_format::identify(util::random_read &io, uint32_t form_factor, const std:
 	return 0;
 }
 
-bool cqm_format::load(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
+bool cqm_format::load(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
 {
-	size_t actual;
 	const int max_size = 4*1024*1024; // 4MB ought to be large enough for any floppy
 	std::vector<uint8_t> imagebuf(max_size);
 	uint8_t header[CQM_HEADER_SIZE];
-	io.read_at(0, header, CQM_HEADER_SIZE, actual);
+	io_generic_read(io, header, 0, CQM_HEADER_SIZE);
 
 	int sector_size      = (header[0x04] << 8) | header[0x03];
 	int sector_per_track = (header[0x11] << 8) | header[0x10];
@@ -312,11 +318,9 @@ bool cqm_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 	int rpm = form_factor == floppy_image::FF_8 || (form_factor == floppy_image::FF_525 && rate >= 300000) ? 360 : 300;
 	int base_cell_count = rate*60/rpm;
 
-	uint64_t cqm_size;
-	if (io.length(cqm_size))
-		return false;
+	int cqm_size = io_generic_size(io);
 	std::vector<uint8_t> cqmbuf(cqm_size);
-	io.read_at(0, &cqmbuf[0], cqm_size, actual);
+	io_generic_read(io, &cqmbuf[0], 0, cqm_size);
 
 	// decode the RLE data
 	for (int s = 0, pos = CQM_HEADER_SIZE + comment_size; pos < cqm_size; )
@@ -365,7 +369,7 @@ bool cqm_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 	return true;
 }
 
-bool cqm_format::save(util::random_read_write &io, const std::vector<uint32_t> &variants, floppy_image *image)
+bool cqm_format::save(io_generic *io, const std::vector<uint32_t> &variants, floppy_image *image)
 {
 	return false;
 }

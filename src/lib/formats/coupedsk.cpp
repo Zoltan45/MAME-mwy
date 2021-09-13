@@ -8,10 +8,10 @@
 
 **************************************************************************/
 
-#include "coupedsk.h"
+#include <cassert>
 
-#include "ioprocs.h"
-
+#include "formats/coupedsk.h"
+#include "flopimg.h"
 
 const floppy_image_format_t::desc_e mgt_format::desc_10[] = {
 	{ MFM, 0x4e, 60 },
@@ -64,11 +64,9 @@ bool mgt_format::supports_save() const
 	return true;
 }
 
-int mgt_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int mgt_format::identify(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
-	uint64_t size;
-	if(io.length(size))
-		return 0;
+	uint64_t size = io_generic_size(io);
 
 	if(/*size == 737280 || */ size == 819200)
 		return 50;
@@ -76,12 +74,10 @@ int mgt_format::identify(util::random_read &io, uint32_t form_factor, const std:
 	return 0;
 }
 
-bool mgt_format::load(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
+bool mgt_format::load(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
 {
-	uint64_t size;
-	if(io.length(size))
-		return false;
-	int const sector_count = (size == 737280) ? 9 : 10;
+	uint64_t size = io_generic_size(io);
+	int sector_count = size == 737280 ? 9 : 10;
 
 	uint8_t sectdata[10*512];
 	desc_s sectors[10];
@@ -94,8 +90,7 @@ bool mgt_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 	int track_size = sector_count*512;
 	for(int head=0; head < 2; head++) {
 		for(int track=0; track < 80; track++) {
-			size_t actual;
-			io.read_at((track*2+head)*track_size, sectdata, track_size, actual);
+			io_generic_read(io, sectdata, (track*2+head)*track_size, track_size);
 			generate_track(desc_10, track, head, sectors, sector_count+1, 100000, image);
 		}
 	}
@@ -104,7 +99,7 @@ bool mgt_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 	return true;
 }
 
-bool mgt_format::save(util::random_read_write &io, const std::vector<uint32_t> &variants, floppy_image *image)
+bool mgt_format::save(io_generic *io, const std::vector<uint32_t> &variants, floppy_image *image)
 {
 	int track_count, head_count, sector_count;
 	get_geometry_mfm_pc(image, 2000, track_count, head_count, sector_count);
@@ -120,8 +115,7 @@ bool mgt_format::save(util::random_read_write &io, const std::vector<uint32_t> &
 	for(int head=0; head < 2; head++) {
 		for(int track=0; track < 80; track++) {
 			get_track_data_mfm_pc(track, head, image, 2000, 512, sector_count, sectdata);
-			size_t actual;
-			io.write_at((track*2+head)*track_size, sectdata, track_size, actual);
+			io_generic_write(io, sectdata, (track*2+head)*track_size, track_size);
 		}
 	}
 

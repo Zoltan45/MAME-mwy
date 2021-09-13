@@ -5,15 +5,13 @@
     CDRDAO TOC parser for CHD compression frontend
 
 ***************************************************************************/
-#ifndef MAME_LIB_UTIL_CHDCD_H
-#define MAME_LIB_UTIL_CHDCD_H
+
+#ifndef MAME_UTIL_CHDCD_H
+#define MAME_UTIL_CHDCD_H
 
 #pragma once
 
 #include "cdrom.h"
-
-#include <system_error>
-
 
 struct chdcd_track_input_entry
 {
@@ -35,6 +33,6 @@ struct chdcd_track_input_info
 };
 
 
-std::error_condition chdcd_parse_toc(const char *tocfname, cdrom_toc &outtoc, chdcd_track_input_info &outinfo);
+chd_error chdcd_parse_toc(const char *tocfname, cdrom_toc &outtoc, chdcd_track_input_info &outinfo);
 
-#endif // MAME_LIB_UTIL_CHDCD_H
+#endif // MAME_UTIL_CHDCD_H

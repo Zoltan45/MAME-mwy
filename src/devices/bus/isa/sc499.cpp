@@ -16,7 +16,7 @@
 
 #include "emu.h"
 #include "sc499.h"
-
+#include "formats/ioprocs.h"
 
 #define VERBOSE 0
 
@@ -1310,17 +1310,18 @@ void sc499_ctape_image_device::write_block(int block_num, uint8_t *ptr)
 
 image_init_result sc499_ctape_image_device::call_load()
 {
-	try
-	{
-		auto const size = length();
-		m_ctape_data.resize(size);
-		if (!fseek(0, SEEK_SET) && (fread(m_ctape_data.data(), size) == size))
-			return image_init_result::PASS;
-	}
-	catch (...)
-	{
-	}
-	return image_init_result::FAIL;
+	uint32_t size;
+	io_generic io;
+	io.file = (device_image_interface *)this;
+	io.procs = &image_ioprocs;
+	io.filler = 0xff;
+
+	size = io_generic_size(&io);
+	m_ctape_data.resize(size);
+
+	io_generic_read(&io, &m_ctape_data[0], 0, size);
+
+	return image_init_result::PASS;
 }
 
 void sc499_ctape_image_device::call_unload()

@@ -24,10 +24,7 @@
 
 #include "emu.h"
 #include "emuopts.h"
-
-#include "util/coreutil.h"
-#include "util/ioprocs.h"
-#include "util/ioprocsfilter.h"
+#include "coreutil.h"
 
 
 //**************************************************************************
@@ -215,6 +212,7 @@ save_error save_manager::check_file(running_machine &machine, emu_file &file, co
 	sig = machine.save().signature();
 
 	// seek to the beginning and read the header
+	file.compress(FCOMPRESS_NONE);
 	file.seek(0, SEEK_SET);
 	u8 header[HEADER_SIZE];
 	if (file.read(header, sizeof(header)) != sizeof(header))
@@ -259,28 +257,20 @@ void save_manager::dispatch_presave()
 
 save_error save_manager::write_file(emu_file &file)
 {
-	util::write_stream::ptr writer;
-	save_error err = do_write(
+	return do_write(
 			[] (size_t total_size) { return true; },
-			[&writer] (const void *data, size_t size)
+			[&file] (const void *data, size_t size) { return file.write(data, size) == size; },
+			[&file] ()
 			{
-				size_t written;
-				std::error_condition filerr = writer->write(data, size, written);
-				return !filerr && (size == written);
+				file.compress(FCOMPRESS_NONE);
+				file.seek(0, SEEK_SET);
+				return true;
 			},
-			[&file, &writer] ()
+			[&file] ()
 			{
-				if (file.seek(0, SEEK_SET))
-					return false;
-				writer = util::core_file_read_write(file);
-				return bool(writer);
-			},
-			[&file, &writer] ()
-			{
-				writer = util::zlib_write(util::core_file_read_write(file), 6, 16384);
-				return bool(writer);
+				file.compress(FCOMPRESS_MEDIUM);
+				return true;
 			});
-	return (STATERR_NONE != err) ? err : writer->finalize() ? STATERR_WRITE_ERROR : STATERR_NONE;
 }
 
 
@@ -290,26 +280,19 @@ save_error save_manager::write_file(emu_file &file)
 
 save_error save_manager::read_file(emu_file &file)
 {
-	util::read_stream::ptr reader;
 	return do_read(
 			[] (size_t total_size) { return true; },
-			[&reader] (void *data, size_t size)
+			[&file] (void *data, size_t size) { return file.read(data, size) == size; },
+			[&file] ()
 			{
-				std::size_t read;
-				std::error_condition filerr = reader->read(data, size, read);
-				return !filerr && (read == size);
+				file.compress(FCOMPRESS_NONE);
+				file.seek(0, SEEK_SET);
+				return true;
 			},
-			[&file, &reader] ()
+			[&file] ()
 			{
-				if (file.seek(0, SEEK_SET))
-					return false;
-				reader = util::core_file_read(file);
-				return bool(reader);
-			},
-			[&file, &reader] ()
-			{
-				reader = util::zlib_read(util::core_file_read(file), 16384);
-				return bool(reader);
+				file.compress(FCOMPRESS_MEDIUM);
+				return true;
 			});
 }
 

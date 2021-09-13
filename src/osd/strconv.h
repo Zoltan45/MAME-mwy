@@ -17,7 +17,7 @@
 //  FUNCTION PROTOTYPES
 //============================================================
 
-#if defined(_WIN32)
+#if defined(WIN32)
 
 #include <windows.h>
 
@@ -56,7 +56,7 @@ typedef std::string tstring;
 	}
 }
 
-#endif // defined(_WIN32)
+#endif // defined(WIN32)
 
 
 #endif // MAME_OSD_STRCONV_H

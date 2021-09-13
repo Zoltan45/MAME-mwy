@@ -11,9 +11,8 @@
 #include "flopimg.h"
 #include "imageutl.h"
 
-#include "ioprocs.h"
-
 #include "osdcore.h"
+#include "ioprocs.h"
 
 #include <cassert>
 #include <cctype>
@@ -31,7 +30,7 @@ using util::BIT;
 
 struct floppy_image_legacy
 {
-	util::random_read_write::ptr io = nullptr;
+	struct io_generic io = { 0 };
 
 	const struct FloppyFormat *floppy_option = nullptr;
 	struct FloppyCallbacks format = { 0 };
@@ -70,20 +69,22 @@ OPTION_GUIDE_START(floppy_option_guide)
 OPTION_GUIDE_END
 
 
-static void floppy_close_internal(floppy_image_legacy *floppy);
+static void floppy_close_internal(floppy_image_legacy *floppy, bool close_file);
 
 /*********************************************************************
     opening, closing and creating of floppy images
 *********************************************************************/
 
 /* basic floppy_image_legacy initialization common to floppy_open() and floppy_create() */
-static floppy_image_legacy *floppy_init(util::random_read_write::ptr &&io, int flags)
+static floppy_image_legacy *floppy_init(void *fp, const struct io_procs *procs, int flags)
 {
 	floppy_image_legacy *floppy;
 
 	floppy = new floppy_image_legacy;
 
-	floppy->io = std::move(io);
+	floppy->io.file = fp;
+	floppy->io.procs = procs;
+	floppy->io.filler = 0xFF;
 	floppy->flags = (uint8_t) flags;
 	return floppy;
 }
@@ -92,7 +93,7 @@ static floppy_image_legacy *floppy_init(util::random_read_write::ptr &&io, int f
 
 /* main code for identifying and maybe opening a disk image; not exposed
  * directly because this function is big and hideous */
-static floperr_t floppy_open_internal(util::random_read_write::ptr &&io, const std::string &extension,
+static floperr_t floppy_open_internal(void *fp, const struct io_procs *procs, const std::string &extension,
 	const struct FloppyFormat *floppy_options, int max_options, int flags, floppy_image_legacy **outfloppy,
 	int *outoption)
 {
@@ -103,7 +104,7 @@ static floperr_t floppy_open_internal(util::random_read_write::ptr &&io, const s
 	int vote;
 	size_t i;
 
-	floppy = floppy_init(std::move(io), flags);
+	floppy = floppy_init(fp, procs, flags);
 	if (!floppy)
 	{
 		err = FLOPPY_ERROR_OUTOFMEMORY;
@@ -162,7 +163,7 @@ done:
 	/* if we have a floppy disk and we either errored or are not keeping it, close it */
 	if (floppy && (!outfloppy || err))
 	{
-		floppy_close_internal(floppy);
+		floppy_close_internal(floppy, false);
 		floppy = nullptr;
 	}
 
@@ -175,31 +176,31 @@ done:
 
 
 
-floperr_t floppy_identify(util::random_read_write::ptr &&io, const char *extension,
+floperr_t floppy_identify(void *fp, const struct io_procs *procs, const char *extension,
 	const struct FloppyFormat *formats, int *identified_format)
 {
-	return floppy_open_internal(std::move(io), extension, formats, INT_MAX, FLOPPY_FLAGS_READONLY, nullptr, identified_format);
+	return floppy_open_internal(fp, procs, extension, formats, INT_MAX, FLOPPY_FLAGS_READONLY, nullptr, identified_format);
 }
 
 
 
-floperr_t floppy_open(util::random_read_write::ptr &&io, const std::string &extension,
+floperr_t floppy_open(void *fp, const struct io_procs *procs, const std::string &extension,
 	const struct FloppyFormat *format, int flags, floppy_image_legacy **outfloppy)
 {
-	return floppy_open_internal(std::move(io), extension, format, 1, flags, outfloppy, nullptr);
+	return floppy_open_internal(fp, procs, extension, format, 1, flags, outfloppy, nullptr);
 }
 
 
 
-floperr_t floppy_open_choices(util::random_read_write::ptr &&io, const std::string &extension,
+floperr_t floppy_open_choices(void *fp, const struct io_procs *procs, const std::string &extension,
 	const struct FloppyFormat *formats, int flags, floppy_image_legacy **outfloppy)
 {
-	return floppy_open_internal(std::move(io), extension, formats, INT_MAX, flags, outfloppy, nullptr);
+	return floppy_open_internal(fp, procs, extension, formats, INT_MAX, flags, outfloppy, nullptr);
 }
 
 
 
-floperr_t floppy_create(util::random_read_write::ptr &&io, const struct FloppyFormat *format, util::option_resolution *parameters, floppy_image_legacy **outfloppy)
+floperr_t floppy_create(void *fp, const struct io_procs *procs, const struct FloppyFormat *format, util::option_resolution *parameters, floppy_image_legacy **outfloppy)
 {
 	floppy_image_legacy *floppy = nullptr;
 	floperr_t err;
@@ -209,7 +210,7 @@ floperr_t floppy_create(util::random_read_write::ptr &&io, const struct FloppyFo
 	assert(format);
 
 	/* create the new image */
-	floppy = floppy_init(std::move(io), 0);
+	floppy = floppy_init(fp, procs, 0);
 	if (!floppy)
 	{
 		err = FLOPPY_ERROR_OUTOFMEMORY;
@@ -265,26 +266,28 @@ floperr_t floppy_create(util::random_read_write::ptr &&io, const struct FloppyFo
 done:
 	if (err && floppy)
 	{
-		floppy_close_internal(floppy);
+		floppy_close_internal(floppy, false);
 		floppy = nullptr;
 	}
 
 	if (outfloppy)
 		*outfloppy = floppy;
 	else if (floppy)
-		floppy_close_internal(floppy);
+		floppy_close_internal(floppy, false);
 	return err;
 }
 
 
 
-static void floppy_close_internal(floppy_image_legacy *floppy)
+static void floppy_close_internal(floppy_image_legacy *floppy, bool close_file)
 {
 	if (floppy) {
 		floppy_track_unload(floppy);
 
 		if(floppy->floppy_option && floppy->floppy_option->destruct)
 			floppy->floppy_option->destruct(floppy, floppy->floppy_option);
+		if (close_file)
+			io_generic_close(&floppy->io);
 
 		delete floppy;
 	}
@@ -294,7 +297,7 @@ static void floppy_close_internal(floppy_image_legacy *floppy)
 
 void floppy_close(floppy_image_legacy *floppy)
 {
-	floppy_close_internal(floppy);
+	floppy_close_internal(floppy, true);
 }
 
 
@@ -329,16 +332,14 @@ void *floppy_create_tag(floppy_image_legacy *floppy, size_t tagsize)
 
 uint8_t floppy_get_filler(floppy_image_legacy *floppy)
 {
-	// FIXME: remove this function, it's here for legacy reasons
-	// the caller actually sets the filler byte - in practice it's always 0xff but there's no actual guarantee
-	return 0xff;
+	return floppy->io.filler;
 }
 
 
 
-util::random_read_write &floppy_get_io(floppy_image_legacy *floppy)
+void floppy_set_filler(floppy_image_legacy *floppy, uint8_t filler)
 {
-	return *floppy->io;
+	floppy->io.filler = filler;
 }
 
 
@@ -349,42 +350,28 @@ util::random_read_write &floppy_get_io(floppy_image_legacy *floppy)
 
 void floppy_image_read(floppy_image_legacy *floppy, void *buffer, uint64_t offset, size_t length)
 {
-	size_t actual;
-	floppy->io->read_at(offset, buffer, length, actual);
+	io_generic_read(&floppy->io, buffer, offset, length);
 }
 
 
 
 void floppy_image_write(floppy_image_legacy *floppy, const void *buffer, uint64_t offset, size_t length)
 {
-	size_t actual;
-	floppy->io->write_at(offset, buffer, length, actual);
+	io_generic_write(&floppy->io, buffer, offset, length);
 }
 
 
 
 void floppy_image_write_filler(floppy_image_legacy *floppy, uint8_t filler, uint64_t offset, size_t length)
 {
-	uint8_t buffer[512];
-	memset(buffer, filler, std::min(sizeof(buffer), length));
-
-	while (length)
-	{
-		size_t const block = std::min(sizeof(buffer), length);
-		size_t actual;
-		floppy->io->write_at(offset, buffer, block, actual);
-		offset += block;
-		length -= block;
-	}
+	io_generic_write_filler(&floppy->io, filler, offset, length);
 }
 
 
 
 uint64_t floppy_image_size(floppy_image_legacy *floppy)
 {
-	uint64_t result;
-	floppy->io->length(result);
-	return result;
+	return io_generic_size(&floppy->io);
 }
 
 
@@ -989,7 +976,7 @@ bool floppy_image_format_t::has_variant(const std::vector<uint32_t> &variants, u
 	return false;
 }
 
-bool floppy_image_format_t::save(util::random_read_write &io, const std::vector<uint32_t> &, floppy_image *)
+bool floppy_image_format_t::save(io_generic *, const std::vector<uint32_t> &, floppy_image *)
 {
 	return false;
 }

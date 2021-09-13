@@ -7,13 +7,9 @@
     Device PTY interface
 
 ***************************************************************************/
+
 #ifndef MAME_EMU_DIPTY_H
 #define MAME_EMU_DIPTY_H
-
-#pragma once
-
-#include <string>
-
 
 class device_pty_interface : public device_interface
 {
@@ -32,7 +28,7 @@ public:
 
 	bool is_slave_connected() const;
 
-	const std::string &slave_name() const { return m_slave_name; }
+	const char *slave_name() const;
 
 protected:
 	osd_file::ptr m_pty_master;

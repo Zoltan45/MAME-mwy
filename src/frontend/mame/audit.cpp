@@ -425,11 +425,11 @@ media_auditor::summary media_auditor::audit_samples()
 			while (path.next(curpath, samplename))
 			{
 				// attempt to access the file (.flac) or (.wav)
-				std::error_condition filerr = file.open(curpath + ".flac");
-				if (filerr)
+				osd_file::error filerr = file.open(curpath + ".flac");
+				if (filerr != osd_file::error::NONE)
 					filerr = file.open(curpath + ".wav");
 
-				if (!filerr)
+				if (filerr == osd_file::error::NONE)
 				{
 					record.set_status(audit_status::GOOD, audit_substatus::GOOD);
 					found++;
@@ -589,14 +589,14 @@ media_auditor::audit_record &media_auditor::audit_one_rom(const std::vector<std:
 	file.set_restrict_to_mediapath(1);
 
 	// open the file if we can
-	std::error_condition filerr;
+	osd_file::error filerr;
 	if (has_crc)
 		filerr = file.open(record.name(), crc);
 	else
 		filerr = file.open(record.name());
 
 	// if it worked, get the actual length and hashes, then stop
-	if (!filerr)
+	if (filerr == osd_file::error::NONE)
 		record.set_actual(file.hashes(m_validation), file.size());
 
 	// compute the final status
@@ -617,10 +617,10 @@ media_auditor::audit_record &media_auditor::audit_one_disk(const rom_entry *rom,
 
 	// open the disk
 	chd_file source;
-	const std::error_condition err = rom_load_manager::open_disk_image(m_enumerator.options(), std::forward<T>(args)..., rom, source);
+	const chd_error err = rom_load_manager::open_disk_image(m_enumerator.options(), std::forward<T>(args)..., rom, source);
 
 	// if we succeeded, get the hashes
-	if (!err)
+	if (err == CHDERR_NONE)
 	{
 		util::hash_collection hashes;
 
@@ -633,7 +633,7 @@ media_auditor::audit_record &media_auditor::audit_one_disk(const rom_entry *rom,
 	}
 
 	// compute the final status
-	compute_status(record, rom, !err);
+	compute_status(record, rom, err == CHDERR_NONE);
 	return record;
 }
 

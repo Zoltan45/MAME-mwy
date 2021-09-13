@@ -17,7 +17,6 @@
 #include "img_dsk.h"
 
 #include "coretmpl.h" // BIT
-#include "ioprocs.h"
 
 
 // Debugging
@@ -41,12 +40,9 @@ img_format::img_format()
 {
 }
 
-int img_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int img_format::identify(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
-	uint64_t size;
-	if (io.length(size)) {
-		return 0;
-	}
+	uint64_t size = io_generic_size(io);
 
 	if (((form_factor == floppy_image::FF_8) || (form_factor == floppy_image::FF_UNKNOWN)) &&
 		size == IMG_IMAGE_SIZE) {
@@ -56,18 +52,17 @@ int img_format::identify(util::random_read &io, uint32_t form_factor, const std:
 	}
 }
 
-bool img_format::load(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
+bool img_format::load(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
 {
-	uint64_t size;
-	if (io.length(size) || (size != IMG_IMAGE_SIZE)) {
+	uint64_t size = io_generic_size(io);
+	if (size != IMG_IMAGE_SIZE) {
 		return false;
 	}
 	image->set_variant(floppy_image::SSDD);
 
 	// Suck in the whole image
 	std::vector<uint8_t> image_data(size);
-	size_t actual;
-	io.read_at(0, image_data.data(), size, actual);
+	io_generic_read(io, (void *)image_data.data(), 0, size);
 
 	for (unsigned cyl = 0; cyl < TRACKS; cyl++) {
 		std::vector<uint32_t> track_data;
@@ -101,7 +96,7 @@ bool img_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 	return true;
 }
 
-bool img_format::save(util::random_read_write &io, const std::vector<uint32_t> &variants, floppy_image *image)
+bool img_format::save(io_generic *io, const std::vector<uint32_t> &variants, floppy_image *image)
 {
 	for (int cyl = 0; cyl < TRACKS; cyl++) {
 		auto bitstream = generate_bitstream_from_track(cyl , 0 , CELL_SIZE , image , 0);
@@ -111,8 +106,7 @@ bool img_format::save(util::random_read_write &io, const std::vector<uint32_t> &
 		while (get_next_sector(bitstream , pos , track_no , sector_no , sector_data)) {
 			if (track_no == cyl && sector_no >= 1 && sector_no <= SECTORS) {
 				unsigned offset_in_image = (cyl * SECTORS + sector_no - 1) * SECTOR_SIZE;
-				size_t actual;
-				io.write_at(offset_in_image, sector_data, SECTOR_SIZE, actual);
+				io_generic_write(io, sector_data, offset_in_image, SECTOR_SIZE);
 			}
 		}
 	}

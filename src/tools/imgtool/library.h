@@ -4,31 +4,29 @@
 
     library.h
 
-    Code relevant to the Imgtool library; analogous to the MAME driver list.
+    Code relevant to the Imgtool library; analogous to the MESS/MAME driver
+    list.
 
-    Unlike MAME which has a static driver lists, Imgtool has a concept of a
-    library and this library is built at startup time.
+    Unlike MESS and MAME which have static driver lists, Imgtool has a
+    concept of a library and this library is built at startup time.
     dynamic for which modules are added to.  This makes "dynamic" modules
     much easier
 
 ****************************************************************************/
-#ifndef MAME_TOOLS_IMGTOOL_LIBRARY_H
-#define MAME_TOOLS_IMGTOOL_LIBRARY_H
 
-#pragma once
+#ifndef LIBRARY_H
+#define LIBRARY_H
 
-#include "charconv.h"
-#include "stream.h"
+#include <ctime>
+#include <list>
+#include <chrono>
 
 #include "corestr.h"
 #include "opresolv.h"
-#include "timeconv.h"
+#include "stream.h"
 #include "unicode.h"
-
-#include <chrono>
-#include <ctime>
-#include <list>
-
+#include "charconv.h"
+#include "timeconv.h"
 
 namespace imgtool
 {
@@ -544,4 +542,4 @@ private:
 
 } // namespace imgtool
 
-#endif // MAME_TOOLS_IMGTOOL_LIBRARY_H
+#endif // LIBRARY_H

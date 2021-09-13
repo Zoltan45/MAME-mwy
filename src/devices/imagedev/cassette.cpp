@@ -9,11 +9,8 @@
 *********************************************************************/
 
 #include "emu.h"
-#include "cassette.h"
-
 #include "formats/imageutl.h"
-
-#include "util/ioprocs.h"
+#include "cassette.h"
 
 #define LOG_WARN          (1U<<1)   // Warnings
 #define LOG_DETAIL        (1U<<2)   // Details
@@ -21,7 +18,6 @@
 #define VERBOSE ( LOG_WARN )
 
 #include "logmacro.h"
-
 
 // device type definition
 DEFINE_DEVICE_TYPE(CASSETTE, cassette_image_device, "cassette_image", "Cassette")
@@ -257,24 +253,12 @@ image_init_result cassette_image_device::internal_load(bool is_create)
 	device_image_interface *image = nullptr;
 	interface(image);
 
-	check_for_file();
 	if (is_create || (length()==0)) // empty existing images are fine to write over.
 	{
-		auto io = util::core_file_read_write(image_core_file(), 0x00);
-		if (io)
-		{
-			// creating an image
-			err = cassette_image::create(
-					std::move(io),
-					&cassette_image::wavfile_format,
-					m_create_opts,
-					cassette_image::FLAG_READWRITE|cassette_image::FLAG_SAVEONEXIT,
-					m_cassette);
-		}
-		else
-		{
-			err = cassette_image::error::OUT_OF_MEMORY;
-		}
+		// creating an image
+		err = cassette_image::create((void *)image, &image_ioprocs, &cassette_image::wavfile_format, m_create_opts, cassette_image::FLAG_READWRITE|cassette_image::FLAG_SAVEONEXIT, m_cassette);
+		if (err != cassette_image::error::SUCCESS)
+			goto error;
 	}
 	else
 	{
@@ -285,24 +269,11 @@ image_init_result cassette_image_device::internal_load(bool is_create)
 			// we probably don't want to retry...
 			retry = false;
 
-			auto io = util::core_file_read_write(image_core_file(), 0x00);
-			if (io)
-			{
-				// try opening the cassette
-				int const cassette_flags = is_readonly()
-						? cassette_image::FLAG_READONLY
-						: (cassette_image::FLAG_READWRITE | cassette_image::FLAG_SAVEONEXIT);
-				err = cassette_image::open_choices(
-						std::move(io),
-						filetype(),
-						m_formats,
-						cassette_flags,
-						m_cassette);
-			}
-			else
-			{
-				err = cassette_image::error::OUT_OF_MEMORY;
-			}
+			// try opening the cassette
+			int cassette_flags = is_readonly()
+				? cassette_image::FLAG_READONLY
+				: (cassette_image::FLAG_READWRITE | cassette_image::FLAG_SAVEONEXIT);
+			err = cassette_image::open_choices((void *)image, &image_ioprocs, filetype(), m_formats, cassette_flags, m_cassette);
 
 			// special case - if we failed due to readwrite not being supported, make the image be read only and retry
 			if (err == cassette_image::error::READ_WRITE_UNSUPPORTED)
@@ -312,48 +283,47 @@ image_init_result cassette_image_device::internal_load(bool is_create)
 			}
 		}
 		while(retry);
+
+		if (err != cassette_image::error::SUCCESS)
+			goto error;
 	}
 
-	if (err == cassette_image::error::SUCCESS)
+	/* set to default state, but only change the UI state */
+	change_state(m_default_state, CASSETTE_MASK_UISTATE);
+
+	/* reset the position */
+	m_position = 0.0;
+	m_position_time = machine().time().as_double();
+
+	/* default channel to 0, speed multiplier to 1 */
+	m_channel = 0;
+	m_speed = 1;
+	m_direction = 1;
+
+	return image_init_result::PASS;
+
+error:
+	image_error_t imgerr = IMAGE_ERROR_UNSPECIFIED;
+	switch(err)
 	{
-		/* set to default state, but only change the UI state */
-		change_state(m_default_state, CASSETTE_MASK_UISTATE);
-
-		/* reset the position */
-		m_position = 0.0;
-		m_position_time = machine().time().as_double();
-
-		/* default channel to 0, speed multiplier to 1 */
-		m_channel = 0;
-		m_speed = 1;
-		m_direction = 1;
-
-		return image_init_result::PASS;
+		case cassette_image::error::INTERNAL:
+			imgerr = IMAGE_ERROR_INTERNAL;
+			break;
+		case cassette_image::error::UNSUPPORTED:
+			imgerr = IMAGE_ERROR_UNSUPPORTED;
+			break;
+		case cassette_image::error::OUT_OF_MEMORY:
+			imgerr = IMAGE_ERROR_OUTOFMEMORY;
+			break;
+		case cassette_image::error::INVALID_IMAGE:
+			imgerr = IMAGE_ERROR_INVALIDIMAGE;
+			break;
+		default:
+			imgerr = IMAGE_ERROR_UNSPECIFIED;
+			break;
 	}
-	else
-	{
-		std::error_condition imgerr = image_error::UNSPECIFIED;
-		switch(err)
-		{
-			case cassette_image::error::INTERNAL:
-				imgerr = image_error::INTERNAL;
-				break;
-			case cassette_image::error::UNSUPPORTED:
-				imgerr = image_error::UNSUPPORTED;
-				break;
-			case cassette_image::error::OUT_OF_MEMORY:
-				imgerr = std::errc::not_enough_memory;
-				break;
-			case cassette_image::error::INVALID_IMAGE:
-				imgerr = image_error::INVALIDIMAGE;
-				break;
-			default:
-				imgerr = image_error::UNSPECIFIED;
-				break;
-		}
-		image->seterror(imgerr, nullptr);
-		return image_init_result::FAIL;
-	}
+	image->seterror(imgerr, "" );
+	return image_init_result::FAIL;
 }
 
 

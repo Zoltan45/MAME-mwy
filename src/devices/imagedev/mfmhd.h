@@ -17,11 +17,7 @@
 #pragma once
 
 #include "imagedev/harddriv.h"
-
 #include "formats/mfm_hd.h"
-
-#include <system_error>
-
 
 class mfm_harddisk_device;
 
@@ -98,7 +94,7 @@ public:
 	attotime        track_end_time();
 
 	// Access the tracks on the image. Used as a callback from the cache.
-	std::error_condition load_track(uint16_t* data, int cylinder, int head);
+	chd_error       load_track(uint16_t* data, int cylinder, int head);
 	void            write_track(uint16_t* data, int cylinder, int head);
 
 	// Delivers the number of heads according to the loaded image

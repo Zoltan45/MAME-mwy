@@ -21,18 +21,14 @@ ToDo:
 
 
 #include "emu.h"
-//#include "audio/midway.h"
 #include "machine/genpin.h"
-
 #include "cpu/m6800/m6801.h"
 //#include "cpu/m6809/m6809.h"
 #include "machine/6821pia.h"
 #include "machine/timer.h"
-
+//#include "audio/midway.h"
 //#include "by6803.lh"
 
-
-namespace {
 
 class by6803_state : public genpin_class
 {
@@ -43,9 +39,12 @@ public:
 		, m_pia0(*this, "pia0")
 		, m_pia1(*this, "pia1")
 		, m_io_test(*this, "TEST")
-		, m_io_x(*this, "X%u", 0U)
+		, m_io_x0(*this, "X0")
+		, m_io_x1(*this, "X1")
+		, m_io_x2(*this, "X2")
+		, m_io_x3(*this, "X3")
+		, m_io_x4(*this, "X4")
 		, m_digits(*this, "digit%u", 0U)
-		, m_leds(*this, "led%u", 0U)
 	{ }
 
 	void init_by6803();
@@ -53,10 +52,6 @@ public:
 
 	DECLARE_INPUT_CHANGED_MEMBER(activity_test);
 	DECLARE_INPUT_CHANGED_MEMBER(self_test);
-
-protected:
-	virtual void machine_start() override;
-	virtual void machine_reset() override;
 
 private:
 	uint8_t port1_r();
@@ -86,13 +81,18 @@ private:
 	uint8_t m_port1, m_port2;
 	//uint8_t m_digit;
 	uint8_t m_segment;
+	virtual void machine_reset() override;
+	virtual void machine_start() override { m_digits.resolve(); }
 	required_device<m6803_cpu_device> m_maincpu;
 	required_device<pia6821_device> m_pia0;
 	required_device<pia6821_device> m_pia1;
 	required_ioport m_io_test;
-	required_ioport_array<5> m_io_x;
+	required_ioport m_io_x0;
+	required_ioport m_io_x1;
+	required_ioport m_io_x2;
+	required_ioport m_io_x3;
+	required_ioport m_io_x4;
 	output_finder<40> m_digits;
-	output_finder<1> m_leds;
 };
 
 
@@ -193,7 +193,7 @@ uint8_t by6803_state::port2_r()
 void by6803_state::port2_w(uint8_t data)
 {
 	m_port2 = data;
-	m_leds[0] = BIT(data, 2); // P22 drives LED
+	output().set_value("led0", BIT(data, 2)); // P22 drives LED
 }
 
 // display latch strobes; display blanking
@@ -254,9 +254,20 @@ uint8_t by6803_state::pia0_b_r()
 {
 	uint8_t data = 0;
 
-	for (unsigned i = 0; m_io_x.size() > i; ++i)
-		if (BIT(m_pia0_a, i))
-			data |= m_io_x[i]->read();
+	if (BIT(m_pia0_a, 0))
+		data |= m_io_x0->read();
+
+	if (BIT(m_pia0_a, 1))
+		data |= m_io_x1->read();
+
+	if (BIT(m_pia0_a, 2))
+		data |= m_io_x2->read();
+
+	if (BIT(m_pia0_a, 3))
+		data |= m_io_x3->read();
+
+	if (BIT(m_pia0_a, 4))
+		data |= m_io_x4->read();
 
 	return data;
 }
@@ -329,12 +340,6 @@ void by6803_state::pia1_b_w(uint8_t data)
 		case 0xf: // not used
 			break;
 	}
-}
-
-void by6803_state::machine_start()
-{
-	m_digits.resolve();
-	m_leds.resolve();
 }
 
 void by6803_state::machine_reset()
@@ -744,8 +749,6 @@ ROM_START(trucksp2)
 	ROM_LOAD("u20sndp1.256", 0x20000, 0x8000, CRC(93ac5c33) SHA1(f6dc84eca4678188a58ba3c8ef18975164dd29b0))
 	ROM_RELOAD(0x20000 +0x8000, 0x8000)
 ROM_END
-
-} // anonymous namespace
 
 
 GAME( 1985, eballchp,  0,        by6803, by6803, by6803_state, init_by6803, ROT0, "Bally", "Eight Ball Champ",                      MACHINE_IS_SKELETON_MECHANICAL)

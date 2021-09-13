@@ -8,10 +8,9 @@
 
 *********************************************************************/
 
+#include <cassert>
+
 #include "formats/sdd_dsk.h"
-
-#include "ioprocs.h"
-
 
 sdd_format::sdd_format() : wd177x_format(formats)
 {

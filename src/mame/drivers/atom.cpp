@@ -683,7 +683,7 @@ image_init_result atom_state::load_cart(device_image_interface &image, generic_s
 
 	if (size > 0x1000)
 	{
-		image.seterror(image_error::INVALIDIMAGE, "Unsupported ROM size");
+		image.seterror(IMAGE_ERROR_UNSPECIFIED, "Unsupported ROM size");
 		return image_init_result::FAIL;
 	}
 

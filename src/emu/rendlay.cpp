@@ -17,11 +17,10 @@
 #include "rendutil.h"
 #include "video/rgbutil.h"
 
-#include "util/nanosvg.h"
-#include "util/path.h"
-#include "util/unicode.h"
-#include "util/vecstream.h"
-#include "util/xmlfile.h"
+#include "nanosvg.h"
+#include "unicode.h"
+#include "vecstream.h"
+#include "xmlfile.h"
 
 #include <cctype>
 #include <algorithm>
@@ -1714,10 +1713,12 @@ private:
 			std::string filename;
 			if (!m_searchpath.empty())
 				filename = m_dirname;
-			util::path_append(filename, m_imagefile);
+			if (!filename.empty() && !util::is_directory_separator(filename[filename.size() - 1]))
+				filename.append(PATH_SEPARATOR);
+			filename.append(m_imagefile);
 			LOGMASKED(LOG_IMAGE_LOAD, "Image component attempt to load image file '%s'\n", filename);
-			std::error_condition const imgerr = file.open(filename);
-			if (!imgerr)
+			osd_file::error const imgerr = file.open(filename);
+			if (osd_file::error::NONE == imgerr)
 			{
 				if (!load_bitmap(file))
 				{
@@ -1728,8 +1729,7 @@ private:
 			}
 			else
 			{
-				LOGMASKED(LOG_IMAGE_LOAD, "Image component unable to open image file '%s' (%s:%d %s)\n",
-						filename, imgerr.category().name(), imgerr.value(), imgerr.message());
+				LOGMASKED(LOG_IMAGE_LOAD, "Image component unable to open image file '%s'\n", filename);
 			}
 		}
 		else if (!m_data.empty())
@@ -1745,10 +1745,12 @@ private:
 				std::string filename;
 				if (!m_searchpath.empty())
 					filename = m_dirname;
-				util::path_append(filename, m_alphafile);
+				if (!filename.empty() && !util::is_directory_separator(filename[filename.size() - 1]))
+					filename.append(PATH_SEPARATOR);
+				filename.append(m_alphafile);
 				LOGMASKED(LOG_IMAGE_LOAD, "Image component attempt to load alpha channel from file '%s'\n", filename);
-				std::error_condition const alferr = file.open(filename);
-				if (!alferr)
+				osd_file::error const alferr = file.open(filename);
+				if (osd_file::error::NONE == alferr)
 				{
 					// TODO: no way to detect corner case where we had alpha from the image but the alpha PNG makes it entirely opaque
 					if (render_load_png(m_bitmap, file, true))
@@ -1757,8 +1759,7 @@ private:
 				}
 				else
 				{
-					LOGMASKED(LOG_IMAGE_LOAD, "Image component unable to open alpha channel file '%s' (%s:%d %s)\n",
-							filename, alferr.category().name(), alferr.value(), alferr.message());
+					LOGMASKED(LOG_IMAGE_LOAD, "Image component unable to open alpha channel file '%s'\n", filename);
 				}
 			}
 			else if (m_svg)
@@ -1840,8 +1841,8 @@ private:
 
 		// make a file wrapper for the data and see if it looks like a bitmap
 		util::core_file::ptr file;
-		std::error_condition const filerr(util::core_file::open_ram(m_data.c_str(), m_data.size(), OPEN_FLAG_READ, file));
-		bool const bitmapdata(!filerr && file && load_bitmap(*file));
+		osd_file::error const filerr(util::core_file::open_ram(m_data.c_str(), m_data.size(), OPEN_FLAG_READ, file));
+		bool const bitmapdata((osd_file::error::NONE == filerr) && file && load_bitmap(*file));
 		file.reset();
 
 		// if it didn't look like a bitmap, see if it looks like it might be XML and hence SVG
@@ -3397,10 +3398,12 @@ private:
 		std::string filename;
 		if (!m_searchpath.empty())
 			filename = m_dirname;
-		util::path_append(filename, m_imagefile[number]);
+		if (!filename.empty() && !util::is_directory_separator(filename[filename.size() - 1]))
+			filename.append(PATH_SEPARATOR);
+		filename.append(m_imagefile[number]);
 
 		// load the basic bitmap
-		if (!file.open(filename))
+		if (file.open(filename) == osd_file::error::NONE)
 			render_load_png(m_bitmap[number], file);
 
 		// if we can't load the bitmap just use text rendering

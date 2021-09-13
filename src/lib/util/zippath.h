@@ -18,7 +18,6 @@
 
 #include <string>
 #include <string_view>
-#include <system_error>
 
 
 namespace util {
@@ -33,7 +32,7 @@ public:
 	typedef std::unique_ptr<zippath_directory> ptr;
 
 	// opens a directory
-	static std::error_condition open(std::string_view path, ptr &directory);
+	static osd_file::error open(std::string_view path, ptr &directory);
 
 	// closes a directory
 	virtual ~zippath_directory();
@@ -64,7 +63,7 @@ std::string zippath_combine(const std::string &path1, const std::string &path2);
 // ----- file operations -----
 
 // opens a zip path file
-std::error_condition zippath_fopen(std::string_view filename, uint32_t openflags, util::core_file::ptr &file, std::string &revised_path);
+osd_file::error zippath_fopen(std::string_view filename, uint32_t openflags, util::core_file::ptr &file, std::string &revised_path);
 
 } // namespace util
 

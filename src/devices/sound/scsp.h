@@ -9,10 +9,8 @@
 
 #pragma once
 
-#include "scspdsp.h"
-
 #include "dirom.h"
-
+#include "scspdsp.h"
 
 #define SCSP_FM_DELAY    0    // delay in number of slots processed before samples are written to the FM ring buffer
 				// driver code indicates should be 4, but sounds distorted then

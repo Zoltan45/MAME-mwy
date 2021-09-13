@@ -29,10 +29,10 @@
          FORMAT A: /F:160 on DOS; turn MEDIACHK ON
 ************************************************************************/
 
+#include <cassert>
+
+#include "flopimg.h"
 #include "formats/rx50_dsk.h"
-
-#include "ioprocs.h"
-
 
 // Controller: WD1793
 // TRACK LAYOUT IS UNVERIFED. SEE SOURCES:
@@ -95,17 +95,12 @@ bool rx50img_format::supports_save() const
 	return true;
 }
 
-void rx50img_format::find_size(util::random_read &io, uint8_t &track_count, uint8_t &head_count, uint8_t &sector_count)
+void rx50img_format::find_size(io_generic *io, uint8_t &track_count, uint8_t &head_count, uint8_t &sector_count)
 {
 	head_count = 1;
 
 	uint32_t expected_size = 0;
-	uint64_t size;
-	if (io.length(size))
-	{
-		track_count = head_count = sector_count = 0;
-		return;
-	}
+	uint64_t size = io_generic_size(io);
 
 	track_count = 80;
 	sector_count = 10;
@@ -129,7 +124,7 @@ void rx50img_format::find_size(util::random_read &io, uint8_t &track_count, uint
 	track_count = head_count = sector_count = 0;
 }
 
-int rx50img_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int rx50img_format::identify(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
 	uint8_t track_count, head_count, sector_count;
 	find_size(io, track_count, head_count, sector_count);
@@ -140,7 +135,7 @@ int rx50img_format::identify(util::random_read &io, uint32_t form_factor, const 
 }
 
 	//  /* Sectors are numbered 1 to 10 */
-bool rx50img_format::load(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
+bool rx50img_format::load(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
 {
 	uint8_t track_count, head_count, sector_count;
 	find_size(io, track_count, head_count, sector_count);
@@ -158,8 +153,7 @@ bool rx50img_format::load(util::random_read &io, uint32_t form_factor, const std
 	int track_size = sector_count*512;
 	for(int track=0; track < track_count; track++) {
 		for(int head=0; head < head_count; head++) {
-			size_t actual;
-			io.read_at((track*head_count + head)*track_size, sectdata, track_size, actual);
+			io_generic_read(io, sectdata, (track*head_count + head)*track_size, track_size);
 			generate_track(rx50_10_desc, track, head, sectors, sector_count, 102064, image);  // 98480
 		}
 	}
@@ -169,7 +163,7 @@ bool rx50img_format::load(util::random_read &io, uint32_t form_factor, const std
 	return true;
 }
 
-bool rx50img_format::save(util::random_read_write &io, const std::vector<uint32_t> &variants, floppy_image *image)
+bool rx50img_format::save(io_generic *io, const std::vector<uint32_t> &variants, floppy_image *image)
 {
 	int track_count, head_count, sector_count;
 	get_geometry_mfm_pc(image, 2000, track_count, head_count, sector_count);
@@ -205,8 +199,7 @@ bool rx50img_format::save(util::random_read_write &io, const std::vector<uint32_
 	for(int track=0; track < track_count; track++) {
 		for(int head=0; head < head_count; head++) {
 			get_track_data_mfm_pc(track, head, image, 2000, 512, sector_count, sectdata);
-			size_t actual;
-			io.write_at((track*head_count + head)*track_size, sectdata, track_size, actual);
+			io_generic_write(io, sectdata, (track*head_count + head)*track_size, track_size);
 		}
 	}
 	return true;

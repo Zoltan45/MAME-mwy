@@ -12,8 +12,6 @@
 
 #include "formats/d64_dsk.h"
 
-#include "ioprocs.h"
-
 
 d64_format::d64_format()
 {
@@ -81,12 +79,9 @@ const int d64_format::speed_zone[] =
 	0, 0                                               // 41-42
 };
 
-int d64_format::find_size(util::random_read &io, uint32_t form_factor) const
+int d64_format::find_size(io_generic *io, uint32_t form_factor) const
 {
-	uint64_t size;
-	if(io.length(size))
-		return 0;
-
+	uint64_t size = io_generic_size(io);
 	for(int i=0; formats[i].sector_count; i++) {
 		const format &f = formats[i];
 		if(size == (uint32_t) f.sector_count*f.sector_base_size*f.head_count)
@@ -94,13 +89,12 @@ int d64_format::find_size(util::random_read &io, uint32_t form_factor) const
 		if(size == (uint32_t) (f.sector_count*f.sector_base_size*f.head_count) + f.sector_count)
 			return i;
 	}
-
 	return -1;
 }
 
-int d64_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int d64_format::identify(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
-	const int type = find_size(io, form_factor);
+	int type = find_size(io, form_factor);
 
 	if (type != -1)
 		return 50;
@@ -120,11 +114,10 @@ int d64_format::get_disk_id_offset(const format &f)
 	return 0x165a2;
 }
 
-void d64_format::get_disk_id(const format &f, util::random_read &io, uint8_t &id1, uint8_t &id2)
+void d64_format::get_disk_id(const format &f, io_generic *io, uint8_t &id1, uint8_t &id2)
 {
 	uint8_t id[2];
-	size_t actual;
-	io.read_at(get_disk_id_offset(f), id, 2, actual);
+	io_generic_read(io, id, get_disk_id_offset(f), 2);
 	id1 = id[0];
 	id2 = id[1];
 }
@@ -213,7 +206,7 @@ void d64_format::fix_end_gap(floppy_image_format_t::desc_e* desc, int remaining_
 	desc[22].p1 >>= remaining_size & 0x01;
 }
 
-bool d64_format::load(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
+bool d64_format::load(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
 {
 	int type = find_size(io, form_factor);
 	if(type == -1)
@@ -221,9 +214,7 @@ bool d64_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 
 	const format &f = formats[type];
 
-	uint64_t size;
-	if(io.length(size))
-		return false;
+	uint64_t size = io_generic_size(io);
 	std::vector<uint8_t> img;
 
 	if(size == (uint32_t)f.sector_count*f.sector_base_size) {
@@ -234,8 +225,7 @@ bool d64_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 		img.resize(size);
 	}
 
-	size_t actual;
-	io.read_at(0, &img[0], size, actual);
+	io_generic_read(io, &img[0], 0, size);
 
 	int track_offset = 0, error_offset = f.sector_count*f.sector_base_size;
 
@@ -276,7 +266,7 @@ bool d64_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 	return true;
 }
 
-bool d64_format::save(util::random_read_write &io, const std::vector<uint32_t> &variants, floppy_image *image)
+bool d64_format::save(io_generic *io, const std::vector<uint32_t> &variants, floppy_image *image)
 {
 	const format &f = formats[0];
 
@@ -290,8 +280,7 @@ bool d64_format::save(util::random_read_write &io, const std::vector<uint32_t> &
 
 			build_sector_description(f, sectdata, 0, 0, sectors, sector_count);
 			extract_sectors(image, f, sectors, track, head, sector_count);
-			size_t actual;
-			io.write_at(offset, sectdata, track_size, actual);
+			io_generic_write(io, sectdata, offset, track_size);
 		}
 	}
 

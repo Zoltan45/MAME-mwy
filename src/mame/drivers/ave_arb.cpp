@@ -23,7 +23,7 @@ Known chess modules (*denotes not dumped yet):
 - Grand Master Series 4.0
 
 Other games:
-- Avelan (checkers)
+- *Avelan (checkers)
 
 Newer modules included button label stickers for OPTIONS, Verify, Take Back, Clear.
 
@@ -33,7 +33,7 @@ running at 16MHz.
 
 TODO:
 - verify gms40 module memory layout
-- gms40 and avelan rom labels
+- need to add checkers pieces and custom initial position when Avelan gets dumped
 
 ******************************************************************************/
 
@@ -100,10 +100,6 @@ private:
 	void main_map(address_map &map);
 	void v2_map(address_map &map);
 
-	// sensorboard
-	void init_board(int state);
-	bool m_altboard = false;
-
 	// cartridge
 	DECLARE_DEVICE_IMAGE_LOAD_MEMBER(cart_load);
 	u8 cartridge_r(offs_t offset);
@@ -148,22 +144,6 @@ void arb_state::update_reset()
     I/O
 ******************************************************************************/
 
-// sensorboard
-
-void arb_state::init_board(int state)
-{
-	// different board setup for checkers
-	if (m_altboard)
-		for (int i = 0; i < 12; i++)
-		{
-			m_board->write_piece((i % 4) * 2 + ((i / 4) & 1), i / 4, 13); // white
-			m_board->write_piece((i % 4) * 2 + (~(i / 4) & 1), i / 4 + 5, 14); // black
-		}
-	else
-		m_board->preset_chess(state);
-}
-
-
 // cartridge
 
 DEVICE_IMAGE_LOAD_MEMBER(arb_state::cart_load)
@@ -177,8 +157,6 @@ DEVICE_IMAGE_LOAD_MEMBER(arb_state::cart_load)
 	// extra ram (optional)
 	if (image.get_feature("ram"))
 		m_maincpu->space(AS_PROGRAM).install_ram(0x0800, 0x0fff, 0x1000, m_extram);
-
-	m_altboard = bool(image.get_feature("altboard"));
 
 	return image_init_result::PASS;
 }
@@ -301,8 +279,7 @@ void arb_state::v2(machine_config &config)
 	NVRAM(config, "nvram", nvram_device::DEFAULT_ALL_0);
 
 	SENSORBOARD(config, m_board).set_type(sensorboard_device::MAGNETS);
-	m_board->init_cb().set(FUNC(arb_state::init_board));
-	m_board->set_spawnpoints(12+2); // +2 checkers pieces
+	m_board->init_cb().set(m_board, FUNC(sensorboard_device::preset_chess));
 	m_board->set_delay(attotime::from_msec(100));
 
 	/* video hardware */

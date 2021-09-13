@@ -16,8 +16,6 @@
 
 #include <lua.hpp>
 
-#include <system_error>
-
 
 
 template <typename T>
@@ -260,8 +258,10 @@ public:
 } // namespace sol
 
 
-// automatically convert std::error_condition to string
-int sol_lua_push(sol::types<std::error_condition>, lua_State &L, std::error_condition &&value);
+// osd_file::error customisation
+int sol_lua_push(sol::types<osd_file::error>, lua_State *L, osd_file::error &&value);
+template <typename Handler>
+bool sol_lua_check(sol::types<osd_file::error>, lua_State *L, int index, Handler &&handler, sol::stack::record &tracking);
 
 // enums to automatically convert to strings
 int sol_lua_push(sol::types<map_handler_type>, lua_State *L, map_handler_type &&value);

@@ -11,8 +11,6 @@
 #include "imgtool.h"
 #include "main.h"
 #include "modules.h"
-
-#include "corefile.h"
 #include "strformat.h"
 
 #include <cstdio>

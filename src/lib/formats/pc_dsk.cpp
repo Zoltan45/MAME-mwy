@@ -8,12 +8,10 @@
 
 *********************************************************************/
 
-#include "formats/pc_dsk.h"
-
-#include "ioprocs.h"
-
 #include <cstring>
+#include <cassert>
 
+#include "formats/pc_dsk.h"
 
 pc_format::pc_format() : upd765_format(formats)
 {
@@ -34,12 +32,9 @@ const char *pc_format::extensions() const
 	return "dsk,ima,img,ufi,360";
 }
 
-int pc_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int pc_format::identify(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
-	uint64_t size;
-	if (io.length(size)) {
-		return 0;
-	}
+	uint64_t size = io_generic_size(io);
 
 	/* some 360K images have a 512-byte header */
 	if (size == 368640 + 0x200) {

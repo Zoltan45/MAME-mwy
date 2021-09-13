@@ -6,6 +6,7 @@
 //
 //============================================================
 
+
 #include "winfile.h"
 
 // MAMEOS headers
@@ -44,7 +45,7 @@ public:
 	win_osd_file& operator=(win_osd_file const &) = delete;
 	win_osd_file& operator=(win_osd_file &&) = delete;
 
-	win_osd_file(HANDLE handle) noexcept : m_handle(handle)
+	win_osd_file(HANDLE handle) : m_handle(handle)
 	{
 		assert(m_handle);
 		assert(INVALID_HANDLE_VALUE != m_handle);
@@ -56,7 +57,7 @@ public:
 		CloseHandle(m_handle);
 	}
 
-	virtual std::error_condition read(void *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) noexcept override
+	virtual error read(void *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) override
 	{
 		// attempt to set the file pointer
 		LARGE_INTEGER largeOffset;
@@ -70,10 +71,10 @@ public:
 			return win_error_to_file_error(GetLastError());
 
 		actual = result;
-		return std::error_condition();
+		return error::NONE;
 	}
 
-	virtual std::error_condition write(void const *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) noexcept override
+	virtual error write(void const *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) override
 	{
 		// attempt to set the file pointer
 		LARGE_INTEGER largeOffset;
@@ -87,10 +88,10 @@ public:
 			return win_error_to_file_error(GetLastError());
 
 		actual = result;
-		return std::error_condition();
+		return error::NONE;
 	}
 
-	virtual std::error_condition truncate(std::uint64_t offset) noexcept override
+	virtual error truncate(std::uint64_t offset) override
 	{
 		// attempt to set the file pointer
 		LARGE_INTEGER largeOffset;
@@ -102,13 +103,13 @@ public:
 		if (!SetEndOfFile(m_handle))
 			return win_error_to_file_error(GetLastError());
 		else
-			return std::error_condition();
+			return error::NONE;
 	}
 
-	virtual std::error_condition flush() noexcept override
+	virtual error flush() override
 	{
 		// shouldn't be any userspace buffers on the file handle
-		return std::error_condition();
+		return error::NONE;
 	}
 
 private:
@@ -161,11 +162,11 @@ DWORD create_path_recursive(TCHAR *path)
 //  osd_open
 //============================================================
 
-std::error_condition osd_file::open(std::string const &orig_path, uint32_t openflags, ptr &file, std::uint64_t &filesize) noexcept
+osd_file::error osd_file::open(std::string const &orig_path, uint32_t openflags, ptr &file, std::uint64_t &filesize)
 {
 	std::string path;
 	try { osd_subst_env(path, orig_path); }
-	catch (...) { return std::errc::not_enough_memory; }
+	catch (...) { return error::OUT_OF_MEMORY; }
 
 	if (win_check_socket_path(path))
 		return win_open_socket(path, openflags, file, filesize);
@@ -173,11 +174,10 @@ std::error_condition osd_file::open(std::string const &orig_path, uint32_t openf
 		return win_open_ptty(path, openflags, file, filesize);
 
 	// convert path to TCHAR
-	osd::text::tstring t_path;
-	try { t_path = osd::text::to_tstring(path); }
-	catch (...) { return std::errc::not_enough_memory; }
+	osd::text::tstring t_path = osd::text::to_tstring(path);
 
-	// convert the path into something Windows compatible (the actual interesting part appears to have been commented out???)
+	// convert the path into something Windows compatible (the actual interesting part appears
+	// to have been commented out???)
 	for (auto iter = t_path.begin(); iter != t_path.end(); iter++)
 		*iter = /* ('/' == *iter) ? '\\' : */ *iter;
 
@@ -187,8 +187,7 @@ std::error_condition osd_file::open(std::string const &orig_path, uint32_t openf
 	{
 		disposition = (!is_path_to_physical_drive(path.c_str()) && (openflags & OPEN_FLAG_CREATE)) ? CREATE_ALWAYS : OPEN_EXISTING;
 		access = (openflags & OPEN_FLAG_READ) ? (GENERIC_READ | GENERIC_WRITE) : GENERIC_WRITE;
-		if (is_path_to_physical_drive(path.c_str()))
-			access |= GENERIC_READ;
+		if (is_path_to_physical_drive(path.c_str())) access |= GENERIC_READ;
 		sharemode = FILE_SHARE_READ;
 	}
 	else if (openflags & OPEN_FLAG_READ)
@@ -199,7 +198,7 @@ std::error_condition osd_file::open(std::string const &orig_path, uint32_t openf
 	}
 	else
 	{
-		return std::errc::invalid_argument;
+		return error::INVALID_ACCESS;
 	}
 
 	// attempt to open the file
@@ -263,15 +262,17 @@ std::error_condition osd_file::open(std::string const &orig_path, uint32_t openf
 		}
 	}
 
-	osd_file::ptr result(new (std::nothrow) win_osd_file(h));
-	if (!result)
+	try
+	{
+		file = std::make_unique<win_osd_file>(h);
+		filesize = (std::uint64_t(upper) << 32) | lower;
+		return error::NONE;
+	}
+	catch (...)
 	{
 		CloseHandle(h);
-		return std::errc::not_enough_memory;
+		return error::OUT_OF_MEMORY;
 	}
-	file = std::move(result);
-	filesize = (std::uint64_t(upper) << 32) | lower;
-	return std::error_condition();
 }
 
 
@@ -280,9 +281,9 @@ std::error_condition osd_file::open(std::string const &orig_path, uint32_t openf
 //  osd_openpty
 //============================================================
 
-std::error_condition osd_file::openpty(ptr &file, std::string &name) noexcept
+osd_file::error osd_file::openpty(ptr &file, std::string &name)
 {
-	return std::errc::not_supported; // TODO: revisit this error code
+	return error::FAILURE;
 }
 
 
@@ -291,13 +292,11 @@ std::error_condition osd_file::openpty(ptr &file, std::string &name) noexcept
 //  osd_rmfile
 //============================================================
 
-std::error_condition osd_file::remove(std::string const &filename) noexcept
+osd_file::error osd_file::remove(std::string const &filename)
 {
-	osd::text::tstring tempstr;
-	try { tempstr = osd::text::to_tstring(filename); }
-	catch (...) { return std::errc::not_enough_memory; }
+	osd::text::tstring tempstr = osd::text::to_tstring(filename);
 
-	std::error_condition filerr;
+	error filerr = error::NONE;
 	if (!DeleteFile(tempstr.c_str()))
 		filerr = win_error_to_file_error(GetLastError());
 
@@ -310,7 +309,7 @@ std::error_condition osd_file::remove(std::string const &filename) noexcept
 //  osd_get_physical_drive_geometry
 //============================================================
 
-bool osd_get_physical_drive_geometry(const char *filename, uint32_t *cylinders, uint32_t *heads, uint32_t *sectors, uint32_t *bps) noexcept
+bool osd_get_physical_drive_geometry(const char *filename, uint32_t *cylinders, uint32_t *heads, uint32_t *sectors, uint32_t *bps)
 {
 	DISK_GEOMETRY dg;
 	DWORD bytesRead;
@@ -322,17 +321,10 @@ bool osd_get_physical_drive_geometry(const char *filename, uint32_t *cylinders, 
 		return false;
 
 	// do a create file on the drive
-	try
-	{
-		auto t_filename = osd::text::to_tstring(filename);
-		file = CreateFile(t_filename.c_str(), GENERIC_READ, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING, nullptr);
-		if (file == INVALID_HANDLE_VALUE)
-			return false;
-	}
-	catch (...)
-	{
+	auto t_filename = osd::text::to_tstring(filename);
+	file = CreateFile(t_filename.c_str(), GENERIC_READ, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING, nullptr);
+	if (file == INVALID_HANDLE_VALUE)
 		return false;
-	}
 
 	// device I/O control should return the geometry
 	result = DeviceIoControl(file, IOCTL_DISK_GET_DRIVE_GEOMETRY, nullptr, 0, &dg, sizeof(dg), &bytesRead, nullptr);
@@ -407,29 +399,22 @@ std::unique_ptr<osd::directory::entry> osd_stat(const std::string &path)
 //  osd_get_full_path
 //============================================================
 
-std::error_condition osd_get_full_path(std::string &dst, std::string const &path) noexcept
+osd_file::error osd_get_full_path(std::string &dst, std::string const &path)
 {
-	try
-	{
-		// get the length of the full path
-		std::wstring const w_path(osd::text::to_wstring(path));
-		DWORD const length(GetFullPathNameW(w_path.c_str(), 0, nullptr, nullptr));
-		if (!length)
-			return win_error_to_file_error(GetLastError());
+	// get the length of the full path
+	std::wstring const w_path(osd::text::to_wstring(path));
+	DWORD const length(GetFullPathNameW(w_path.c_str(), 0, nullptr, nullptr));
+	if (!length)
+		return win_error_to_file_error(GetLastError());
 
-		// allocate a buffer and get the canonical path
-		std::unique_ptr<wchar_t []> buffer(std::make_unique<wchar_t []>(length));
-		if (!GetFullPathNameW(w_path.c_str(), length, buffer.get(), nullptr))
-			return win_error_to_file_error(GetLastError());
+	// allocate a buffer and get the canonical path
+	std::unique_ptr<wchar_t []> buffer(std::make_unique<wchar_t []>(length));
+	if (!GetFullPathNameW(w_path.c_str(), length, buffer.get(), nullptr))
+		return win_error_to_file_error(GetLastError());
 
-		// convert the result back to UTF-8
-		osd::text::from_wstring(dst, buffer.get());
-		return std::error_condition();
-	}
-	catch (...)
-	{
-		return std::errc::not_enough_memory; // the string conversions can throw bad_alloc
-	}
+	// convert the result back to UTF-8
+	osd::text::from_wstring(dst, buffer.get());
+	return osd_file::error::NONE;
 }
 
 
@@ -438,7 +423,7 @@ std::error_condition osd_get_full_path(std::string &dst, std::string const &path
 //  osd_is_absolute_path
 //============================================================
 
-bool osd_is_absolute_path(std::string const &path) noexcept
+bool osd_is_absolute_path(std::string const &path)
 {
 	return !PathIsRelativeW(osd::text::to_wstring(path).c_str());
 }
@@ -508,7 +493,7 @@ std::vector<std::string> osd_get_volume_names()
 //  osd_is_valid_filename_char
 //============================================================
 
-bool osd_is_valid_filename_char(char32_t uchar) noexcept
+bool osd_is_valid_filename_char(char32_t uchar)
 {
 	return osd_is_valid_filepath_char(uchar)
 		&& uchar != '/'
@@ -522,7 +507,7 @@ bool osd_is_valid_filename_char(char32_t uchar) noexcept
 //  osd_is_valid_filepath_char
 //============================================================
 
-bool osd_is_valid_filepath_char(char32_t uchar) noexcept
+bool osd_is_valid_filepath_char(char32_t uchar)
 {
 	return uchar >= 0x20
 		&& uchar != '<'
@@ -541,62 +526,39 @@ bool osd_is_valid_filepath_char(char32_t uchar) noexcept
 //  win_error_to_file_error
 //============================================================
 
-std::error_condition win_error_to_file_error(DWORD error) noexcept
+osd_file::error win_error_to_file_error(DWORD error)
 {
-	// TODO: work out if there's a better way to do this
+	osd_file::error filerr;
+
+	// convert a Windows error to a osd_file::error
 	switch (error)
 	{
 	case ERROR_SUCCESS:
-		return std::error_condition();
-
-	case ERROR_INVALID_HANDLE:
-		return std::errc::bad_file_descriptor;
+		filerr = osd_file::error::NONE;
+		break;
 
 	case ERROR_OUTOFMEMORY:
-		return std::errc::not_enough_memory;
-
-	case ERROR_NOT_SUPPORTED:
-		return std::errc::not_supported;
+		filerr = osd_file::error::OUT_OF_MEMORY;
+		break;
 
 	case ERROR_FILE_NOT_FOUND:
+	case ERROR_FILENAME_EXCED_RANGE:
 	case ERROR_PATH_NOT_FOUND:
 	case ERROR_INVALID_NAME:
-		return std::errc::no_such_file_or_directory;
-
-	case ERROR_FILENAME_EXCED_RANGE:
-		return std::errc::filename_too_long;
+		filerr = osd_file::error::NOT_FOUND;
+		break;
 
 	case ERROR_ACCESS_DENIED:
+		filerr = osd_file::error::ACCESS_DENIED;
+		break;
+
 	case ERROR_SHARING_VIOLATION:
-		return std::errc::permission_denied;
-
-	case ERROR_ALREADY_EXISTS:
-		return std::errc::file_exists;
-
-	case ERROR_TOO_MANY_OPEN_FILES:
-		return std::errc::too_many_files_open;
-
-	case ERROR_WRITE_FAULT:
-	case ERROR_READ_FAULT:
-		return std::errc::io_error;
-
-	case ERROR_HANDLE_DISK_FULL:
-	case ERROR_DISK_FULL:
-		return std::errc::no_space_on_device;
-
-	case ERROR_PATH_BUSY:
-	case ERROR_BUSY:
-		return std::errc::device_or_resource_busy;
-
-	case ERROR_FILE_TOO_LARGE:
-		return std::errc::file_too_large;
-
-	case ERROR_INVALID_ACCESS:
-	case ERROR_NEGATIVE_SEEK:
-	case ERROR_BAD_ARGUMENTS:
-		return std::errc::invalid_argument;
+		filerr = osd_file::error::ALREADY_OPEN;
+		break;
 
 	default:
-		return std::error_condition(error, std::system_category());
+		filerr = osd_file::error::FAILURE;
+		break;
 	}
+	return filerr;
 }

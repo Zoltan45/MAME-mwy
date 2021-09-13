@@ -1911,8 +1911,8 @@ void screen_device::finalize_burnin()
 
 	// compute the name and create the file
 	emu_file file(machine().options().snapshot_directory(), OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS);
-	std::error_condition const filerr = file.open(util::string_format("%s" PATH_SEPARATOR "burnin-%s.png", machine().basename(), tag() + 1));
-	if (!filerr)
+	osd_file::error filerr = file.open(util::string_format("%s" PATH_SEPARATOR "burnin-%s.png", machine().basename(), tag() + 1));
+	if (filerr == osd_file::error::NONE)
 	{
 		util::png_info pnginfo;
 
@@ -1942,7 +1942,7 @@ void screen_device::load_effect_overlay(const char *filename)
 	// load the file
 	m_screen_overlay_bitmap.reset();
 	emu_file file(machine().options().art_path(), OPEN_FLAG_READ);
-	if (!file.open(fullname))
+	if (file.open(fullname) == osd_file::error::NONE)
 	{
 		render_load_png(m_screen_overlay_bitmap, file);
 		file.close();

@@ -13,6 +13,8 @@
 #include "emucore.h"
 #include "osdcore.h"
 
+const char *const endianness_names[2] = { "little", "big" };
+
 emu_fatalerror::emu_fatalerror(util::format_argument_pack<std::ostream> const &args)
 	: emu_fatalerror(0, args)
 {

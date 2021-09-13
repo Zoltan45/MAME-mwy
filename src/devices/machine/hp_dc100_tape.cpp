@@ -30,8 +30,6 @@
 #include "emu.h"
 #include "hp_dc100_tape.h"
 
-#include "util/ioprocs.h"
-
 // Debugging
 #include "logmacro.h"
 #define LOG_TMR_MASK (LOG_GENERAL << 1)
@@ -109,12 +107,12 @@ void hp_dc100_tape_device::call_unload()
 	device_reset();
 
 	if (m_image_dirty) {
-		check_for_file();
-		auto io = util::core_file_read_write(image_core_file(), 0);
-		if (io) {
-			m_image.save_tape(*io);
-			m_image_dirty = false;
-		}
+		io_generic io;
+		io.file = (device_image_interface *)this;
+		io.procs = &image_ioprocs;
+		io.filler = 0;
+		m_image.save_tape(&io);
+		m_image_dirty = false;
 	}
 
 	m_image.clear_tape();
@@ -604,31 +602,18 @@ image_init_result hp_dc100_tape_device::internal_load(bool is_create)
 
 	device_reset();
 
-	check_for_file();
+	io_generic io;
+	io.file = (device_image_interface *)this;
+	io.procs = &image_ioprocs;
+	io.filler = 0;
 	if (is_create) {
-		auto io = util::core_file_read_write(image_core_file(), 0);
-		if (!io) {
-			LOG("out of memory\n");
-			seterror(std::errc::not_enough_memory, nullptr);
-			set_tape_present(false);
-			return image_init_result::FAIL;
-		}
 		m_image.clear_tape();
-		m_image.save_tape(*io);
-	} else {
-		auto io = util::core_file_read(image_core_file(), 0);
-		if (!io) {
-			LOG("out of memory\n");
-			seterror(std::errc::not_enough_memory, nullptr);
-			set_tape_present(false);
-			return image_init_result::FAIL;
-		}
-		if (!m_image.load_tape(*io)) {
-			LOG("load failed\n");
-			seterror(image_error::INVALIDIMAGE , "Wrong format");
-			set_tape_present(false);
-			return image_init_result::FAIL;
-		}
+		m_image.save_tape(&io);
+	} else if (!m_image.load_tape(&io)) {
+		LOG("load failed\n");
+		seterror(IMAGE_ERROR_INVALIDIMAGE , "Wrong format");
+		set_tape_present(false);
+		return image_init_result::FAIL;
 	}
 	LOG("load OK\n");
 

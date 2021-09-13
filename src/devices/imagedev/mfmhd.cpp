@@ -440,8 +440,8 @@ image_init_result mfm_harddisk_device::call_load()
 		}
 
 		// Read the hard disk metadata
-		std::error_condition state = chdfile->read_metadata(HARD_DISK_METADATA_TAG, 0, metadata);
-		if (state)
+		chd_error state = chdfile->read_metadata(HARD_DISK_METADATA_TAG, 0, metadata);
+		if (state != CHDERR_NONE)
 		{
 			LOG("Failed to read CHD metadata\n");
 			return image_init_result::FAIL;
@@ -475,7 +475,7 @@ image_init_result mfm_harddisk_device::call_load()
 		param.reduced_wcurr_cylinder = -1;
 
 		state = chdfile->read_metadata(MFM_HARD_DISK_METADATA_TAG, 0, metadata);
-		if (state)
+		if (state != CHDERR_NONE)
 		{
 			LOGMASKED(LOG_WARN, "Failed to read CHD sector arrangement/recording specs, applying defaults\n");
 		}
@@ -494,7 +494,7 @@ image_init_result mfm_harddisk_device::call_load()
 				param.interleave, param.cylskew, param.headskew, param.write_precomp_cylinder, param.reduced_wcurr_cylinder);
 
 		state = chdfile->read_metadata(MFM_HARD_DISK_METADATA_TAG, 1, metadata);
-		if (state)
+		if (state != CHDERR_NONE)
 		{
 			LOGMASKED(LOG_WARN, "Failed to read CHD track gap specs, applying defaults\n");
 		}
@@ -561,8 +561,8 @@ void mfm_harddisk_device::call_unload()
 			LOGMASKED(LOG_WARN, "MFM HD sector arrangement and recording specs have changed; updating CHD metadata\n");
 			chd_file* chdfile = get_chd_file();
 
-			std::error_condition err = chdfile->write_metadata(MFM_HARD_DISK_METADATA_TAG, 0, string_format(MFMHD_REC_METADATA_FORMAT, params->interleave, params->cylskew, params->headskew, params->write_precomp_cylinder, params->reduced_wcurr_cylinder), 0);
-			if (err)
+			chd_error err = chdfile->write_metadata(MFM_HARD_DISK_METADATA_TAG, 0, string_format(MFMHD_REC_METADATA_FORMAT, params->interleave, params->cylskew, params->headskew, params->write_precomp_cylinder, params->reduced_wcurr_cylinder), 0);
+			if (err != CHDERR_NONE)
 			{
 				LOGMASKED(LOG_WARN, "Failed to save MFM HD sector arrangement/recording specs to CHD\n");
 			}
@@ -573,8 +573,8 @@ void mfm_harddisk_device::call_unload()
 			LOGMASKED(LOG_WARN, "MFM HD track gap specs have changed; updating CHD metadata\n");
 			chd_file* chdfile = get_chd_file();
 
-			std::error_condition err = chdfile->write_metadata(MFM_HARD_DISK_METADATA_TAG, 1, string_format(MFMHD_GAP_METADATA_FORMAT, params->gap1, params->gap2, params->gap3, params->sync, params->headerlen, params->ecctype), 0);
-			if (err)
+			chd_error err = chdfile->write_metadata(MFM_HARD_DISK_METADATA_TAG, 1, string_format(MFMHD_GAP_METADATA_FORMAT, params->gap1, params->gap2, params->gap3, params->sync, params->headerlen, params->ecctype), 0);
+			if (err != CHDERR_NONE)
 			{
 				LOGMASKED(LOG_WARN, "Failed to save MFM HD track gap specs to CHD\n");
 			}
@@ -919,9 +919,10 @@ bool mfm_harddisk_device::write(attotime &from_when, const attotime &limit, uint
 	return false;
 }
 
-std::error_condition mfm_harddisk_device::load_track(uint16_t* data, int cylinder, int head)
+chd_error mfm_harddisk_device::load_track(uint16_t* data, int cylinder, int head)
 {
-	return m_format->load(m_chd, data, m_trackimage_size, cylinder, head);
+	chd_error state = m_format->load(m_chd, data, m_trackimage_size, cylinder, head);
+	return state;
 }
 
 void mfm_harddisk_device::write_track(uint16_t* data, int cylinder, int head)
@@ -1069,7 +1070,7 @@ void mfmhd_trackimage_cache::init(mfm_harddisk_device* mfmhd, int tracksize, int
 {
 	if (TRACE_CACHE) m_machine.logerror("[%s:cache] MFM HD cache init; cache size is %d tracks\n", mfmhd->tag(), trackslots);
 
-	std::error_condition state;
+	chd_error state;
 
 	mfmhd_trackimage* previous;
 	mfmhd_trackimage* current = nullptr;
@@ -1090,8 +1091,7 @@ void mfmhd_trackimage_cache::init(mfm_harddisk_device* mfmhd, int tracksize, int
 
 		// Load the first tracks into the slots
 		state = m_mfmhd->load_track(current->encdata.get(), cylinder, head);
-		if (state)
-			throw emu_fatalerror("Cannot load (c=%d,h=%d) from hard disk", cylinder, head);
+		if (state != CHDERR_NONE) throw emu_fatalerror("Cannot load (c=%d,h=%d) from hard disk", cylinder, head);
 
 		current->dirty = false;
 		current->cylinder = cylinder;
@@ -1128,11 +1128,11 @@ uint16_t* mfmhd_trackimage_cache::get_trackimage(int cylinder, int head)
 	mfmhd_trackimage* current = m_tracks;
 	mfmhd_trackimage* previous = nullptr;
 
-	std::error_condition state;
+	chd_error state = CHDERR_NONE;
 
 	// Repeat the search. This loop should run at most twice; once for a direct hit,
 	// and twice on miss, then the second iteration will be a hit.
-	while (!state)
+	while (state == CHDERR_NONE)
 	{
 		// A simple linear search
 		while (current != nullptr)

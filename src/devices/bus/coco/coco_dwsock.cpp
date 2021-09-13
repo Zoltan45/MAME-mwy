@@ -82,14 +82,18 @@ beckerport_device::~beckerport_device()
 
 void beckerport_device::device_start()
 {
-	osd_printf_verbose("%s: Connecting to Drivewire server on %s:%d... ", tag(), m_hostname, m_dwtcpport);
+	char chAddress[64];
+
+	/* format address string for opening the port */
+	snprintf(chAddress, sizeof(chAddress), "socket.%s:%d", m_hostname, m_dwtcpport);
+
+	osd_printf_verbose("Connecting to Drivewire server on %s:%d... ", m_hostname, m_dwtcpport);
 
 	u64 filesize; // unused
-	/* format address string for opening the port */
-	std::error_condition filerr = osd_file::open(util::string_format("socket.%s:%d", m_hostname, m_dwtcpport), 0, m_pSocket, filesize);
-	if (filerr)
+	osd_file::error filerr = osd_file::open(chAddress, 0, m_pSocket, filesize);
+	if (filerr != osd_file::error::NONE)
 	{
-		osd_printf_verbose("Error: osd_open returned error %s:%d %s!\n", filerr.category().name(), filerr.value(), filerr.message());
+		osd_printf_verbose("Error: osd_open returned error %i!\n", (int) filerr);
 		return;
 	}
 
@@ -104,7 +108,7 @@ void beckerport_device::device_stop()
 {
 	if (m_pSocket)
 	{
-		printf("%s: Closing connection to Drivewire server\n", tag());
+		printf("Closing connection to Drivewire server\n");
 		m_pSocket.reset();
 	}
 }
@@ -135,25 +139,24 @@ u8 beckerport_device::read(offs_t offset)
 		case DWS_STATUS:
 			if (!m_rx_pending)
 			{
-				// Try to read from dws
-				std::error_condition filerr = m_pSocket->read(m_buf, 0, sizeof(m_buf), m_rx_pending);
-				if (filerr && (std::errc::operation_would_block != filerr))
-					osd_printf_error("%s: coco_dwsock.c: beckerport_device::read() socket read operation failed with error %s:%d %s\n", tag(), filerr.category().name(), filerr.value(), filerr.message());
+				/* Try to read from dws */
+				osd_file::error filerr = m_pSocket->read(m_buf, 0, sizeof(m_buf), m_rx_pending);
+				if (filerr != osd_file::error::NONE && filerr != osd_file::error::FAILURE)  // osd_file::error::FAILURE means no data available, so don't throw error message
+					fprintf(stderr, "coco_dwsock.c: beckerport_device::read() socket read operation failed with osd_file::error %i\n", int(filerr));
 				else
 					m_head = 0;
 			}
-			//logerror("beckerport_device: status read. %i bytes remaining.\n", m_rx_pending);
+			//printf("beckerport_device: status read. %i bytes remaining.\n", m_rx_pending);
 			data = (m_rx_pending > 0) ? 2 : 0;
 			break;
 		case DWS_DATA:
-			if (!m_rx_pending)
-			{
-				osd_printf_error("%s: coco_dwsock.c: beckerport_device::read() buffer underrun\n", tag());
+			if (!m_rx_pending) {
+				fprintf(stderr, "coco_dwsock.c: beckerport_device::read() buffer underrun\n");
 				break;
 			}
 			data = m_buf[m_head++];
 			m_rx_pending--;
-			//logerror("beckerport_device: data read 1 byte (0x%02x).  %i bytes remaining.\n", data&0xff, m_rx_pending);
+			//printf("beckerport_device: data read 1 byte (0x%02x).  %i bytes remaining.\n", data&0xff, m_rx_pending);
 			break;
 		default:
 			fprintf(stderr, "%s: read from bad offset %d\n", __FILE__, offset);
@@ -169,7 +172,7 @@ u8 beckerport_device::read(offs_t offset)
 void beckerport_device::write(offs_t offset, u8 data)
 {
 	char d = char(data);
-	std::error_condition filerr;
+	osd_file::error filerr;
 	u32 written;
 
 	if (!m_pSocket)
@@ -178,13 +181,13 @@ void beckerport_device::write(offs_t offset, u8 data)
 	switch (offset)
 	{
 		case DWS_STATUS:
-			//logerror("beckerport_write: error: write (0x%02x) to status register\n", d);
+			//printf("beckerport_write: error: write (0x%02x) to status register\n", d);
 			break;
 		case DWS_DATA:
 			filerr = m_pSocket->write(&d, 0, 1, written);
-			if (filerr)
-				osd_printf_error("%s: coco_dwsock.c: beckerport_device::write() socket write operation failed with error %s:%d %s\n", tag(), filerr.category().name(), filerr.value(), filerr.message());
-			//logerror("beckerport_write: data write one byte (0x%02x)\n", d & 0xff);
+			if (filerr != osd_file::error::NONE)
+				fprintf(stderr, "coco_dwsock.c: beckerport_device::write() socket write operation failed with osd_file::error %i\n", int(filerr));
+			//printf("beckerport_write: data write one byte (0x%02x)\n", d & 0xff);
 			break;
 		default:
 			fprintf(stderr, "%s: write to bad offset %d\n", __FILE__, offset);

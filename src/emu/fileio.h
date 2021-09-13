@@ -18,7 +18,6 @@
 
 #include <iterator>
 #include <string>
-#include <system_error>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -157,15 +156,18 @@ public:
 	void set_restrict_to_mediapath(int rtmp) { m_restrict_to_mediapath = rtmp; }
 
 	// open/close
-	std::error_condition open(std::string &&name);
-	std::error_condition open(std::string &&name, u32 crc);
-	std::error_condition open(std::string_view name) { return open(std::string(name)); }
-	std::error_condition open(std::string_view name, u32 crc) { return open(std::string(name), crc); }
-	std::error_condition open(const char *name) { return open(std::string(name)); }
-	std::error_condition open(const char *name, u32 crc) { return open(std::string(name), crc); }
-	std::error_condition open_next();
-	std::error_condition open_ram(const void *data, u32 length);
+	osd_file::error open(std::string &&name);
+	osd_file::error open(std::string &&name, u32 crc);
+	osd_file::error open(std::string_view name) { return open(std::string(name)); }
+	osd_file::error open(std::string_view name, u32 crc) { return open(std::string(name), crc); }
+	osd_file::error open(const char *name) { return open(std::string(name)); }
+	osd_file::error open(const char *name, u32 crc) { return open(std::string(name), crc); }
+	osd_file::error open_next();
+	osd_file::error open_ram(const void *data, u32 length);
 	void close();
+
+	// control
+	osd_file::error compress(int compress);
 
 	// position
 	int seek(s64 offset, int whence);
@@ -211,11 +213,11 @@ private:
 	}
 
 	bool part_of_mediapath(const std::string &path);
-	std::error_condition compressed_file_ready();
+	bool compressed_file_ready();
 
 	// internal helpers
-	std::error_condition attempt_zipped();
-	std::error_condition load_zipped_file();
+	osd_file::error attempt_zipped();
+	osd_file::error load_zipped_file();
 
 	// internal state
 	std::string             m_filename;             // original filename provided

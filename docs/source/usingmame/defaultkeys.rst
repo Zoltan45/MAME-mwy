@@ -110,7 +110,6 @@ and saving/loading save states.
     * **Page Up**/**Page Down** - scroll up/down one page at a time.
     * **Home**/**End** - move to top/bottom of list.
     * **-**/**+** - increase/decrease the number of colors per row.
-    * **0** - restore the default number of colors per row.
     * **Enter** - switch to graphics viewer.
 
     Graphics mode:
@@ -122,7 +121,6 @@ and saving/loading save states.
     * **Left**/**Right** - change color displayed.
     * **R** - rotate tiles 90 degrees clockwise.
     * **-**/**+** - increase/decrease the number of tiles per row.
-    * **0** - restore the default number of tiles per row.
     * **Enter** - switch to tilemap viewer.
 
     Tilemap mode:
@@ -132,11 +130,10 @@ and saving/loading save states.
     * **Shift+Up**/**Down**/**Left**/**Right** - scroll 1 pixel at a time.
     * **Control+Up**/**Down**/**Left**/**Right** - scroll 64 pixels at a time.
     * **R** - rotate tilemap view 90 degrees clockwise.
-    * **-**/**+** - decrease/increase the zoom factor.
-    * **0** - expand small tilemaps to fill the display.
+    * **-**/**+** - increase/decrease the zoom factor.
     * **Enter** - switch to palette/colortable mode.
 
-    Note: Not all systems have decoded graphics and/or tilemaps.
+    Note: Not all games have decoded graphics and/or tilemaps.
 **Left Ctrl+F5**
     Toggle Filter.
     (*SDL MAME only*)

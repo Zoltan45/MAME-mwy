@@ -22,7 +22,7 @@
 #endif
 #endif
 
-#ifdef _WIN32
+#ifdef WIN32
 #define _FILE_OFFSET_BITS 64
 #endif
 
@@ -64,12 +64,11 @@
 
 
 namespace {
-
 //============================================================
 //  CONSTANTS
 //============================================================
 
-#if defined(_WIN32)
+#if defined(WIN32)
 constexpr char PATHSEPCH = '\\';
 constexpr char INVPATHSEPCH = '/';
 #else
@@ -86,7 +85,7 @@ public:
 	posix_osd_file& operator=(posix_osd_file const &) = delete;
 	posix_osd_file& operator=(posix_osd_file &&) = delete;
 
-	posix_osd_file(int fd) noexcept : m_fd(fd)
+	posix_osd_file(int fd) : m_fd(fd)
 	{
 		assert(m_fd >= 0);
 	}
@@ -96,68 +95,68 @@ public:
 		::close(m_fd);
 	}
 
-	virtual std::error_condition read(void *buffer, std::uint64_t offset, std::uint32_t count, std::uint32_t &actual) noexcept override
+	virtual error read(void *buffer, std::uint64_t offset, std::uint32_t count, std::uint32_t &actual) override
 	{
 		ssize_t result;
 
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__)
 		result = ::pread(m_fd, buffer, size_t(count), off_t(std::make_unsigned_t<off_t>(offset)));
-#elif defined(_WIN32) || defined(SDLMAME_NO64BITIO)
+#elif defined(WIN32) || defined(SDLMAME_NO64BITIO)
 		if (lseek(m_fd, off_t(std::make_unsigned_t<off_t>(offset)), SEEK_SET) < 0)
-			return std::error_condition(errno, std::generic_category());
+			return errno_to_file_error(errno)
 		result = ::read(m_fd, buffer, size_t(count));
 #else
 		result = ::pread64(m_fd, buffer, size_t(count), off64_t(offset));
 #endif
 
 		if (result < 0)
-			return std::error_condition(errno, std::generic_category());
+			return errno_to_file_error(errno);
 
 		actual = std::uint32_t(std::size_t(result));
-		return std::error_condition();
+		return error::NONE;
 	}
 
-	virtual std::error_condition write(void const *buffer, std::uint64_t offset, std::uint32_t count, std::uint32_t &actual) noexcept override
+	virtual error write(void const *buffer, std::uint64_t offset, std::uint32_t count, std::uint32_t &actual) override
 	{
 		ssize_t result;
 
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__)
 		result = ::pwrite(m_fd, buffer, size_t(count), off_t(std::make_unsigned_t<off_t>(offset)));
-#elif defined(_WIN32) || defined(SDLMAME_NO64BITIO)
+#elif defined(WIN32) || defined(SDLMAME_NO64BITIO)
 		if (lseek(m_fd, off_t(std::make_unsigned_t<off_t>(offset)), SEEK_SET) < 0)
-			return std::error_condition(errno, std::generic_category());
+			return errno_to_file_error(errno)
 		result = ::write(m_fd, buffer, size_t(count));
 #else
 		result = ::pwrite64(m_fd, buffer, size_t(count), off64_t(offset));
 #endif
 
 		if (result < 0)
-			return std::error_condition(errno, std::generic_category());
+			return errno_to_file_error(errno);
 
 		actual = std::uint32_t(std::size_t(result));
-		return std::error_condition();
+		return error::NONE;
 	}
 
-	virtual std::error_condition truncate(std::uint64_t offset) noexcept override
+	virtual error truncate(std::uint64_t offset) override
 	{
 		int result;
 
-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__EMSCRIPTEN__) || defined(WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
 		result = ::ftruncate(m_fd, off_t(std::make_unsigned_t<off_t>(offset)));
 #else
 		result = ::ftruncate64(m_fd, off64_t(offset));
 #endif
 
 		if (result < 0)
-			return std::error_condition(errno, std::generic_category());
+			return errno_to_file_error(errno);
 
-		return std::error_condition();
+		return error::NONE;
 	}
 
-	virtual std::error_condition flush() noexcept override
+	virtual error flush() override
 	{
 		// no user-space buffering on unistd I/O
-		return std::error_condition();
+		return error::NONE;
 	}
 
 private:
@@ -169,9 +168,9 @@ private:
 //  is_path_separator
 //============================================================
 
-bool is_path_separator(char c) noexcept
+bool is_path_separator(char c)
 {
-#if defined(_WIN32)
+#if defined(WIN32)
 	return (c == PATHSEPCH) || (c == INVPATHSEPCH);
 #else
 	return c == PATHSEPCH;
@@ -183,36 +182,31 @@ bool is_path_separator(char c) noexcept
 //  create_path_recursive
 //============================================================
 
-std::error_condition create_path_recursive(std::string_view path) noexcept
+osd_file::error create_path_recursive(std::string const &path)
 {
 	// if there's still a separator, and it's not the root, nuke it and recurse
 	auto const sep = path.rfind(PATHSEPCH);
-	if ((sep != std::string_view::npos) && (sep > 0) && (path[sep - 1] != PATHSEPCH))
+	if ((sep != std::string::npos) && (sep > 0) && (path[sep - 1] != PATHSEPCH))
 	{
-		std::error_condition err = create_path_recursive(path.substr(0, sep));
-		if (err)
+		osd_file::error const err = create_path_recursive(path.substr(0, sep));
+		if (err != osd_file::error::NONE)
 			return err;
 	}
 
-	// need a NUL-terminated version of the subpath
-	std::string p;
-	try { p = path; }
-	catch (...) { return std::errc::not_enough_memory; }
-
 	// if the path already exists, we're done
 	struct stat st;
-	if (!::stat(p.c_str(), &st))
-		return std::error_condition();
+	if (!::stat(path.c_str(), &st))
+		return osd_file::error::NONE;
 
 	// create the path
-#ifdef _WIN32
-	if (mkdir(p.c_str()) < 0)
+#ifdef WIN32
+	if (mkdir(path.c_str()) < 0)
 #else
-	if (mkdir(p.c_str(), 0777) < 0)
+	if (mkdir(path.c_str(), 0777) < 0)
 #endif
-		return std::error_condition(errno, std::generic_category());
+		return errno_to_file_error(errno);
 	else
-		return std::error_condition();
+		return osd_file::error::NONE;
 }
 
 } // anonymous namespace
@@ -222,7 +216,7 @@ std::error_condition create_path_recursive(std::string_view path) noexcept
 //  osd_file::open
 //============================================================
 
-std::error_condition osd_file::open(std::string const &path, std::uint32_t openflags, ptr &file, std::uint64_t &filesize) noexcept
+osd_file::error osd_file::open(std::string const &path, std::uint32_t openflags, ptr &file, std::uint64_t &filesize)
 {
 	std::string dst;
 	if (posix_check_socket_path(path))
@@ -245,24 +239,23 @@ std::error_condition osd_file::open(std::string const &path, std::uint32_t openf
 	}
 	else
 	{
-		return std::errc::invalid_argument;
+		return error::INVALID_ACCESS;
 	}
-#if defined(_WIN32)
+#if defined(WIN32)
 	access |= O_BINARY;
 #endif
 
 	// convert the path into something compatible
 	dst = path;
-#if defined(_WIN32)
+#if defined(WIN32)
 	for (auto it = dst.begin(); it != dst.end(); ++it)
 		*it = (INVPATHSEPCH == *it) ? PATHSEPCH : *it;
 #endif
-	try { osd_subst_env(dst, dst); }
-	catch (...) { return std::errc::not_enough_memory; }
+	osd_subst_env(dst, dst);
 
 	// attempt to open the file
 	int fd = -1;
-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
 	fd = ::open(dst.c_str(), access, 0666);
 #else
 	fd = ::open64(dst.c_str(), access, 0666);
@@ -270,9 +263,6 @@ std::error_condition osd_file::open(std::string const &path, std::uint32_t openf
 
 	if (fd < 0)
 	{
-		// save the error from the first attempt to open the file
-		std::error_condition openerr(errno, std::generic_category());
-
 		// create the path if necessary
 		if ((openflags & OPEN_FLAG_CREATE) && (openflags & OPEN_FLAG_CREATE_PATHS))
 		{
@@ -280,20 +270,16 @@ std::error_condition osd_file::open(std::string const &path, std::uint32_t openf
 			if (pathsep != std::string::npos)
 			{
 				// create the path up to the file
-				std::error_condition const createrr = create_path_recursive(dst.substr(0, pathsep));
+				osd_file::error const error = create_path_recursive(dst.substr(0, pathsep));
 
 				// attempt to reopen the file
-				if (!createrr)
+				if (error == osd_file::error::NONE)
 				{
-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
 					fd = ::open(dst.c_str(), access, 0666);
 #else
 					fd = ::open64(dst.c_str(), access, 0666);
 #endif
-				}
-				if (fd < 0)
-				{
-					openerr.assign(errno, std::generic_category());
 				}
 			}
 		}
@@ -301,12 +287,12 @@ std::error_condition osd_file::open(std::string const &path, std::uint32_t openf
 		// if we still failed, clean up and free
 		if (fd < 0)
 		{
-			return openerr;
+			return errno_to_file_error(errno);
 		}
 	}
 
 	// get the file size
-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
 	struct stat st;
 	if (::fstat(fd, &st) < 0)
 #else
@@ -314,20 +300,22 @@ std::error_condition osd_file::open(std::string const &path, std::uint32_t openf
 	if (::fstat64(fd, &st) < 0)
 #endif
 	{
-		std::error_condition staterr(errno, std::generic_category());
+		int const error = errno;
 		::close(fd);
-		return staterr;
+		return errno_to_file_error(error);
 	}
+	filesize = std::uint64_t(std::make_unsigned_t<decltype(st.st_size)>(st.st_size));
 
-	osd_file::ptr result(new (std::nothrow) posix_osd_file(fd));
-	if (!result)
+	try
+	{
+		file = std::make_unique<posix_osd_file>(fd);
+		return error::NONE;
+	}
+	catch (...)
 	{
 		::close(fd);
-		return std::errc::not_enough_memory;
+		return error::OUT_OF_MEMORY;
 	}
-	file = std::move(result);
-	filesize = std::uint64_t(std::make_unsigned_t<decltype(st.st_size)>(st.st_size));
-	return std::error_condition();
 }
 
 
@@ -335,9 +323,9 @@ std::error_condition osd_file::open(std::string const &path, std::uint32_t openf
 //  osd_file::openpty
 //============================================================
 
-std::error_condition osd_file::openpty(ptr &file, std::string &name) noexcept
+osd_file::error osd_file::openpty(ptr &file, std::string &name)
 {
-	std::uint64_t filesize;
+	std::uint64_t   filesize;
 	return posix_open_ptty(OPEN_FLAG_READ | OPEN_FLAG_WRITE, file, filesize, name);
 }
 
@@ -346,12 +334,12 @@ std::error_condition osd_file::openpty(ptr &file, std::string &name) noexcept
 //  osd_file::remove
 //============================================================
 
-std::error_condition osd_file::remove(std::string const &filename) noexcept
+osd_file::error osd_file::remove(std::string const &filename)
 {
 	if (::unlink(filename.c_str()) < -1)
-		return std::error_condition(errno, std::generic_category());
+		return errno_to_file_error(errno);
 	else
-		return std::error_condition();
+		return error::NONE;
 }
 
 
@@ -359,7 +347,7 @@ std::error_condition osd_file::remove(std::string const &filename) noexcept
 //  osd_get_physical_drive_geometry
 //============================================================
 
-bool osd_get_physical_drive_geometry(const char *filename, uint32_t *cylinders, uint32_t *heads, uint32_t *sectors, uint32_t *bps) noexcept
+bool osd_get_physical_drive_geometry(const char *filename, uint32_t *cylinders, uint32_t *heads, uint32_t *sectors, uint32_t *bps)
 {
 	return false; // no, no way, huh-uh, forget it
 }
@@ -371,7 +359,7 @@ bool osd_get_physical_drive_geometry(const char *filename, uint32_t *cylinders, 
 
 std::unique_ptr<osd::directory::entry> osd_stat(const std::string &path)
 {
-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(_WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__) || defined(__HAIKU__) || defined(WIN32) || defined(SDLMAME_NO64BITIO) || defined(__ANDROID__)
 	struct stat st;
 	int const err = ::stat(path.c_str(), &st);
 #else
@@ -401,58 +389,58 @@ std::unique_ptr<osd::directory::entry> osd_stat(const std::string &path)
 //  osd_get_full_path
 //============================================================
 
-std::error_condition osd_get_full_path(std::string &dst, std::string const &path) noexcept
+osd_file::error osd_get_full_path(std::string &dst, std::string const &path)
 {
 	try
 	{
-#if defined(_WIN32)
+#if defined(WIN32)
 		std::vector<char> path_buffer(MAX_PATH);
 		if (::_fullpath(&path_buffer[0], path.c_str(), MAX_PATH))
 		{
 			dst = &path_buffer[0];
-			return std::error_condition();
+			return osd_file::error::NONE;
 		}
 		else
 		{
-			return std::errc::io_error; // TODO: better error reporting?
+			return osd_file::error::FAILURE;
 		}
 #else
 		std::unique_ptr<char, void (*)(void *)> canonical(::realpath(path.c_str(), nullptr), &std::free);
 		if (canonical)
 		{
 			dst = canonical.get();
-			return std::error_condition();
+			return osd_file::error::NONE;
 		}
 
 		std::vector<char> path_buffer(PATH_MAX);
 		if (::realpath(path.c_str(), &path_buffer[0]))
 		{
 			dst = &path_buffer[0];
-			return std::error_condition();
+			return osd_file::error::NONE;
 		}
 		else if (path[0] == PATHSEPCH)
 		{
 			dst = path;
-			return std::error_condition();
+			return osd_file::error::NONE;
 		}
 		else
 		{
 			while (!::getcwd(&path_buffer[0], path_buffer.size()))
 			{
 				if (errno != ERANGE)
-					return std::error_condition(errno, std::generic_category());
+					return errno_to_file_error(errno);
 				else
 					path_buffer.resize(path_buffer.size() * 2);
 			}
 			dst.assign(&path_buffer[0]).push_back(PATHSEPCH);
 			dst.append(path);
-			return std::error_condition();
+			return osd_file::error::NONE;
 		}
 #endif
 	}
 	catch (...)
 	{
-		return std::errc::not_enough_memory;
+		return osd_file::error::OUT_OF_MEMORY;
 	}
 }
 
@@ -461,11 +449,11 @@ std::error_condition osd_get_full_path(std::string &dst, std::string const &path
 //  osd_is_absolute_path
 //============================================================
 
-bool osd_is_absolute_path(std::string const &path) noexcept
+bool osd_is_absolute_path(std::string const &path)
 {
 	if (!path.empty() && is_path_separator(path[0]))
 		return true;
-#if !defined(_WIN32)
+#if !defined(WIN32)
 	else if (!path.empty() && (path[0] == '.') && (!path[1] || is_path_separator(path[1]))) // FIXME: why is this even here? foo/./bar is a valid way to refer to foo/bar
 		return true;
 #elif !defined(UNDER_CE)
@@ -504,12 +492,12 @@ std::vector<std::string> osd_get_volume_names()
 //  osd_is_valid_filename_char
 //============================================================
 
-bool osd_is_valid_filename_char(char32_t uchar) noexcept
+bool osd_is_valid_filename_char(char32_t uchar)
 {
 	// The only one that's actually invalid is the slash
 	// The other two are just problematic because they're the escape character and path separator
 	return osd_is_valid_filepath_char(uchar)
-#if defined(_WIN32)
+#if defined(WIN32)
 		&& uchar != PATHSEPCH
 		&& uchar != INVPATHSEPCH
 #else
@@ -524,12 +512,12 @@ bool osd_is_valid_filename_char(char32_t uchar) noexcept
 //  osd_is_valid_filepath_char
 //============================================================
 
-bool osd_is_valid_filepath_char(char32_t uchar) noexcept
+bool osd_is_valid_filepath_char(char32_t uchar)
 {
 	// One could argue that colon should be in here too because it functions as path separator
 	return uchar >= 0x20
 		&& !(uchar >= '\x7F' && uchar <= '\x9F')
-#if defined(_WIN32)
+#if defined(WIN32)
 		&& uchar != '<'
 		&& uchar != '>'
 		&& uchar != '\"'
@@ -538,4 +526,40 @@ bool osd_is_valid_filepath_char(char32_t uchar) noexcept
 		&& uchar != '*'
 #endif
 		&& uchar_isvalid(uchar);
+}
+
+
+//============================================================
+//  errno_to_file_error
+//============================================================
+
+osd_file::error errno_to_file_error(int error)
+{
+	switch (error)
+	{
+	case 0:
+		return osd_file::error::NONE;
+
+	case ENOENT:
+	case ENOTDIR:
+		return osd_file::error::NOT_FOUND;
+
+	case EACCES:
+	case EROFS:
+#ifndef WIN32
+	case ETXTBSY:
+#endif
+	case EEXIST:
+	case EPERM:
+	case EISDIR:
+	case EINVAL:
+		return osd_file::error::ACCESS_DENIED;
+
+	case ENFILE:
+	case EMFILE:
+		return osd_file::error::TOO_MANY_FILES;
+
+	default:
+		return osd_file::error::FAILURE;
+	}
 }

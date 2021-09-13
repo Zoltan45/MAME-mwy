@@ -6,6 +6,7 @@
 //
 //============================================================
 
+
 #include "winfile.h"
 
 // MAMEOS headers
@@ -27,7 +28,6 @@
 
 
 namespace {
-
 char const *const winfile_socket_identifier  = "socket.";
 
 
@@ -39,7 +39,7 @@ public:
 	win_osd_socket& operator=(win_osd_socket const &) = delete;
 	win_osd_socket& operator=(win_osd_socket &&) = delete;
 
-	win_osd_socket(SOCKET s, bool l) noexcept
+	win_osd_socket(SOCKET s, bool l)
 		: m_socket(s)
 		, m_listening(l)
 	{
@@ -51,7 +51,7 @@ public:
 		closesocket(m_socket);
 	}
 
-	virtual std::error_condition read(void *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) noexcept override
+	virtual error read(void *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) override
 	{
 		fd_set readfds;
 		FD_ZERO(&readfds);
@@ -62,7 +62,10 @@ public:
 
 		if (select(m_socket + 1, &readfds, nullptr, nullptr, &timeout) < 0)
 		{
-			return wsa_error_to_file_error(WSAGetLastError());
+			char line[80];
+			std::sprintf(line, "win_read_socket : %s : %d ", __FILE__,  __LINE__);
+			std::perror(line);
+			return error::FAILURE;
 		}
 		else if (FD_ISSET(m_socket, &readfds))
 		{
@@ -77,7 +80,7 @@ public:
 				else
 				{
 					actual = result;
-					return std::error_condition();
+					return error::NONE;
 				}
 			}
 			else
@@ -95,82 +98,50 @@ public:
 					m_listening = false;
 					actual = 0;
 
-					return std::error_condition();
+					return error::NONE;
 				}
 			}
 		}
 		else
 		{
-			// no data available
-			actual = 0;
-			return std::errc::operation_would_block;
+			return error::FAILURE;
 		}
 	}
 
-	virtual std::error_condition write(void const *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) noexcept override
+	virtual error write(void const *buffer, std::uint64_t offset, std::uint32_t length, std::uint32_t &actual) override
 	{
 		auto const result = send(m_socket, reinterpret_cast<const char *>(buffer), length, 0);
 		if (result < 0)
 			return wsa_error_to_file_error(WSAGetLastError());
 
 		actual = result;
-		return std::error_condition();
+		return error::NONE;
 	}
 
-	virtual std::error_condition truncate(std::uint64_t offset) noexcept override
+	virtual error truncate(std::uint64_t offset) override
 	{
 		// doesn't make sense for a socket
-		return std::errc::bad_file_descriptor;
+		return error::INVALID_ACCESS;
 	}
 
-	virtual std::error_condition flush() noexcept override
+	virtual error flush() override
 	{
 		// no buffers to flush
-		return std::error_condition();
+		return error::NONE;
 	}
 
-	static std::error_condition wsa_error_to_file_error(int err)
+	static error wsa_error_to_file_error(int err)
 	{
-		// TODO: determine if there's a better way to do this
 		switch (err)
 		{
-		case 0:                     return std::error_condition();
-		case WSA_NOT_ENOUGH_MEMORY: return std::errc::not_enough_memory;
-		case WSA_INVALID_PARAMETER: return std::errc::invalid_argument;
-		case WSAEINTR:              return std::errc::interrupted;
-		case WSAEBADF:              return std::errc::bad_file_descriptor;
-		case WSAEACCES:             return std::errc::permission_denied;
-		case WSAEFAULT:             return std::errc::bad_address;
-		case WSAEINVAL:             return std::errc::invalid_argument;
-		case WSAEMFILE:             return std::errc::too_many_files_open;
-		case WSAENETRESET:          return std::errc::network_reset;
-		case WSAECONNABORTED:       return std::errc::connection_aborted;
-		case WSAEWOULDBLOCK:        return std::errc::operation_would_block;
-		case WSAEINPROGRESS:        return std::errc::operation_in_progress;
-		case WSAEALREADY:           return std::errc::connection_already_in_progress;
-		case WSAENOTSOCK:           return std::errc::not_a_socket;
-		case WSAEDESTADDRREQ:       return std::errc::destination_address_required;
-		case WSAEMSGSIZE:           return std::errc::message_size;
-		case WSAEPROTOTYPE:         return std::errc::wrong_protocol_type;
-		case WSAENOPROTOOPT:        return std::errc::no_protocol_option;
-		case WSAEPROTONOSUPPORT:    return std::errc::protocol_not_supported;
-		case WSAEOPNOTSUPP:         return std::errc::operation_not_supported;
-		case WSAEAFNOSUPPORT:       return std::errc::address_family_not_supported;
-		case WSAEADDRINUSE:         return std::errc::address_in_use;
-		case WSAEADDRNOTAVAIL:      return std::errc::address_not_available;
-		case WSAENETDOWN:           return std::errc::network_down;
-		case WSAENETUNREACH:        return std::errc::network_unreachable;
-		case WSAECONNRESET:         return std::errc::connection_reset;
-		case WSAENOBUFS:            return std::errc::no_buffer_space;
-		case WSAEISCONN:            return std::errc::already_connected;
-		case WSAENOTCONN:           return std::errc::not_connected;
-		case WSAETIMEDOUT:          return std::errc::timed_out;
-		case WSAECONNREFUSED:       return std::errc::connection_refused;
-		case WSAEHOSTUNREACH:       return std::errc::host_unreachable;
-		case WSAECANCELLED:         return std::errc::operation_canceled;
-
-		// TODO: better default error code?
-		default:                    return std::errc::io_error;
+		case 0:                 return error::NONE;
+		case WSAEACCES:         return error::ACCESS_DENIED;
+		case WSAEADDRINUSE:     return error::ALREADY_OPEN;
+		case WSAEADDRNOTAVAIL:  return error::NOT_FOUND;
+		case WSAECONNREFUSED:   return error::NOT_FOUND;
+		case WSAEHOSTUNREACH:   return error::NOT_FOUND;
+		case WSAENETUNREACH:    return error::NOT_FOUND;
+		default:                return error::FAILURE;
 		}
 	}
 
@@ -182,7 +153,7 @@ private:
 } // anonymous namespace
 
 
-bool win_init_sockets() noexcept
+bool win_init_sockets()
 {
 	WSADATA wsaData;
 	WORD const version = MAKEWORD(2, 0);
@@ -208,13 +179,13 @@ bool win_init_sockets() noexcept
 }
 
 
-void win_cleanup_sockets() noexcept
+void win_cleanup_sockets()
 {
 	WSACleanup();
 }
 
 
-bool win_check_socket_path(std::string const &path) noexcept
+bool win_check_socket_path(std::string const &path)
 {
 	if (strncmp(path.c_str(), winfile_socket_identifier, strlen(winfile_socket_identifier)) == 0 &&
 		strchr(path.c_str(), ':') != nullptr) return true;
@@ -222,7 +193,7 @@ bool win_check_socket_path(std::string const &path) noexcept
 }
 
 
-std::error_condition win_open_socket(std::string const &path, std::uint32_t openflags, osd_file::ptr &file, std::uint64_t &filesize) noexcept
+osd_file::error win_open_socket(std::string const &path, std::uint32_t openflags, osd_file::ptr &file, std::uint64_t &filesize)
 {
 	char hostname[256];
 	int port;
@@ -230,7 +201,7 @@ std::error_condition win_open_socket(std::string const &path, std::uint32_t open
 
 	struct hostent const *const localhost = gethostbyname(hostname);
 	if (!localhost)
-		return std::errc::no_such_file_or_directory;
+		return osd_file::error::NOT_FOUND;
 
 	struct sockaddr_in sai;
 	memset(&sai, 0, sizeof(sai));
@@ -251,12 +222,11 @@ std::error_condition win_open_socket(std::string const &path, std::uint32_t open
 	}
 
 	// listening socket support
-	osd_file::ptr result;
 	if (openflags & OPEN_FLAG_CREATE)
 	{
 		//printf("Listening for client at '%s' on port '%d'\n", hostname, port);
 		// bind socket...
-		if (bind(sock, reinterpret_cast<struct sockaddr const *>(&sai), sizeof(sai)) == SOCKET_ERROR)
+		if (bind(sock, reinterpret_cast<struct sockaddr const *>(&sai), sizeof(struct sockaddr)) == SOCKET_ERROR)
 		{
 			int const err = WSAGetLastError();
 			closesocket(sock);
@@ -272,26 +242,36 @@ std::error_condition win_open_socket(std::string const &path, std::uint32_t open
 		}
 
 		// mark socket as "listening"
-		result.reset(new (std::nothrow) win_osd_socket(sock, true));
+		try
+		{
+			file = std::make_unique<win_osd_socket>(sock, true);
+			filesize = 0;
+			return osd_file::error::NONE;
+		}
+		catch (...)
+		{
+			closesocket(sock);
+			return osd_file::error::OUT_OF_MEMORY;
+		}
 	}
 	else
 	{
 		//printf("Connecting to server '%s' on port '%d'\n", hostname, port);
-		if (connect(sock, reinterpret_cast<struct sockaddr const *>(&sai), sizeof(sai)) == SOCKET_ERROR)
+		if (connect(sock, reinterpret_cast<struct sockaddr const *>(&sai), sizeof(struct sockaddr)) == SOCKET_ERROR)
 		{
-			int const err = WSAGetLastError();
 			closesocket(sock);
-			return win_osd_socket::wsa_error_to_file_error(err);
+			return osd_file::error::ACCESS_DENIED; // have to return this value or bitb won't try to bind on connect failure
 		}
-		result.reset(new (std::nothrow) win_osd_socket(sock, false));
+		try
+		{
+			file = std::make_unique<win_osd_socket>(sock, false);
+			filesize = 0;
+			return osd_file::error::NONE;
+		}
+		catch (...)
+		{
+			closesocket(sock);
+			return osd_file::error::OUT_OF_MEMORY;
+		}
 	}
-
-	if (!result)
-	{
-		closesocket(sock);
-		return std::errc::not_enough_memory;
-	}
-	file = std::move(result);
-	filesize = 0;
-	return std::error_condition();
 }

@@ -2,8 +2,6 @@
 // copyright-holders:Olivier Galibert
 #include "pasti_dsk.h"
 
-#include "ioprocs.h"
-
 // Pasti format supported using the documentation at
 // http://www.sarnau.info/atari:pasti_file_format
 
@@ -38,11 +36,10 @@ bool pasti_format::supports_save() const
 	return false;
 }
 
-int pasti_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int pasti_format::identify(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
 	uint8_t h[16];
-	size_t actual;
-	io.read_at(0, h, 16, actual);
+	io_generic_read(io, h, 0, 16);
 
 	if(!memcmp(h, "RSY\0\3\0", 6) &&
 		(1 || (h[10] >= 80 && h[10] <= 82) || (h[10] >= 160 && h[10] <= 164)))
@@ -61,11 +58,10 @@ static void hexdump(const uint8_t *d, int s)
 	}
 }
 
-bool pasti_format::load(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
+bool pasti_format::load(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
 {
-	size_t actual;
 	uint8_t fh[16];
-	io.read_at(0, fh, 16, actual);
+	io_generic_read(io, fh, 0, 16);
 
 	std::vector<uint8_t> raw_track;
 
@@ -80,7 +76,7 @@ bool pasti_format::load(util::random_read &io, uint32_t form_factor, const std::
 	for(int track=0; track < tracks; track++) {
 		for(int head=0; head < heads; head++) {
 			uint8_t th[16];
-			io.read_at(pos, th, 16, actual);
+			io_generic_read(io, th, pos, 16);
 			int entry_len = th[0] | (th[1] << 8) | (th[2] << 16) | (th[3] << 24);
 			int fuzz_len  = th[4] | (th[5] << 8) | (th[6] << 16) | (th[7] << 24);
 			int sect      = th[8] | (th[9] << 8);
@@ -91,7 +87,7 @@ bool pasti_format::load(util::random_read &io, uint32_t form_factor, const std::
 
 			raw_track.resize(entry_len-16);
 
-			io.read_at(pos+16, &raw_track[0], entry_len-16, actual);
+			io_generic_read(io, &raw_track[0], pos+16, entry_len-16);
 
 			uint8_t *fuzz = fuzz_len ? &raw_track[16*sect] : nullptr;
 			uint8_t *bdata = fuzz ? fuzz+fuzz_len : &raw_track[16*sect];

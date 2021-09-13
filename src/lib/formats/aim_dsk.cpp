@@ -12,9 +12,9 @@
 
 *********************************************************************/
 
-#include "aim_dsk.h"
+#include <cassert>
 
-#include "ioprocs.h"
+#include "aim_dsk.h"
 
 
 aim_format::aim_format()
@@ -40,20 +40,18 @@ const char *aim_format::extensions() const
 }
 
 
-int aim_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int aim_format::identify(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
-	uint64_t size;
-	if (io.length(size))
-		return 0;
-
-	if (size == 2068480)
+	if (io_generic_size(io) == 2068480)
+	{
 		return 100;
+	}
 
 	return 0;
 }
 
 
-bool aim_format::load(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
+bool aim_format::load(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
 {
 	image->set_variant(floppy_image::DSQD);
 
@@ -72,8 +70,7 @@ bool aim_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 			bool header = false;
 
 			// Read track
-			size_t actual;
-			io.read_at((heads * track + head) * track_size, &track_data[0], track_size, actual);
+			io_generic_read(io, &track_data[0], ( heads * track + head ) * track_size, track_size);
 
 			// Find first sector header or index mark
 			for (int offset = 0; offset < track_size; offset += 2)

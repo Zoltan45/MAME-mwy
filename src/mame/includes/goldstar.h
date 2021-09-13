@@ -203,12 +203,10 @@ public:
 	void amcoe1(machine_config &config);
 	void chryangl(machine_config &config);
 	void ss2001(machine_config &config);
-	void super7(machine_config &config);
 	void amcoe1_portmap(address_map &map);
 	void amcoe2_portmap(address_map &map);
 	void cm_portmap(address_map &map);
 	void cm97_portmap(address_map &map);
-	void super7_portmap(address_map &map);
 	void chryangl_decrypted_opcodes_map(address_map &map);
 	void ss2001_portmap(address_map &map);
 
@@ -296,7 +294,6 @@ public:
 
 	void init_cb3();
 	void init_cb3e();
-	void init_cb3f();
 	void init_cherrys();
 	void init_chrygld();
 	void init_chry10();
@@ -317,7 +314,6 @@ protected:
 	void dump_to_file(uint8_t *rom);
 
 	uint8_t cb3_decrypt(uint8_t cipherText, uint16_t address);
-	uint8_t cb3f_decrypt(uint8_t cipherText, uint16_t address);
 	uint8_t chry10_decrypt(uint8_t cipherText);
 };
 

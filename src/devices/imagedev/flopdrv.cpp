@@ -14,12 +14,8 @@
 */
 
 #include "emu.h"
-#include "flopdrv.h"
-
 #include "formats/imageutl.h"
-
-#include "util/ioprocs.h"
-
+#include "flopdrv.h"
 
 #define VERBOSE     0
 #define LOG(x) do { if (VERBOSE) logerror x; } while (0)
@@ -37,7 +33,7 @@
 struct floppy_error_map
 {
 	floperr_t ferr;
-	std::error_condition ierr;
+	image_error_t ierr;
 	const char *message;
 };
 
@@ -49,11 +45,11 @@ struct floppy_error_map
 
 static const floppy_error_map errmap[] =
 {
-	{ FLOPPY_ERROR_SUCCESS,         { } },
-	{ FLOPPY_ERROR_INTERNAL,        { image_error::INTERNAL } },
-	{ FLOPPY_ERROR_UNSUPPORTED,     { image_error::UNSUPPORTED } },
-	{ FLOPPY_ERROR_OUTOFMEMORY,     { std::errc::not_enough_memory } },
-	{ FLOPPY_ERROR_INVALIDIMAGE,    { image_error::INVALIDIMAGE } }
+	{ FLOPPY_ERROR_SUCCESS,         IMAGE_ERROR_SUCCESS },
+	{ FLOPPY_ERROR_INTERNAL,        IMAGE_ERROR_INTERNAL },
+	{ FLOPPY_ERROR_UNSUPPORTED,     IMAGE_ERROR_UNSUPPORTED },
+	{ FLOPPY_ERROR_OUTOFMEMORY,     IMAGE_ERROR_OUTOFMEMORY },
+	{ FLOPPY_ERROR_INVALIDIMAGE,    IMAGE_ERROR_INVALIDIMAGE }
 };
 
 /***************************************************************************
@@ -422,52 +418,50 @@ void legacy_floppy_image_device::floppy_drive_set_controller(device_t *controlle
 
 image_init_result legacy_floppy_image_device::internal_floppy_device_load(bool is_create, int create_format, util::option_resolution *create_args)
 {
-	const struct FloppyFormat *floppy_options = m_config->formats;
-
 	floperr_t err;
-	check_for_file();
-	auto io = util::core_file_read_write(image_core_file(), 0xff);
-	if (!io)
-	{
-		err = FLOPPY_ERROR_OUTOFMEMORY;
-	}
-	else if (is_create)
+	const struct FloppyFormat *floppy_options;
+	int floppy_flags, i;
+
+	device_image_interface *image = nullptr;
+	interface(image);   /* figure out the floppy options */
+	floppy_options = m_config->formats;
+
+	if (is_create)
 	{
 		/* creating an image */
 		assert(create_format >= 0);
-		err = floppy_create(std::move(io), &floppy_options[create_format], create_args, &m_floppy);
+		err = floppy_create((void *) image, &image_ioprocs, &floppy_options[create_format], create_args, &m_floppy);
+		if (err)
+			goto error;
 	}
 	else
 	{
 		/* opening an image */
-		int const floppy_flags = !is_readonly() ? FLOPPY_FLAGS_READWRITE : FLOPPY_FLAGS_READONLY;
-		err = floppy_open_choices(std::move(io), filetype(), floppy_options, floppy_flags, &m_floppy);
+		floppy_flags = !is_readonly() ? FLOPPY_FLAGS_READWRITE : FLOPPY_FLAGS_READONLY;
+		err = floppy_open_choices((void *) image, &image_ioprocs, filetype(), floppy_options, floppy_flags, &m_floppy);
+		if (err)
+			goto error;
 	}
-
-	if (!err)
+	if (floppy_callbacks(m_floppy)->get_heads_per_disk && floppy_callbacks(m_floppy)->get_tracks_per_disk)
 	{
-		if (floppy_callbacks(m_floppy)->get_heads_per_disk && floppy_callbacks(m_floppy)->get_tracks_per_disk)
-		{
-			floppy_drive_set_geometry_absolute(floppy_get_tracks_per_disk(m_floppy),floppy_get_heads_per_disk(m_floppy));
-		}
-		/* disk changed */
-		m_dskchg = CLEAR_LINE;
-
-		// If we have one of our hacky load procs, call it
-		if (m_load_proc)
-			m_load_proc(*this, is_create);
-
-		return image_init_result::PASS;
+		floppy_drive_set_geometry_absolute(floppy_get_tracks_per_disk(m_floppy),floppy_get_heads_per_disk(m_floppy));
 	}
-	else
+	/* disk changed */
+	m_dskchg = CLEAR_LINE;
+
+	// If we have one of our hacky load procs, call it
+	if (m_load_proc)
+		m_load_proc(*this, is_create);
+
+	return image_init_result::PASS;
+
+error:
+	for (i = 0; i < std::size(errmap); i++)
 	{
-		for (int i = 0; i < std::size(errmap); i++)
-		{
-			if (err == errmap[i].ferr)
-				seterror(errmap[i].ierr, errmap[i].message);
-		}
-		return image_init_result::FAIL;
+		if (err == errmap[i].ferr)
+			seterror(errmap[i].ierr, errmap[i].message);
 	}
+	return image_init_result::FAIL;
 }
 
 TIMER_CALLBACK_MEMBER( legacy_floppy_image_device::set_wpt )

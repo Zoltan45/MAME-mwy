@@ -7,15 +7,12 @@
     Bridge code for Imgtool into the standard floppy code
 
 *********************************************************************/
-#ifndef MAME_TOOLS_IMGTOOL_IFLOPIMG_H
-#define MAME_TOOLS_IMGTOOL_IFLOPIMG_H
 
-#pragma once
-
-#include "library.h"
+#ifndef IFLOPIMG_H
+#define IFLOPIMG_H
 
 #include "formats/flopimg.h"
-
+#include "library.h"
 
 /***************************************************************************
 
@@ -41,4 +38,4 @@ imgtoolerr_t imgtool_floppy_write_sector_from_stream(imgtool::image &img, int he
 
 void *imgtool_floppy_extrabytes(imgtool::image &img);
 
-#endif // MAME_TOOLS_IMGTOOL_IFLOPIMG_H
+#endif /* IFLOPIMG_H */

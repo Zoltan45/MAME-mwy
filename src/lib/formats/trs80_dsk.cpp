@@ -66,9 +66,6 @@ Description of JV3:
 
 #include "trs80_dsk.h"
 
-#include "ioprocs.h"
-
-
 jv1_format::jv1_format() : wd177x_format(formats)
 {
 }
@@ -135,18 +132,15 @@ const char *jv3_format::extensions() const
 	return "jv3,dsk";
 }
 
-int jv3_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int jv3_format::identify(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
-	uint64_t image_size;
-	if (io.length(image_size))
-		return 0;
+	uint32_t image_size = io_generic_size(io);
 
 	if (image_size < 0x2200)
 		return 0; // too small, silent return
 
 	std::vector<uint8_t> data(image_size);
-	size_t actual;
-	io.read_at(0, data.data(), image_size, actual);
+	io_generic_read(io, data.data(), 0, image_size);
 	const uint32_t entries = 2901;
 	const uint32_t header_size = entries *3 +1;
 
@@ -187,20 +181,20 @@ int jv3_format::identify(util::random_read &io, uint32_t form_factor, const std:
 			// validate so we don't overrun the array
 			if (track >= MAX_TRACKS)
 			{
-				osd_printf_info("jv3_format::identify - track %d exceeds maximum allowed (%d)\n",track,MAX_TRACKS-1);
+				printf("jv3_format::identify - track %d exceeds maximum allowed (%d)\n",track,MAX_TRACKS-1);
 				return 0;
 			}
 
 			if (sector >= MAX_SECTORS)
 			{
-				osd_printf_info("jv3_format::identify - sector %d exceeds maximum allowed (%d)\n",sector,MAX_SECTORS-1);
+				printf("jv3_format::identify - sector %d exceeds maximum allowed (%d)\n",sector,MAX_SECTORS-1);
 				return 0;
 			}
 
 			// check if sector already exists
 			if (sector_array[flag_side][track][sector])
 			{
-				osd_printf_info("jv3_format::identify - side %d track %d sector %d is duplicated\n",flag_side,track,sector);
+				printf("jv3_format::identify - side %d track %d sector %d is duplicated\n",flag_side,track,sector);
 				return 0;
 			}
 
@@ -220,25 +214,21 @@ int jv3_format::identify(util::random_read &io, uint32_t form_factor, const std:
 	// Is all data in the image? (unused tracks at the end are optional)
 	if (last_data > image_size)
 	{
-		osd_printf_info("jv3_format::identify - disk is missing some data. Expected 0x%X, Actual = 0x%X\n",last_data,image_size);
+		printf("jv3_format::identify - disk is missing some data. Expected 0x%X, Actual = 0x%X\n",last_data,image_size);
 		return 0;
 	}
 
 	return 80;
 }
 
-bool jv3_format::load(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
+bool jv3_format::load(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image *image)
 {
 	// disk has already been validated in every way except if it exceeds drive tracks, we do that below
-	osd_printf_info("Disk detected as JV3\n");
+	printf("Disk detected as JV3\n");fflush(stdout);
 	int drive_tracks, drive_sides;
 	image->get_maximal_geometry(drive_tracks, drive_sides);
-	uint64_t image_size;
-	if (io.length(image_size))
-		return false;
-	std::vector<uint8_t> data(image_size);
-	size_t actual;
-	io.read_at(0, data.data(), data.size(), actual);
+	std::vector<uint8_t> data(io_generic_size(io));
+	io_generic_read(io, data.data(), 0, data.size());
 	const uint32_t entries = 2901;
 	const uint32_t header_size = entries *3 +1;
 	bool is_dd = false, is_ds = false;
@@ -323,7 +313,7 @@ bool jv3_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 					data_ptr += sector_size;
 				}
 
-				//osd_printf_verbose("Side %d, Track %d, %s density\n",curr_side,curr_track,ddensity ? "Double" : "Single");
+				//printf("Side %d, Track %d, %s density\n",curr_side,curr_track,ddensity ? "Double" : "Single");
 				if (ddensity)
 				{
 					is_dd = true;
@@ -354,7 +344,7 @@ bool jv3_format::load(util::random_read &io, uint32_t form_factor, const std::ve
 	return true;
 }
 
-bool jv3_format::save(util::random_read_write &io, const std::vector<uint32_t> &variants, floppy_image *image)
+bool jv3_format::save(io_generic *io, const std::vector<uint32_t> &variants, floppy_image *image)
 {
 	int track_count, head_count;
 	image->get_actual_geometry(track_count, head_count);
@@ -362,15 +352,10 @@ bool jv3_format::save(util::random_read_write &io, const std::vector<uint32_t> &
 	if (track_count)
 	{
 		// If the disk already exists, find out if it's writable
-		uint64_t image_size;
-		if (!io.length(image_size))
-		{
-			std::vector<uint8_t> data(image_size);
-			size_t actual;
-			io.read_at(0, data.data(), data.size(), actual);
-			if ((data.size() >= 0x2200) && (data[0x21ff] == 0))
-				return false;   // disk is readonly
-		}
+		std::vector<uint8_t> data(io_generic_size(io));
+		io_generic_read(io, data.data(), 0, data.size());
+		if ((data.size() >= 0x2200) && (data[0x21ff] == 0))
+			return false;   // disk is readonly
 	}
 
 	uint32_t data_ptr = 0x2200, sect_ptr = 0;
@@ -411,8 +396,7 @@ bool jv3_format::save(util::random_read_write &io, const std::vector<uint32_t> &
 					header[sect_ptr++] = track;
 					header[sect_ptr++] = i;
 					header[sect_ptr++] = head ? 0x10 : 0;
-					size_t actual;
-					io.write_at(data_ptr, &dummy[0], 256, actual);
+					io_generic_write(io, &dummy[0], data_ptr, 256);
 					data_ptr += 256;
 				}
 			}
@@ -433,16 +417,14 @@ bool jv3_format::save(util::random_read_write &io, const std::vector<uint32_t> &
 					flags |= (sectors[i].size() >> 8) ^1;
 					flags |= head ? 0x10 : 0;
 					header[sect_ptr++] = flags;
-					size_t actual;
-					io.write_at(data_ptr, sectors[i].data(), sectors[i].size(), actual);
+					io_generic_write(io, sectors[i].data(), data_ptr, sectors[i].size());
 					data_ptr += sectors[i].size();
 				}
 			}
 		}
 	}
 	// Save the header
-	size_t actual;
-	io.write_at(0, header, 0x2200, actual);
+	io_generic_write(io, header, 0, 0x2200);
 
 	return true;
 }

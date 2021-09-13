@@ -14,7 +14,6 @@
 
 #include "machine/eepromser.h"
 #include "machine/intelfsh.h"
-#include "sound/dac.h"
 #include "sound/namco.h"
 #include "emupal.h"
 
@@ -32,8 +31,7 @@ public:
 		m_mainbank(*this, "mainbank"),
 		m_maincpu(*this, "maincpu"),
 		m_eeprom(*this, "eeprom"),
-		m_palette(*this, "palette"),
-		m_dac(*this, "dac")
+		m_palette(*this, "palette")
 	{ }
 
 	void _20pacgal(machine_config &config);
@@ -60,7 +58,6 @@ protected:
 	required_device<cpu_device> m_maincpu;
 	required_device<eeprom_serial_93cxx_device> m_eeprom;
 	required_device<palette_device> m_palette;
-	required_device<dac_8bit_r2r_device> m_dac;
 
 	/* memory */
 	std::unique_ptr<uint8_t[]> m_sprite_gfx_ram;

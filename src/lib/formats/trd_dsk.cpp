@@ -8,10 +8,9 @@
 
 *********************************************************************/
 
+#include <cassert>
+
 #include "formats/trd_dsk.h"
-
-#include "ioprocs.h"
-
 
 trd_format::trd_format() : wd177x_format(formats)
 {
@@ -32,13 +31,10 @@ const char *trd_format::extensions() const
 	return "trd";
 }
 
-int trd_format::find_size(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants)
+int trd_format::find_size(io_generic *io, uint32_t form_factor, const std::vector<uint32_t> &variants)
 {
-	uint64_t size;
-	if (io.length(size))
-		return -1;
-
 	int index = -1;
+	uint64_t size = io_generic_size(io);
 	for (int i = 0; formats[i].form_factor; i++)
 	{
 		const format &f = formats[i];
@@ -51,13 +47,12 @@ int trd_format::find_size(util::random_read &io, uint32_t form_factor, const std
 		{
 			index = i; // at least size match, save it for the case if there will be no exact matches
 
-			size_t actual;
 			uint8_t sectdata[0x100];
 			if (f.encoding == floppy_image::MFM)
-				io.read_at(0x800, sectdata, 0x100, actual);
+				io_generic_read(io, sectdata, 0x800, 0x100);
 			else
 			{
-				io.read_at(0x100, sectdata, 0x100, actual);
+				io_generic_read(io, sectdata, 0x100, 0x100);
 				for (int i = 0; i < 0x100; i++)
 					sectdata[i] ^= 0xff;
 			}

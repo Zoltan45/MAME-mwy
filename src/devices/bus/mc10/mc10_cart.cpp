@@ -96,14 +96,14 @@ image_init_result mc10cart_slot_device::call_load()
 	memory_region *romregion(loaded_through_softlist() ? memregion("rom") : nullptr);
 	if (loaded_through_softlist() && !romregion)
 	{
-		seterror(image_error::INVALIDIMAGE, "Software list item has no 'rom' data area");
+		seterror(IMAGE_ERROR_INVALIDIMAGE, "Software list item has no 'rom' data area");
 		return image_init_result::FAIL;
 	}
 
 	u32 const len(loaded_through_softlist() ? romregion->bytes() : length());
 	if (len > m_cart->max_rom_length())
 	{
-		seterror(image_error::INVALIDIMAGE, "Unsupported cartridge size");
+		seterror(IMAGE_ERROR_UNSUPPORTED, "Unsupported cartridge size");
 		return image_init_result::FAIL;
 	}
 
@@ -114,7 +114,7 @@ image_init_result mc10cart_slot_device::call_load()
 		u32 const cnt(fread(romregion->base(), len));
 		if (cnt != len)
 		{
-			seterror(image_error::UNSPECIFIED, "Error reading cartridge file");
+			seterror(IMAGE_ERROR_UNSPECIFIED, "Error reading cartridge file");
 			return image_init_result::FAIL;
 		}
 	}

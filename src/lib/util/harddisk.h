@@ -8,15 +8,13 @@
 
 ***************************************************************************/
 
-#ifndef MAME_LIB_UTIL_HARDDISK_H
-#define MAME_LIB_UTIL_HARDDISK_H
+#ifndef MAME_UTIL_HARDDISK_H
+#define MAME_UTIL_HARDDISK_H
 
 #pragma once
 
-#include "chd.h"
-#include "utilfwd.h"
-
 #include "osdcore.h"
+#include "chd.h"
 
 
 /***************************************************************************
@@ -51,4 +49,4 @@ hard_disk_info *hard_disk_get_info(hard_disk_file *file);
 uint32_t hard_disk_read(hard_disk_file *file, uint32_t lbasector, void *buffer);
 uint32_t hard_disk_write(hard_disk_file *file, uint32_t lbasector, const void *buffer);
 
-#endif // MAME_LIB_UTIL_HARDDISK_H
+#endif // MAME_UTIL_HARDDISK_H

@@ -8,12 +8,10 @@
 
 ***************************************************************************/
 
+#include <cassert>
 #include "harddisk.h"
-
-#include "corefile.h"
-
+#include "osdcore.h"
 #include <cstdlib>
-
 
 /***************************************************************************
     TYPE DEFINITIONS
@@ -42,7 +40,7 @@ hard_disk_file *hard_disk_open(chd_file *chd)
 	int cylinders, heads, sectors, sectorbytes;
 	hard_disk_file *file;
 	std::string metadata;
-	std::error_condition err;
+	chd_error err;
 
 	/* punt if no CHD */
 	if (chd == nullptr)
@@ -50,7 +48,7 @@ hard_disk_file *hard_disk_open(chd_file *chd)
 
 	/* read the hard disk metadata */
 	err = chd->read_metadata(HARD_DISK_METADATA_TAG, 0, metadata);
-	if (err)
+	if (err != CHDERR_NONE)
 		return nullptr;
 
 	/* parse the metadata */
@@ -179,8 +177,8 @@ uint32_t hard_disk_read(hard_disk_file *file, uint32_t lbasector, void *buffer)
 {
 	if (file->chd)
 	{
-		std::error_condition err = file->chd->read_units(lbasector, buffer);
-		return !err;
+		chd_error err = file->chd->read_units(lbasector, buffer);
+		return (err == CHDERR_NONE);
 	}
 	else
 	{
@@ -213,8 +211,8 @@ uint32_t hard_disk_write(hard_disk_file *file, uint32_t lbasector, const void *b
 {
 	if (file->chd)
 	{
-		std::error_condition err = file->chd->write_units(lbasector, buffer);
-		return !err;
+		chd_error err = file->chd->write_units(lbasector, buffer);
+		return (err == CHDERR_NONE);
 	}
 	else
 	{
