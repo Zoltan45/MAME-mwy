@@ -1,5 +1,3 @@
-This version of MAME has the Team Plus games added to the source code.
-
 
 # **MAME** #
 
