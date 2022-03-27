@@ -10,7 +10,7 @@
 
     Games supported:
         * Mortal Kombat (T-unit version)
-        * Mortal Kombat 2
+        * Mortal Kombat II
         * Mortal Kombat II +
         * NBA Jam
         * NBA Jam Tournament Edition
@@ -1674,7 +1674,6 @@ GAME( 1992, mkr4,       mk,       tunit_adpcm, mk,       midtunit_state, init_mk
 GAME( 1992, mktturbo,   mk,       tunit_adpcm, mk,       midtunit_state, init_mkturbo,  ROT0, "hack",     "Mortal Kombat (Turbo Ninja T-Unit 03/19/93, hack)", MACHINE_SUPPORTS_SAVE )
 
 GAME( 1993, mk2,        0,        tunit_dcs,   mk2,      midtunit_state, init_mk2,      ROT0, "Midway",   "Mortal Kombat II (rev L3.1)", MACHINE_SUPPORTS_SAVE )
-GAME( 2018, mk2p,		mk2,	  tunit_dcs,   mk2,		 midtunit_state, init_mk2,     	ROT0, "Team Plus", "Mortal Kombat II + (beta II)", MACHINE_SUPPORTS_SAVE )
 GAME( 1993, mk2r32e,    mk2,      tunit_dcs,   mk2,      midtunit_state, init_mk2,      ROT0, "Midway",   "Mortal Kombat II (rev L3.2, European)", MACHINE_SUPPORTS_SAVE )
 GAME( 1993, mk2r31e,    mk2,      tunit_dcs,   mk2,      midtunit_state, init_mk2,      ROT0, "Midway",   "Mortal Kombat II (rev L3.1, European)", MACHINE_SUPPORTS_SAVE )
 GAME( 1993, mk2r30,     mk2,      tunit_dcs,   mk2,      midtunit_state, init_mk2,      ROT0, "Midway",   "Mortal Kombat II (rev L3.0)", MACHINE_SUPPORTS_SAVE )
@@ -1685,6 +1684,7 @@ GAME( 1993, mk2r11,     mk2,      tunit_dcs,   mk2,      midtunit_state, init_mk
 GAME( 1993, mk2r42,     mk2,      tunit_dcs,   mk2,      midtunit_state, init_mk2,      ROT0, "hack",     "Mortal Kombat II (rev L4.2, hack)", MACHINE_SUPPORTS_SAVE )
 GAME( 1993, mk2r91,     mk2,      tunit_dcs,   mk2,      midtunit_state, init_mk2,      ROT0, "hack",     "Mortal Kombat II (rev L9.1, hack)", MACHINE_SUPPORTS_SAVE )
 GAME( 1993, mk2chal,    mk2,      tunit_dcs,   mk2,      midtunit_state, init_mk2,      ROT0, "hack",     "Mortal Kombat II Challenger (hack)", MACHINE_SUPPORTS_SAVE )
+GAME( 2018, mk2p,       mk2,      tunit_dcs,   mk2,      midtunit_state, init_mk2,      ROT0, "Team Plus","Mortal Kombat II + (Beta II)", MACHINE_SUPPORTS_SAVE )
 
 GAME( 1993, jdreddp,    0,        tunit_adpcm, jdreddp,  midtunit_state, init_jdreddp,  ROT0, "Midway",   "Judge Dredd (rev TA1 7/12/92, location test)", MACHINE_SUPPORTS_SAVE )
 
