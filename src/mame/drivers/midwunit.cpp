@@ -11,7 +11,7 @@
     Games supported:
         * Mortal Kombat 3
         * Ultimate Mortal Kombat 3
-		* Ultimate Mortal Kombat 3 +
+        * Ultimate Mortal Kombat 3 +
         * NBA Hangtime
         * NBA Maximum Hangtime
         * 2 On 2 Open Ice Challenge
@@ -21,7 +21,7 @@
     TODO:
         * WWF has an unimplemented and not Y2K compatible real-time clock
 
-    BTANB:
+    BTNAB:
         * umk3 Scorpion's "Get Over Here" sample gets cut off, ROM dumps confirmed good
 
     NOTE: There is known to exist (currently not dumped) a Wrestlemania PCB with the following labels:
