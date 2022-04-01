@@ -50,6 +50,7 @@ TODO:
   "First Up" button after the alarm sound.
 - bship discrete sound, netlist is documented
 - finish bshipb SN76477 sound
+- redo internal artwork for the baseball games (embedded SVG for diamond shapes)
 - improve elecbowl driver
 - tithermos temperature sensor comparator (right now just the digital clock works)
 - is alphie(patent) the same as the final version?
@@ -311,14 +312,6 @@ void hh_tms1k_state::machine_start()
 {
 	// resolve handlers
 	m_out_power.resolve();
-
-	// zerofill
-	m_o = 0;
-	m_r = 0;
-	m_inp_mux = 0;
-	m_power_on = false;
-	m_grid = 0;
-	m_plate = 0;
 
 	// register for savestates
 	save_item(NAME(m_o));
@@ -6579,6 +6572,138 @@ static INPUT_PORTS_START( liveafb )
 	PORT_CONFNAME( 0x08, 0x08, DEF_STR( Players ) )
 	PORT_CONFSETTING(    0x08, "1" )
 	PORT_CONFSETTING(    0x00, "2" )
+
+	PORT_START("ROLLER")
+	PORT_BIT( 0x7f, 0x00, IPT_DIAL ) PORT_SENSITIVITY(100) PORT_KEYDELTA(10)
+INPUT_PORTS_END
+
+void liveafb_state::liveafb(machine_config &config)
+{
+	// basic machine hardware
+	TMS1100(config, m_maincpu, 350000); // approximation - RC osc. R=33K, C=100pF
+	m_maincpu->k().set(FUNC(liveafb_state::read_k));
+	m_maincpu->r().set(FUNC(liveafb_state::write_r));
+	m_maincpu->o().set(FUNC(liveafb_state::write_o));
+
+	// video hardware
+	screen_device &mask(SCREEN(config, "mask", SCREEN_TYPE_SVG));
+	mask.set_refresh_hz(60);
+	mask.set_size(1834, 1080);
+	mask.set_visarea_full();
+
+	PWM_DISPLAY(config, m_display).set_size(6+4+4, 8+2);
+	m_display->set_segmask(0x3f, 0x7f);
+	m_display->set_segmask(0x20, 0xff); // only one digit has DP
+	config.set_default_layout(layout_liveafb);
+
+	// sound hardware
+	SPEAKER(config, "mono").front_center();
+	SPEAKER_SOUND(config, m_speaker);
+	m_speaker->add_route(ALL_OUTPUTS, "mono", 0.25);
+}
+
+// roms
+
+ROM_START( liveafb )
+	ROM_REGION( 0x0800, "maincpu", 0 )
+	ROM_LOAD( "mp3489", 0x0000, 0x0800, CRC(1fe05ab3) SHA1(a8d7dfed61a6397b7af1d3fcf17b26d5d917b4f0) )
+
+	ROM_REGION( 867, "maincpu:mpla", 0 )
+	ROM_LOAD( "tms1100_common1_micro.pla", 0, 867, CRC(62445fc9) SHA1(d6297f2a4bc7a870b76cc498d19dbb0ce7d69fec) )
+	ROM_REGION( 365, "maincpu:opla", 0 )
+	ROM_LOAD( "tms1100_liveafb_output.pla", 0, 365, CRC(a7bc9384) SHA1(fab458de394eeddbf5ba0830853a915e51f909c6) )
+
+	ROM_REGION( 162058, "mask", 0)
+	ROM_LOAD( "liveafb.svg", 0, 162058, CRC(046078d0) SHA1(68a5775f4f9a1258c06b76839e1cfdab69b61920) )
+ROM_END
+
+
+
+
+
+/***************************************************************************
+
+  Kosmos Astro
+  * TMS1470NLHL MP1133 (die label TMS1400 MP1133)
+  * 9-digit 7seg VFD display + 8 LEDs(4 green, 4 yellow), no sound
+
+  This is an astrological calculator, and also supports 4-function
+  calculations. Refer to the official manual on how to use this device.
+
+***************************************************************************/
+
+class astro_state : public hh_tms1k_state
+{
+public:
+	astro_state(const machine_config &mconfig, device_type type, const char *tag) :
+		hh_tms1k_state(mconfig, type, tag)
+	{ }
+
+	void astro(machine_config &config);
+
+private:
+	void update_display();
+	void write_r(u16 data);
+	void write_o(u16 data);
+	u8 read_k();
+};
+
+// handlers
+
+void astro_state::update_display()
+{
+	m_display->matrix(m_r, m_o);
+}
+
+void astro_state::write_r(u16 data)
+{
+	// R0-R7: input mux
+	m_inp_mux = data & 0xff;
+
+	// R0-R9: led select
+	m_r = data;
+	update_display();
+}
+
+void astro_state::write_o(u16 data)
+{
+	// O0-O7: led state
+	m_o = data;
+	update_display();
+}
+
+u8 astro_state::read_k()
+{
+	// K: multiplexed inputs
+	return read_inputs(8);
+}
+
+// config
+
+static INPUT_PORTS_START( astro )
+	PORT_START("IN.0") // R0
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_0) PORT_CODE(KEYCODE_0_PAD) PORT_NAME("0")
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_5) PORT_CODE(KEYCODE_5_PAD) PORT_NAME("5")
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_SLASH_PAD) PORT_NAME(UTF8_DIVIDE"/Sun")
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_UNUSED )
+
+	PORT_START("IN.1") // R1
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_1) PORT_CODE(KEYCODE_1_PAD) PORT_NAME("1")
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_6) PORT_CODE(KEYCODE_6_PAD) PORT_NAME("6")
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_ASTERISK) PORT_NAME(UTF8_MULTIPLY"/Mercury")
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_UNUSED )
+
+	PORT_START("IN.2") // R2
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_2) PORT_CODE(KEYCODE_2_PAD) PORT_NAME("2")
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_7) PORT_CODE(KEYCODE_7_PAD) PORT_NAME("7")
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_MINUS_PAD) PORT_NAME("-/Venus")
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_UNUSED )
+
+	PORT_START("IN.3") // R3
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_3) PORT_CODE(KEYCODE_3_PAD) PORT_NAME("3")
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_8) PORT_CODE(KEYCODE_8_PAD) PORT_NAME("8")
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_PLUS_PAD) PORT_NAME("+/Mars")
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_UNUSED )
 
 	PORT_START("ROLLER")
 	PORT_BIT( 0x7f, 0x00, IPT_DIAL ) PORT_SENSITIVITY(100) PORT_KEYDELTA(10)

@@ -140,6 +140,7 @@ using util::BIT;
 #include "cpu/rii/riidasm.h"
 #include "cpu/romp/rompdasm.h"
 #include "cpu/rsp/rsp_dasm.h"
+#include "cpu/rw5000/rw5000d.h"
 #include "cpu/rx01/rx01dasm.h"
 #include "cpu/s2650/2650dasm.h"
 #include "cpu/saturn/saturnds.h"
@@ -376,6 +377,8 @@ static const dasm_table_entry dasm_table[] =
 	{ "alpha_unix",      le,  0, []() -> util::disasm_interface * { return new alpha_disassembler(alpha_disassembler::TYPE_UNIX); } },
 	{ "alpha_vms",       le,  0, []() -> util::disasm_interface * { return new alpha_disassembler(alpha_disassembler::TYPE_VMS); } },
 	{ "alto2",           be, -2, []() -> util::disasm_interface * { return new alto2_disassembler; } },
+	{ "a5000",           le,  0, []() -> util::disasm_interface * { return new a5000_disassembler; } },
+	{ "a5500",           le,  0, []() -> util::disasm_interface * { return new a5500_disassembler; } },
 	{ "am29000",         be,  0, []() -> util::disasm_interface * { return new am29000_disassembler; } },
 	{ "amis2000",        le,  0, []() -> util::disasm_interface * { return new amis2000_disassembler; } },
 	{ "apexc",           be,  0, []() -> util::disasm_interface * { return new apexc_disassembler; } },
@@ -392,7 +395,8 @@ static const dasm_table_entry dasm_table[] =
 	{ "axc51core",       le,  0, []() -> util::disasm_interface * { return new axc51core_disassembler; } },
 	{ "axc208",          le,  0, []() -> util::disasm_interface * { return new ax208_disassembler; } },
 	{ "b5000",           le,  0, []() -> util::disasm_interface * { return new b5000_disassembler; } },
-	{ "b5500",           le,  0, []() -> util::disasm_interface * { return new b5500_disassembler; } },
+	{ "b6000",           le,  0, []() -> util::disasm_interface * { return new b6000_disassembler; } },
+	{ "b6100",           le,  0, []() -> util::disasm_interface * { return new b6100_disassembler; } },
 	{ "capricorn",       le,  0, []() -> util::disasm_interface * { return new capricorn_disassembler; } },
 	{ "ccpu",            le,  0, []() -> util::disasm_interface * { return new ccpu_disassembler; } },
 	{ "cdp1801",         le,  0, []() -> util::disasm_interface * { return new cosmac_disassembler(cosmac_disassembler::TYPE_1801); } },
