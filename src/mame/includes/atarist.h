@@ -329,7 +329,7 @@ protected:
 
 	static void floppy_formats(format_registration &fr);
 
-	int m_monochrome = 0;
+	int m_monochrome;
 	required_device<palette_device> m_palette;
 	required_device<screen_device> m_screen;
 

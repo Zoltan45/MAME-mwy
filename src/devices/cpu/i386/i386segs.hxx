@@ -2479,7 +2479,7 @@ void i386_device::i386_protected_mode_iret(int operand32)
 inline void i386_device::dri_changed()
 {
 	int dr;
-
+	
 	if(m_dri_changed_active)
 		return;
 	m_dri_changed_active = true;
@@ -2562,3 +2562,4 @@ inline void i386_device::dr7_changed(uint32_t old_val, uint32_t new_val)
 	int new_breakpoint_info = new_val >> 16;
 	if(old_breakpoint_info != new_breakpoint_info) dri_changed();
 }
+

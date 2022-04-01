@@ -248,17 +248,6 @@ void tsconf_state::tsconf_UpdateGfxBitmap(bitmap_ind16 &bitmap, const rectangle 
 				*bm++ = *video_location++;
 			}
 		}
-
-		if (from_y == to_y)
-			// done - scanline updated partially
-			from_x = to_x;
-		else
-		{
-			from_y += 1;
-			m_rendering_gfx_y_offset = (m_rendering_gfx_y_offset + 1) & 0x1ff;
-			from_x = screen.left();
-			to_display(screen, from_x, from_y);
-		}
 	}
 }
 
@@ -325,23 +314,6 @@ void tsconf_state::draw_sprites(screen_device &screen_d, bitmap_ind16 &bitmap, c
 				}
 				tile_row += flipy ? -1 : 1;
 			}
-			if (draw)
-				m_previous_tsu_vpos = m_screen->vpos();
-		}
-
-		if (draw)
-		{
-			m_screen->priority().fill(0, screen);
-			if (BIT(m_regs[TS_CONFIG], 5))
-				m_ts_tilemap[TM_TILES0]->draw(*m_screen, m_screen->curbitmap().as_ind16(), screen,
-											  BIT(m_regs[TS_CONFIG], 2) ? TILEMAP_DRAW_ALL_CATEGORIES : TILEMAP_DRAW_CATEGORY(1), 1);
-
-			if (BIT(m_regs[TS_CONFIG], 6))
-				m_ts_tilemap[TM_TILES1]->draw(*m_screen, m_screen->curbitmap().as_ind16(), screen,
-											  BIT(m_regs[TS_CONFIG], 3) ? TILEMAP_DRAW_ALL_CATEGORIES : TILEMAP_DRAW_CATEGORY(1), 2);
-
-			if (BIT(m_regs[TS_CONFIG], 7))
-				draw_sprites(screen);
 		}
 	}
 }

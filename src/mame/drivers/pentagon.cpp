@@ -16,8 +16,6 @@
 
 namespace {
 
-#define PENTAGON_SCREEN  rectangle{138, 393, 80, 271}
-
 class pentagon_state : public spectrum_128_state
 {
 public:

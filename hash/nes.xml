@@ -46434,26 +46434,6 @@ preliminary proto for the PAL version, still running on NTSC systems) or the gfx
 		</part>
 	</software>
 
-	<software name="dwarr2p" cloneof="dwarr2">
-		<description>Dragon Warrior II (USA, prototype)</description>
-		<year>1990?</year>
-		<publisher>Enix</publisher>
-		<part name="cart" interface="nes_cart">
-			<feature name="slot" value="sxrom" />
-			<feature name="pcb" value="NES-SNROM" />
-			<dataarea name="prg" size="262144">
-				<rom name="dragon warrior ii (prototype).prg" size="262144" crc="58fcbaa2" sha1="4637f45ced4b17d01365f0cfaa1cad81027cafee" />
-			</dataarea>
-			<!-- 8k VRAM on cartridge -->
-			<dataarea name="vram" size="8192">
-			</dataarea>
-			<!-- 8k WRAM on cartridge, battery backed up -->
-			<dataarea name="bwram" size="8192">
-				<rom value="0x00" size="8192" offset="0" loadflag="fill" />
-			</dataarea>
-		</part>
-	</software>
-
 	<software name="drgnwarsj" cloneof="drgnwars">
 		<description>Dragon Wars (Jpn)</description>
 		<year>1991</year>
@@ -46527,23 +46507,6 @@ preliminary proto for the PAL version, still running on NTSC systems) or the gfx
 			<feature name="mirroring" value="vertical" />
 			<dataarea name="prg" size="131072">
 				<rom name="dreamworld pogie (prototype).prg" size="131072" crc="63d38b86" sha1="2a5c1d05518a1ae1a13bde19c904c8bdb772fbf8" offset="00000" />
-			</dataarea>
-			<!-- 8k VRAM on cartridge -->
-			<dataarea name="vram" size="8192">
-			</dataarea>
-		</part>
-	</software>
-
-	<software name="ducktaleup1" cloneof="ducktale">
-		<description>DuckTales (USA, 19890205 prototype)</description>
-		<year>1989</year>
-		<publisher>Capcom</publisher>
-		<part name="cart" interface="nes_cart">
-			<feature name="slot" value="uxrom" />
-			<feature name="pcb" value="NES-UNROM" />
-			<feature name="mirroring" value="vertical" />
-			<dataarea name="prg" size="131072">
-				<rom name="ducktales (feb 5, 1989 prototype).prg" size="131072" crc="2c26736b" sha1="e9709c15728cec9a6fed73b1064782bd5ded7ee4" />
 			</dataarea>
 			<!-- 8k VRAM on cartridge -->
 			<dataarea name="vram" size="8192">
@@ -47416,22 +47379,6 @@ preliminary proto for the PAL version, still running on NTSC systems) or the gfx
 			<feature name="pcb" value="NES-SLROM" />
 			<dataarea name="prg" size="131072">
 				<rom name="great deal (japan).prg" size="131072" crc="bcf68611" sha1="d5c89cd8775808c8a85037bc34328bc457e0e696" offset="00000" />
-			</dataarea>
-			<!-- 8k VRAM on cartridge -->
-			<dataarea name="vram" size="8192">
-			</dataarea>
-		</part>
-	</software>
-
-	<software name="squaredl" cloneof="greatdl">
-		<description>Square Deal (Japan, Great Deal prototype)</description>
-		<year>1991</year>
-		<publisher>Hector</publisher>
-		<part name="cart" interface="nes_cart">
-			<feature name="slot" value="sxrom" />
-			<feature name="pcb" value="NES-SLROM" />
-			<dataarea name="prg" size="131072">
-				<rom name="square deal (japan) (sample).prg" size="131072" crc="3f57e040" sha1="c13041cbc4e5840cd35c762da387e3ff08d583bf" />
 			</dataarea>
 			<!-- 8k VRAM on cartridge -->
 			<dataarea name="vram" size="8192">
@@ -49337,43 +49284,6 @@ preliminary proto for the PAL version, still running on NTSC systems) or the gfx
 			</dataarea>
 			<dataarea name="prg" size="131072">
 				<rom name="nekketsu street basket - ganbare dunk heroes (japan).prg" size="131072" crc="4fb460cd" sha1="6eb0f56092da328bf280de4cf6e02baad905b93f" offset="00000" />
-			</dataarea>
-		</part>
-	</software>
-
-	<software name="nesgolfup" cloneof="nesgolf">
-		<description>NES Open Tournament Golf (USA, prototype)</description>
-		<year>1991</year>
-		<publisher>Nintendo</publisher>
-		<part name="cart" interface="nes_cart">
-			<feature name="slot" value="sxrom" />
-			<feature name="pcb" value="NES-SNROM" />
-			<dataarea name="prg" size="262144">
-				<rom name="nes open tournament golf (prototype).prg" size="262144" crc="6417e28e" sha1="bfe5f284329f2474c268f55d98f6c945696f1d85" status="baddump" />
-			</dataarea>
-			<!-- 8k VRAM on cartridge -->
-			<dataarea name="vram" size="8192">
-			</dataarea>
-			<!-- 8k WRAM on cartridge, battery backed up -->
-			<dataarea name="bwram" size="8192">
-				<rom value="0x00" size="8192" offset="0" loadflag="fill" />
-			</dataarea>
-		</part>
-	</software>
-
-	<software name="playfootp" cloneof="playfoot">
-		<description>NES Play Action Football (USA, prototype)</description>
-		<year>1990</year>
-		<publisher>Nintendo</publisher>
-		<part name="cart" interface="nes_cart">
-			<feature name="slot" value="txsrom" />
-			<feature name="pcb" value="NES-TLSROM" />
-			<feature name="peripheral" value="4p_adapter" />
-			<dataarea name="prg" size="131072">
-				<rom name="nes play action football (prototype).prg" size="131072" crc="2ec51099" sha1="60b52e01ce3693384231360e30e83d10bd1d0170" status="baddump" />
-			</dataarea>
-			<dataarea name="chr" size="131072">
-				<rom name="nes play action football (prototype).chr" size="131072" crc="6e8cae8d" sha1="5a1c0c0d0b60bd09d7bbd33f96ef5fd39b3b3046" status="baddump" />
 			</dataarea>
 		</part>
 	</software>
@@ -51638,73 +51548,6 @@ preliminary proto for the PAL version, still running on NTSC systems) or the gfx
 			</dataarea>
 			<dataarea name="prg" size="32768">
 				<rom name="tetris (bulletproof) (japan).prg" size="32768" crc="f5fe896f" sha1="269bd17cfb0b32c0db67922e9a6f03908a32b2da" offset="00000" />
-			</dataarea>
-		</part>
-	</software>
-
-	<software name="tetristp" cloneof="tetrist">
-		<description>Tetris (USA, prototype)</description>
-		<year>198?</year>
-		<publisher>Tengen</publisher>
-		<part name="cart" interface="nes_cart">
-			<feature name="slot" value="nrom" />
-			<feature name="mirroring" value="vertical" />
-			<dataarea name="prg" size="32768">
-				<rom name="tengen tetris (prototype d).prg" size="16384" crc="74f6b1c2" sha1="5d3b82707e08ce82223528485666e64e0c1306f9" offset="0x0000" status="baddump" />
-				<rom size="16384" offset="0x4000" loadflag="reload" />
-			</dataarea>
-			<dataarea name="chr" size="8192">
-				<rom name="tengen tetris (prototype d).chr" size="8192" crc="c68e7dfb" sha1="619c7a468366adfb34460d60c2f5598946eccf24" status="baddump" />
-			</dataarea>
-		</part>
-	</software>
-
-	<software name="tetristp1" cloneof="tetrist">
-		<description>Tetris (USA, prototype, alt)</description>
-		<year>198?</year>
-		<publisher>Tengen</publisher>
-		<part name="cart" interface="nes_cart">
-			<feature name="slot" value="nrom" />
-			<feature name="mirroring" value="vertical" />
-			<dataarea name="prg" size="32768">
-				<rom name="tengen tetris (prototype c).prg" size="16384" crc="908b9b75" sha1="98a44698c0635a82b06092f52b304b1159824e70" offset="0x0000" status="baddump" />
-				<rom size="16384" offset="0x4000" loadflag="reload" />
-			</dataarea>
-			<dataarea name="chr" size="8192">
-				<rom name="tengen tetris (prototype c).chr" size="8192" crc="51e8d403" sha1="ed734994d164c4b59794249a13bce333896b3ee5" status="baddump" />
-			</dataarea>
-		</part>
-	</software>
-
-	<software name="tetristp2" cloneof="tetrist">
-		<description>Tetris (USA, prototype, alt 2)</description>
-		<year>198?</year>
-		<publisher>Tengen</publisher>
-		<part name="cart" interface="nes_cart">
-			<feature name="slot" value="nrom" />
-			<feature name="mirroring" value="vertical" />
-			<dataarea name="prg" size="32768">
-				<rom name="tengen tetris (prototype b).prg" size="32768" crc="aef00002" sha1="48105b3029b8a29f0b864be1b0f835a77eba6f5e" status="baddump" />
-			</dataarea>
-			<dataarea name="chr" size="8192">
-				<rom name="tengen tetris (prototype b).chr" size="8192" crc="45925063" sha1="e358f292573adffdb005145bd5b038f3200a74c7" status="baddump" />
-			</dataarea>
-		</part>
-	</software>
-
-	<software name="tetristp3" cloneof="tetrist">
-		<description>Tetris (USA, prototype, alt 3)</description>
-		<year>198?</year>
-		<publisher>Tengen</publisher>
-		<part name="cart" interface="nes_cart">
-			<feature name="slot" value="nrom" />
-			<feature name="mirroring" value="vertical" />
-			<dataarea name="prg" size="32768">
-				<rom name="tengen tetris (prototype a).prg" size="16384" crc="75227440" sha1="19a3a10152812c349019d347dc154bb3457e9266" offset="0x0000" status="baddump" />
-				<rom size="16384" offset="0x4000" loadflag="reload" />
-			</dataarea>
-			<dataarea name="chr" size="8192">
-				<rom name="tengen tetris (prototype a).chr" size="8192" crc="190ecf89" sha1="5518eda51c626fb33ca9a9da8e1f17644730ad7d" status="baddump" />
 			</dataarea>
 		</part>
 	</software>

@@ -40,19 +40,6 @@ Games:
 **** Other Manufacturer ****
 - Horror (conversion of Space Shuttle)
 
-Games:
-- Combat
-- Winter Sports
-- House of Diamonds
-- Future World
-- Shooting the Rapids
-- Hot Wheels
-- Fire Mountain
-- Star God
-- Space Shuttle
-- Earth Wind Fire
-- Locomotion
-
 Sound - there's 5 sound boards
  1. 4 audio oscillators which can be switched on and off independently. It's shown
     on the schematic of all machines, but only works for (hod, wsports, and futurwld).

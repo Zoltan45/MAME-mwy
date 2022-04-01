@@ -763,9 +763,6 @@ void akiko_device::update_cdrom()
 			// needed by cdtv:defcrown (would otherwise hardlock emulation)
 			m_cdrom_cmd_start = (m_cdrom_cmd_start + 2) & 0xff;
 
-			// needed by cdtv:defcrown (would otherwise hardlock emulation)
-			m_cdrom_cmd_start = (m_cdrom_cmd_start + 2) & 0xff;
-
 			setup_response( 15, resp );
 		}
 		else if ( cmd == 0x07 ) /* check door status */

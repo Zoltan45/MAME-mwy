@@ -66,7 +66,7 @@ Starlight                         530  AS hit 1                  AS
 *Wild Texas is a clone/bootleg of Firepower II, and shows the same game number.
 
 Status:
-- All machines are playable (except Spellbinder).
+- All machines are playable
 - Thunderball: turn Speech DIP off, or you get corrupt sound.
 
 ToDo:
@@ -1119,7 +1119,6 @@ GAME( 1981, hypbl_l3, hypbl_l4, s7, hypbl, s7_state, empty_init, ROT0, "Williams
 GAME( 1981, hypbl_l2, hypbl_l4, s7, hypbl, s7_state, empty_init, ROT0, "Williams",  "HyperBall (L-2)",                   MACHINE_IS_SKELETON_MECHANICAL )
 GAME( 1981, barra_l1, 0,        s7, barra, s7_state, empty_init, ROT0, "Williams",  "Barracora (L-1)",                   MACHINE_IS_SKELETON_MECHANICAL )
 GAME( 1982, vrkon_l1, 0,        s7, vrkon, s7_state, empty_init, ROT0, "Williams",  "Varkon (L-1)",                      MACHINE_IS_SKELETON_MECHANICAL )
-GAME( 1982, splbn_l0, 0,        s7, s7,    s7_state, empty_init, ROT0, "Williams",  "Spellbinder (L-0)",                 MACHINE_IS_SKELETON_MECHANICAL )
 GAME( 1982, tmfnt_l5, 0,        s7, tmfnt, s7_state, empty_init, ROT0, "Williams",  "Time Fantasy (L-5)",                MACHINE_IS_SKELETON_MECHANICAL )
 GAME( 1982, wrlok_l3, 0,        s7, wrlok, s7_state, empty_init, ROT0, "Williams",  "Warlok (L-3)",                      MACHINE_IS_SKELETON_MECHANICAL )
 GAME( 1982, dfndr_l4, 0,        s7, dfndr, s7_state, empty_init, ROT0, "Williams",  "Defender (L-4)",                    MACHINE_IS_SKELETON_MECHANICAL )

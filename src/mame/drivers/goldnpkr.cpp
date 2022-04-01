@@ -4855,7 +4855,7 @@ ROM_END
 
   1- When the player wins a hand, game will automatically switch to HI-LO
      for double-up (no need to press the "double" button)
-
+	 
   2- A card is shown to the player, then the game is to guess the drawn card
     (BIG to guess bigger than actual card, LO to guess a lower card)
 
@@ -4901,7 +4901,7 @@ ROM_END
 
   1- When the player wins a hand, game will automatically switch to HI-LO
      for double-up (no need to press the "double" button)
-
+	 
   2- A card is shown to the player, then the game is to guess the drawn card
     (BIG to guess bigger than actual card, LO to guess a lower card)
 

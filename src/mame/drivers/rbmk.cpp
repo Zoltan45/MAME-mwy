@@ -790,19 +790,6 @@ static const gfx_layout magslot16_layout = // TODO: not correct
 	32*64
 };
 
-static const gfx_layout magslot16_layout = // TODO: not correct
-{
-	16,16,
-	RGN_FRAC(1,1),
-	8,
-	{8, 9,10, 11, 0, 1, 2, 3  },
-	{ 0, 4, 16, 20, 32, 36, 48, 52,
-	512+0,512+4,512+16,512+20,512+32,512+36,512+48,512+52},
-	{ 0*64, 1*64, 2*64, 3*64, 4*64, 5*64, 6*64, 7*64,
-	1024+0*16,1024+1*64,1024+2*64,1024+3*64,1024+4*64,1024+5*64,1024+6*64,1024+7*64},
-	32*64
-};
-
 
 static GFXDECODE_START( gfx_rbmk )
 	GFXDECODE_ENTRY( "gfx1", 0, rbmk32_layout,            0x0, 16  )
@@ -813,12 +800,6 @@ static GFXDECODE_START( gfx_magslot )
 	GFXDECODE_ENTRY( "gfx1", 0, magslot16_layout,         0x000, 16  )
 	GFXDECODE_ENTRY( "gfx2", 0, gfx_8x8x4_packed_lsb,     0x100, 16  )
 	GFXDECODE_ENTRY( "gfx3", 0, gfx_8x8x4_packed_lsb,     0x100, 16  ) // wrong colors
-GFXDECODE_END
-
-static GFXDECODE_START( gfx_magslot )
-	GFXDECODE_ENTRY( "gfx1", 0, magslot16_layout, 0x000, 16  )
-	GFXDECODE_ENTRY( "gfx2", 0, rbmk8_layout,     0x100, 16  )
-	GFXDECODE_ENTRY( "gfx3", 0, rbmk8_layout,     0x100, 16  ) // wrong colors
 GFXDECODE_END
 
 void rbmk_state::video_start()
