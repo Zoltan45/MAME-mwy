@@ -6,29 +6,32 @@
 //
 //============================================================
 
+#include "input_module.h"
 #include "modules/osdmodule.h"
 
 #if defined(OSD_WINDOWS)
 
-// MAME headers
-#include "emu.h"
-
-#include "input_windows.h"
-
-#include "winmain.h"
-#include "window.h"
-
-#include "modules/lib/osdlib.h"
-#include "strconv.h"
+// standard windows headers
+#include <windows.h>
+#include <tchar.h>
+#undef interface
 
 #include <algorithm>
 #include <functional>
 #include <mutex>
 #include <new>
 
-// standard windows headers
-#include <windows.h>
-#include <tchar.h>
+// MAME headers
+#include "emu.h"
+#include "strconv.h"
+
+// MAMEOS headers
+#include "modules/lib/osdlib.h"
+#include "winmain.h"
+#include "window.h"
+
+#include "input_common.h"
+#include "input_windows.h"
 
 
 namespace {
@@ -823,8 +826,6 @@ protected:
 } // anonymous namespace
 
 #else // defined(OSD_WINDOWS)
-
-#include "input_module.h"
 
 MODULE_NOT_SUPPORTED(keyboard_input_rawinput, OSD_KEYBOARDINPUT_PROVIDER, "rawinput")
 MODULE_NOT_SUPPORTED(mouse_input_rawinput, OSD_MOUSEINPUT_PROVIDER, "rawinput")

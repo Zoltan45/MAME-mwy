@@ -1,10 +1,9 @@
 // license:BSD-3-Clause
 // copyright-holders:Couriersud
-
-///
-/// \file nld_truthtable.h
-///
-///
+/*
+ * nld_truthtable.h
+ *
+ */
 
 #ifndef NLID_TRUTHTABLE_H_
 #define NLID_TRUTHTABLE_H_

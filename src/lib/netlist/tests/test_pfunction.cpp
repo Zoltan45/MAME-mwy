@@ -4,7 +4,7 @@
 ///
 /// \file test_pfunction.cpp
 ///
-/// tests for `pfunction` class
+/// tests for pfunction
 ///
 
 #include "plib/ptests.h"

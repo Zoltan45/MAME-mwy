@@ -655,14 +655,9 @@ int avg_device::handler_7() // avg_strobe3
 
 	if (!OP0() && !OP2())
 	{
-		int x = m_xpos;
-		int y = m_ypos;
-
-		apply_flipping(x, y);
-
 		vg_add_point_buf(
-				x,
-				y,
+				m_xpos,
+				m_ypos,
 				vector_device::color111(m_color),
 				(((m_int_latch >> 1) == 1) ? m_intensity : m_int_latch & 0xe) << 4);
 	}

@@ -1909,7 +1909,6 @@ cactusco                        // (c) 2007
 callwld                         // (c) 2007
 calyking                        // (c) 2005
 canaryrc                        // (c) 2006
-centrion                        // (c) 2007
 cmtonig                         // (c) 2005
 cinhell                         // (c) 2004
 corrida                         // (c) 2005
@@ -2078,7 +2077,6 @@ silkrda6                        // (c) 2006
 silgola6                        // (c) 2002
 skydnca6                        // (c) 2008
 spgcarn                         // (c) 1999
-spgcarnjc                       // (c) 2003
 spgcarnq                        // (c) 2001
 spgfest                         // (c) 2008
 stardrft                        // (c) 2003
@@ -2148,8 +2146,7 @@ arkanoidjbl2                    // bootleg (Beta)
 arkanoidu                       // A75 (c) 1986 Taito America Corporation + Romstar license (US)
 arkanoiduo                      // A75 (c) 1986 Taito America Corporation + Romstar license (US)
 arkatayt                        // bootleg
-arkatour                        // A75 (c) 1987 Taito America Corporation + Romstar license (US)
-arkatour2                       // A75 (c) 1987 Taito America Corporation + Romstar license (US)
+arkatour                        // ??? (c) 1987 Taito America Corporation + Romstar license (US)
 arkbloc2                        // bootleg
 arkbloc3                        // bootleg
 arkblock                        // bootleg
@@ -14816,7 +14813,6 @@ superbon                        // bootleg
 superg                          // hack
 supergs                         // Silver Systems hack
 supergx                         // [1980] Nichibutsu
-supershp                        // bootleg
 suprheli                        // bootleg
 swarm                           // hack
 tazmania                        // (c) 1982 Stern
@@ -14954,6 +14950,10 @@ gambl186d                       // EGD
 
 @source:gamecom.cpp
 gamecom                         // Tiger Game.com
+
+@source:gamecstl.cpp
+gamecst2                        // MAME based bootleg, version 2.613
+gamecstl                        // MAME based bootleg
 
 @source:gamecube.cpp
 gcjp                            // (c) 2001 Nintendo
@@ -16588,7 +16588,6 @@ atakaast                        // Elektronika
 auslalom                        // Elektronika
 bassmate                        // Telko
 biathlon                        // Elektronika
-ecircus                         // Elektronika
 ehockey                         // Elektronika
 gnw_ball                        // Nintendo
 gnw_bfight                      // Nintendo
@@ -16794,7 +16793,6 @@ mbdtower                        // Milton Bradley
 mdndclab                        // Mattel
 merlin                          // Parker Bros
 merlina                         // Parker Bros
-mmarvin                         // Entex
 mmerlin                         // Parker Bros
 monkeysee                       // Tandy Corporation
 palmf31                         // Canon
@@ -19993,9 +19991,6 @@ skywolf3                        // bootleg
 sonofphx                        // bootleg
 srdmissn                        // (c) 1986 Taito Corporation
 
-@source:labtam.cpp
-labtam                          // Labtam 3000 model 3006
-
 @source:labyrunr.cpp
 labyrunr                        // GX771 (c) 1987 (Japan)
 labyrunrk                       // GX771 (c) 1987 (Japan)
@@ -20869,9 +20864,6 @@ superpacm                       // (c) 1982 Midway
 todruaga                        // (c) 1984
 todruagao                       // (c) 1984
 todruagas                       // (c) 1984 pcb manufactured by Sidam
-
-@source:marblmd2.cpp
-marblmd2
 
 @source:marineb.cpp
 bcruzm12                        // (c) 1983 Sigma Ent. Inc.
@@ -23606,9 +23598,6 @@ mice2_6502                      // (c) 1986 Microtek International, Inc.
 mice2_8085                      // (c) 1986 Microtek International, Inc.
 mice2_6809                      // (c) 1986 Microtek International, Inc.
 
-@source:miconkit.cpp
-micon2
-
 @source:micral.cpp
 micral                          //
 questarm
@@ -23627,15 +23616,13 @@ tankbatl                        // (c) 1992 Microprose Games Inc.
 dm3270                          //
 
 @source:microdar.cpp
+dibifuca                        // (c) 199? Compumatic
+dibif743                        // (c) 199? Compumatic
+dibif727                        // (c) 199? Compumatic
 cfarwest                        // (c) 1997 Compumatic
-covidarts                       // (c) 1997 Covielsa
-dibifpspdp                      // (c) 1997 Compumatic / Bifuca
-dibif727                        // (c) 199? Compumatic / Bifuca
-dibif743                        // (c) 199? Compumatic / Bifuca
-dibifuca                        // (c) 199? Compumatic / Bifuca
-diola827                        // (c) 1997 Compumatic / Olakoa
-diolakoa                        // (c) 1997 Compumatic / Olakoa
-minidart                        // (c) 2009 Compumatic
+prospdp                         // (c) 1997 Compumatic
+diolakoa                        // (c) 1997 Compumatic
+diola827                        // (c) 1997 Compumatic
 
 @source:microdec.cpp
 md2                             //
@@ -24071,10 +24058,9 @@ daytonata                       // 1994?   Kyle Hodgetts hack
 daytonagtx                      // 2004    Kyle Hodgetts hack
 desert                          // 1994.07 Desert Tank
 doa                             // 1997.01 Dead or Alive (Revision C)
-doaa                            // 1996.12 Dead or Alive (Revision A)
-doaab                           // 1996.11 Dead or Alive (Revision A)
-doaae                           // 1996.11 Dead or Alive (Revision A)
 doab                            // 1996.12 Dead or Alive (Revision B)
+doaa                            // 1996.11 Dead or Alive (Revision A)
+doaab                           // 1996.11 Dead or Alive (Revision A)
 dynabb                          // 1996.08 Dynamite Baseball
 dynabb97                        // 1997.04 Dynamite Baseball 97 (Revision A)
 dynamcop                        // 1998.09 Dynamic Cop (Export)
@@ -37163,7 +37149,6 @@ jst_l2                          //
 lsrcu_l2                        //
 pharo_l2                        //
 solar_l2                        //
-splbn_l0                        //
 strlt_l1                        //
 thund_p1                        //
 thund_p2                        //
@@ -37792,7 +37777,6 @@ westdrm                         //
 astrofl                         // 834-5803 (c) 1986
 fantzn2                         // (c) 1988
 hangonjr                        // (c) 1985
-megrescu                        // (c) 1987
 opaopa                          // (c) 1987
 opaopan                         // (c) 1987
 ridleofp                        // (c) 1986 Sega / Nasco
@@ -38993,11 +38977,6 @@ simpsons2pa                     // GX072 (c) 1991 (Asia)
 simpsons2pj                     // GX072 (c) 1991 (Japan)
 simpsons4pa                     // GX072 (c) 1991 (Asia)
 simpsons4pe                     // GX072 (c) 1991 (World)
-
-@source:sis630.cpp
-gamecst2                        // MAME based bootleg, version 2.613
-gamecstl                        // MAME based bootleg
-shutms11                        // (c) 2000
 
 @source:sitcom.cpp
 sitcom                          //
@@ -42679,13 +42658,11 @@ invds                           // 367-382 (c) 1979 Sega
 invho2                          // 271-286 (c) 1979 Sega
 invho2a                         // 326-341 (c) 1979 Sega
 invinco                         // 310-318 (c) 1979 Sega
-nostromo                        // bootleg
 nsub                            // 268-275 (c) 1980 Sega
 pulsar                          // 790-805 (c) 1981 Sega
 safari                          // 57-66 [1977 Gremlin?]
 safaria                         // bootleg?
-samurai                         // 1217-1230 (c) Sega
-samuraij                        // 289-302 + upgrades (c) 1980 Sega
+samurai                         // 289-302 + upgrades (c) 1980 Sega
 spacetrk                        // 630-645 (c) 1980 Sega
 spacetrkc                       // (c) 1980 Sega
 sspacaho                        // ? epr00001.bin - epr00008.bin
@@ -44187,9 +44164,6 @@ psr70                           // 1985 PSR-70
 
 @source:ympsr340.cpp
 psr340                          // 1999 PSR-340
-
-@source:ymqy70.cpp
-qy70                            // 1997 QY-70
 
 @source:ymrx15.cpp
 rx15                            //

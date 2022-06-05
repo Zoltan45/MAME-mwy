@@ -1,9 +1,5 @@
 // license:CC0
 // copyright-holders:Couriersud
-
-// Specific technical terms
-// spell-checker: words Iave, Vishay, Zdiodes, Icrating, Vceo
-
 #include "devices/net_lib.h"
 
 /* ----------------------------------------------------------------------------

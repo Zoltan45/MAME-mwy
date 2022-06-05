@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "input_windows.h"
-
 #include "modules/lib/osdlib.h"
 
 #include <cstdint>
@@ -12,11 +10,7 @@
 #include <mutex>
 #include <string_view>
 
-#include <xinput.h>
-
-
 class xinput_joystick_device;
-
 
 class xinput_api_helper : public std::enable_shared_from_this<xinput_api_helper>
 {
@@ -45,7 +39,6 @@ private:
 	xinput_get_state_fn      XInputGetState = nullptr;
 	xinput_get_caps_fn       XInputGetCapabilities = nullptr;
 };
-
 
 class xinput_joystick_device : public device_info
 {

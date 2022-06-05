@@ -21,13 +21,13 @@
 // is a common agreement in serious recording applications while
 // still recording the file. So a playback application can determine that the
 // given file is still being recorded. As soon as the recording application
-// finishes the ongoing recording, it writes the correct values for RIFF length
+// finishes the ongoing recording, it writes the correct values for RIFF lenth
 // and data chunk length to the file.
 //
 // http://de.wikipedia.org/wiki/RIFF_WAVE
 //
 
-using arena = plib::aligned_arena<>;
+using arena = plib::aligned_arena;
 
 class wav_t
 {
@@ -401,7 +401,7 @@ public:
 				val = outsam * m_amp;
 			} while (plib::abs(val) > 1.0);
 			// FIXME: log this in state and provide on verbose output
-			//printf("dynamic amplification adjusted to %f at %f\n", m_amp, time);
+			//printf("dynamp adjusted to %f at %f\n", m_amp, time);
 		}
 		m_samples[chan] = val;
 	}

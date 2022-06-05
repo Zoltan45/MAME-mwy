@@ -94,8 +94,6 @@ pps4_device::pps4_device(const machine_config &mconfig, device_type type, const 
 	, m_dia_cb(*this)
 	, m_dib_cb(*this)
 	, m_do_cb(*this)
-	, m_wasldi(0)
-	, m_waslbl(0)
 {
 }
 
@@ -155,6 +153,7 @@ std::unique_ptr<util::disasm_interface> pps4_device::create_disassembler()
 inline u8 pps4_device::ROP()
 {
 	const u8 op = m_cache.read_byte(m_P & 0xFFF);
+	m_Ip = m_I1;         // save previous opcode
 	m_P = (m_P + 1) & 0xFFF;
 	m_icount -= 1;
 	return op;
@@ -614,10 +613,12 @@ void pps4_device::iEXD()
  */
 void pps4_device::iLDI()
 {
-	if (!m_wasldi)
-		m_A = ~m_I1 & 15;
-
-	m_wasldi = 2;
+	// previous LDI instruction?
+	if (0x70 == (m_Ip & 0xf0)) {
+		LOG("%s: skip prev:%02x op:%02x\n", __FUNCTION__, m_Ip, m_I1);
+		return;
+	}
+	m_A = ~m_I1 & 15;
 }
 
 /**
@@ -815,8 +816,8 @@ void pps4_device::iXS()
  */
 void pps4_device::iCYS()
 {
-	const u16 sa = (m_SA >> 4) | ((m_A^15) << 8);
-	m_A = ~m_SA & 15;
+	const u16 sa = (m_SA >> 4) | (m_A << 8);
+	m_A = m_SA & 15;
 	m_SA = sa;
 }
 
@@ -855,17 +856,18 @@ void pps4_device::iCYS()
  */
 void pps4_device::iLB()
 {
-	if (!m_waslbl)
-	{
-		m_SB = m_SA;
-		m_SA = (m_P + 1) & 0xFFF;
-		m_P = (3 << 6) | (m_I1 & 15);
-		m_B = ~ARG() & 255;
-		m_P = m_SA;
-		// swap SA and SB
-		std::swap(m_SA, m_SB);
+	// previous LB or LBL instruction?
+	if (0xc0 == (m_Ip & 0xf0) || 0x00 == m_Ip) {
+		LOG("%s: skip prev:%02x op:%02x\n", __FUNCTION__, m_Ip, m_I1);
+		return;
 	}
-	m_waslbl = 2;
+	m_SB = m_SA;
+	m_SA = (m_P + 1) & 0xFFF;
+	m_P = (3 << 6) | (m_I1 & 15);
+	m_B = ~ARG() & 255;
+	m_P = m_SA;
+	// swap SA and SB
+	std::swap(m_SA, m_SB);
 }
 
 /**
@@ -894,10 +896,12 @@ void pps4_device::iLB()
 void pps4_device::iLBL()
 {
 	m_I2 = ARG();
-	if (!m_waslbl)
-		m_B = ~m_I2 & 255;  // Note: immediate is 1's complement
-
-	m_waslbl = 2;
+	// previous LB or LBL instruction?
+	if (0xc0 == (m_Ip & 0xf0) || 0x00 == m_Ip) {
+		LOG("%s: skip prev:%02x op:%02x\n", __FUNCTION__, m_Ip, m_I1);
+		return;
+	}
+	m_B = ~m_I2 & 255;  // Note: immediate is 1's complement
 }
 
 /**
@@ -1322,10 +1326,6 @@ void pps4_device::iSAG()
 void pps4_device::execute_one()
 {
 	m_I1 = ROP();
-	if (m_wasldi)
-		m_wasldi--;
-	if (m_waslbl)
-		m_waslbl--;
 	if (m_Skip) {
 		m_Skip = 0;
 		LOG("%s: skip op:%02x\n", __FUNCTION__, m_I1);
@@ -1572,8 +1572,7 @@ void pps4_device::device_start()
 	save_item(NAME(m_FF2));
 	save_item(NAME(m_I1));
 	save_item(NAME(m_I2));
-	save_item(NAME(m_wasldi));
-	save_item(NAME(m_waslbl));
+	save_item(NAME(m_Ip));
 
 	state_add( PPS4_PC, "PC", m_P ).mask(0xFFF).formatstr("%03X");
 	state_add( PPS4_A, "A",  m_A ).formatstr("%01X");
@@ -1585,6 +1584,7 @@ void pps4_device::device_start()
 	state_add( PPS4_B, "B",  m_B ).formatstr("%03X");
 	state_add( PPS4_I1, "I1",  m_I1 ).formatstr("%02X").noshow();
 	state_add( PPS4_I2, "I2",  m_I2 ).formatstr("%02X").noshow();
+	state_add( PPS4_Ip, "Ip",  m_Ip ).formatstr("%02X").noshow();
 	state_add( STATE_GENPC,    "GENPC", m_P ).noshow();
 	state_add( STATE_GENPCBASE,"CURPC", m_P ).noshow();
 	state_add( STATE_GENFLAGS, "GENFLAGS", m_C).formatstr("%3s").noshow();
@@ -1633,8 +1633,7 @@ void pps4_device::device_reset()
 	m_FF2 = 0;      // Flip-flop 2
 	m_I1 = 0;        // Most recent instruction I(8:1)
 	m_I2 = 0;       // Most recent parameter I2(8:1)
-	m_wasldi = 0;   // was last instruction LDI?
-	m_waslbl = 0;   // was last instruction LB/LBL?
+	m_Ip = 0;       // Previous instruction I(8:1)
 }
 
 void pps4_2_device::device_reset()

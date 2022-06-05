@@ -4,9 +4,6 @@
 #ifndef NLD_MS_SOR_H_
 #define NLD_MS_SOR_H_
 
-// Names
-// spell-checker: words Seidel
-
 ///
 /// \file nld_ms_sor.h
 ///
@@ -48,10 +45,10 @@ namespace netlist::solver
 		std::vector<float_type> one_m_w;
 	};
 
-	///
-	/// \brief Gauss - Seidel matrix_solver
-	///
-	///
+	// ----------------------------------------------------------------------------------------
+	// matrix_solver - Gauss - Seidel
+	// ----------------------------------------------------------------------------------------
+
 	template <typename FT, int SIZE>
 	void matrix_solver_SOR_t<FT, SIZE>::vsolve_non_dynamic()
 	{
@@ -92,7 +89,7 @@ namespace netlist::solver
 				RHS_t = RHS_t + Idr[i];
 			}
 
-			for (std::size_t i = this->m_terms[k].rail_start(); i < term_count; i++)
+			for (std::size_t i = this->m_terms[k].railstart(); i < term_count; i++)
 				RHS_t = RHS_t  - go[i] * *other_cur_analog[i];
 
 			this->m_RHS[k] = static_cast<float_type>(RHS_t);
@@ -129,11 +126,11 @@ namespace netlist::solver
 			for (std::size_t k = 0; k < iN; k++)
 			{
 				const int * net_other = this->m_terms[k].m_connected_net_idx.data();
-				const std::size_t rail_start = this->m_terms[k].rail_start();
+				const std::size_t railstart = this->m_terms[k].railstart();
 				const auto * go = this->m_gonn[k];
 
 				float_type Idrive = plib::constants<float_type>::zero();
-				for (std::size_t i = 0; i < rail_start; i++)
+				for (std::size_t i = 0; i < railstart; i++)
 					Idrive = Idrive - static_cast<float_type>(go[i]) * this->m_new_V[static_cast<std::size_t>(net_other[i])];
 
 				const float_type new_val = this->m_new_V[k] * one_m_w[k] + (Idrive + this->m_RHS[k]) * w[k];

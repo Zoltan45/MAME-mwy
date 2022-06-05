@@ -48,9 +48,9 @@ Fighting Golf, Country Club                                              YM3812
 Fighting Soccer                                                          Y8950
 
 
-Sound Board
+Sound Board (used by TANK/TNKIII)
 -----------
-A5001UP04-0 (used by TANK/TNKIII)
+no number?
  |---------------------|
  | VOL  AMP  1458  1458|
 |-|                    |

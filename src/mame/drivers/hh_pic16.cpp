@@ -60,7 +60,6 @@ TODO:
 #include "video/pwm.h"
 #include "machine/clock.h"
 #include "machine/timer.h"
-#include "sound/flt_vol.h"
 #include "sound/spkrdev.h"
 
 #include "speaker.h"
@@ -681,8 +680,7 @@ class flash_state : public hh_pic16_state
 {
 public:
 	flash_state(const machine_config &mconfig, device_type type, const char *tag) :
-		hh_pic16_state(mconfig, type, tag),
-		m_volume(*this, "volume")
+		hh_pic16_state(mconfig, type, tag)
 	{ }
 
 	void flash(machine_config &config);
@@ -691,14 +689,12 @@ protected:
 	virtual void machine_start() override;
 
 private:
-	required_device<filter_volume_device> m_volume;
-
 	void update_display();
 	void write_b(u8 data);
 	u8 read_c();
 	void write_c(u8 data);
 
-	void speaker_update();
+	void speaker_decay_reset();
 	TIMER_DEVICE_CALLBACK_MEMBER(speaker_decay_sim);
 	double m_speaker_volume = 0.0;
 };
@@ -711,20 +707,21 @@ void flash_state::machine_start()
 
 // handlers
 
-void flash_state::speaker_update()
+void flash_state::speaker_decay_reset()
 {
 	if (~m_b & 0x40)
-		m_speaker_volume = 50.0;
+		m_speaker_volume = 20.0;
 
 	// it takes a bit before it actually starts fading
-	m_volume->flt_volume_set_volume(std::min(m_speaker_volume, 1.0));
+	double vol = (m_speaker_volume > 1.0) ? 1.0 : m_speaker_volume;
+	m_speaker->set_output_gain(0, vol);
 }
 
 TIMER_DEVICE_CALLBACK_MEMBER(flash_state::speaker_decay_sim)
 {
 	// volume decays when speaker is off (divisor and timer period determine duration)
-	speaker_update();
-	m_speaker_volume /= 1.0075;
+	speaker_decay_reset();
+	m_speaker_volume /= 1.15;
 }
 
 void flash_state::update_display()
@@ -739,11 +736,10 @@ void flash_state::write_b(u8 data)
 	m_b = data;
 	update_display();
 
-	// B7: speaker out
-	m_speaker->level_w(BIT(data, 7));
-
 	// B6: speaker on
-	speaker_update();
+	// B7: speaker out
+	speaker_decay_reset();
+	m_speaker->level_w(data >> 7 & 1);
 }
 
 u8 flash_state::read_c()
@@ -794,10 +790,8 @@ void flash_state::flash(machine_config &config)
 
 	// sound hardware
 	SPEAKER(config, "mono").front_center();
-	SPEAKER_SOUND(config, m_speaker).add_route(ALL_OUTPUTS, "volume", 0.25);
-	FILTER_VOLUME(config, m_volume).add_route(ALL_OUTPUTS, "mono", 1.0);
-
-	TIMER(config, "speaker_decay").configure_periodic(FUNC(flash_state::speaker_decay_sim), attotime::from_msec(1));
+	SPEAKER_SOUND(config, m_speaker).add_route(ALL_OUTPUTS, "mono", 0.25);
+	TIMER(config, "speaker_decay").configure_periodic(FUNC(flash_state::speaker_decay_sim), attotime::from_msec(25));
 }
 
 // roms
@@ -1119,8 +1113,7 @@ class leboom_state : public hh_pic16_state
 {
 public:
 	leboom_state(const machine_config &mconfig, device_type type, const char *tag) :
-		hh_pic16_state(mconfig, type, tag),
-		m_volume(*this, "volume")
+		hh_pic16_state(mconfig, type, tag)
 	{ }
 
 	void leboom(machine_config &config);
@@ -1129,13 +1122,11 @@ protected:
 	virtual void machine_start() override;
 
 private:
-	required_device<filter_volume_device> m_volume;
-
 	u8 read_a();
 	void write_b(u8 data);
 	void write_c(u8 data);
 
-	void speaker_update();
+	void speaker_decay_reset();
 	TIMER_DEVICE_CALLBACK_MEMBER(speaker_decay_sim);
 	double m_speaker_volume = 0.0;
 };
@@ -1148,19 +1139,19 @@ void leboom_state::machine_start()
 
 // handlers
 
-void leboom_state::speaker_update()
+void leboom_state::speaker_decay_reset()
 {
 	if (~m_c & 0x80)
 		m_speaker_volume = 1.0;
 
-	m_volume->flt_volume_set_volume(m_speaker_volume);
+	m_speaker->set_output_gain(0, m_speaker_volume);
 }
 
 TIMER_DEVICE_CALLBACK_MEMBER(leboom_state::speaker_decay_sim)
 {
 	// volume decays when speaker is off (divisor and timer period determine duration)
-	speaker_update();
-	m_speaker_volume /= 1.005;
+	speaker_decay_reset();
+	m_speaker_volume /= 1.015;
 }
 
 u8 leboom_state::read_a()
@@ -1178,14 +1169,14 @@ void leboom_state::write_b(u8 data)
 void leboom_state::write_c(u8 data)
 {
 	// C4: single led
-	m_display->matrix(1, BIT(data, 4));
-
-	// C6: speaker out
-	m_speaker->level_w(BIT(data, 6));
+	m_display->matrix(1, data >> 4 & 1);
 
 	// C7: speaker on
 	m_c = data;
-	speaker_update();
+	speaker_decay_reset();
+
+	// C6: speaker out
+	m_speaker->level_w(data >> 6 & 1);
 }
 
 // config
@@ -1243,10 +1234,8 @@ void leboom_state::leboom(machine_config &config)
 
 	// sound hardware
 	SPEAKER(config, "mono").front_center();
-	SPEAKER_SOUND(config, m_speaker).add_route(ALL_OUTPUTS, "volume", 0.25);
-	FILTER_VOLUME(config, m_volume).add_route(ALL_OUTPUTS, "mono", 1.0);
-
-	TIMER(config, "speaker_decay").configure_periodic(FUNC(leboom_state::speaker_decay_sim), attotime::from_msec(5));
+	SPEAKER_SOUND(config, m_speaker).add_route(ALL_OUTPUTS, "mono", 0.25);
+	TIMER(config, "speaker_decay").configure_periodic(FUNC(leboom_state::speaker_decay_sim), attotime::from_msec(25));
 }
 
 // roms

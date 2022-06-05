@@ -33,8 +33,7 @@ if _OPTIONS["MODERN_WIN_API"]=="1" then
 	}
 else
 	defines {
-		"_WIN32_WINNT=0x0600",
-		"NTDDI_VERSION=0x06000000",
+		"_WIN32_WINNT=0x0501",
 	}
 end
 

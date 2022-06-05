@@ -27,40 +27,22 @@ Known Non-Issues (confirmed on Real Genesis)
 #include "includes/megadriv.h"
 #include "speaker.h"
 
-#define LOG_AUDIOBANK   (1U << 1) // z80 to 68k space window access at $8000-$ffff
-#define LOG_AUDIOBUS    (1U << 2) // z80 bus grants
-#define LOG_AUDIORESET  (1U << 3) // z80 reset line
-
-#define VERBOSE (0)
-
-#include "logmacro.h"
-
-#define LOGAUDIOBANK(...)    LOGMASKED(LOG_AUDIOBANK, __VA_ARGS__)
-#define LOGAUDIOBUS(...)     LOGMASKED(LOG_AUDIOBUS, __VA_ARGS__)
-#define LOGAUDIORESET(...)   LOGMASKED(LOG_AUDIORESET, __VA_ARGS__)
-
 
 void md_base_state::megadriv_z80_bank_w(uint16_t data)
 {
-	// TODO: menghu crashes here
-	// Tries to setup a bank of 0xff0000 from z80 side (PC=1131) after you talk with the cashier twice.
-	// Without a guard over it game will trash 68k memory causing a crash, works on real HW with everdrive
-	// so not coming from a cart copy protection.
-	// Update: it breaks cfodder BGM on character select at least, therefore we current don't guard against it
-	// Apparently reading 68k RAM from z80 is not recommended by Sega, so *writing* isn't possible lacking bus grant?
 	m_genz80.z80_bank_addr = ((m_genz80.z80_bank_addr >> 1) | (data << 23)) & 0xff8000;
 }
 
 void md_base_state::megadriv_68k_z80_bank_write(uint16_t data)
 {
+	//logerror("%06x: 68k writing bit to bank register %01x\n", m_maincpu->pc(),data&0x01);
 	megadriv_z80_bank_w(data & 0x01);
 }
 
 void md_base_state::megadriv_z80_z80_bank_w(uint8_t data)
 {
-	LOGAUDIOBANK("%s: port $6000 write 0x%02x ", machine().describe_context(), data);
+	//logerror("%04x: z80 writing bit to bank register %01x\n", m_maincpu->pc(),data&0x01);
 	megadriv_z80_bank_w(data & 0x01);
-	LOGAUDIOBANK("Current bank %08x\n", m_genz80.z80_bank_addr);
 }
 
 uint8_t md_base_state::megadriv_68k_YM2612_read(offs_t offset, uint8_t mem_mask)
@@ -72,7 +54,7 @@ uint8_t md_base_state::megadriv_68k_YM2612_read(offs_t offset, uint8_t mem_mask)
 	}
 	else
 	{
-		LOG("%s: 68000 attempting to access YM2612 (read) without bus\n", machine().describe_context());
+		logerror("%s: 68000 attempting to access YM2612 (read) without bus\n", machine().describe_context());
 		return 0;
 	}
 
@@ -90,7 +72,7 @@ void md_base_state::megadriv_68k_YM2612_write(offs_t offset, uint8_t data, uint8
 	}
 	else
 	{
-		LOG("%s: 68000 attempting to access YM2612 (write) without bus\n", machine().describe_context());
+		logerror("%s: 68000 attempting to access YM2612 (write) without bus\n", machine().describe_context());
 	}
 }
 
@@ -327,10 +309,8 @@ uint16_t md_base_state::megadriv_68k_io_read(offs_t offset)
 	switch (offset)
 	{
 		case 0:
-			LOG("%06x read version register\n", m_maincpu->pc());
-			// Version number contained in bits 3-0
-			// TODO: non-TMSS BIOSes must return 0 here
-			retdata = m_version_hi_nibble | 0x01;
+			logerror("%06x read version register\n", m_maincpu->pc());
+			retdata = m_version_hi_nibble | 0x01; // Version number contained in bits 3-0
 			break;
 
 		/* Joystick Port Registers */
@@ -506,13 +486,15 @@ uint16_t md_base_state::megadriv_68k_read_z80_ram(offs_t offset, uint16_t mem_ma
 	}
 	else
 	{
-		LOG("%06x: 68000 attempting to access Z80 (read) address space without bus\n", m_maincpu->pc());
+		logerror("%06x: 68000 attempting to access Z80 (read) address space without bus\n", m_maincpu->pc());
 		return machine().rand();
 	}
 }
 
 void md_base_state::megadriv_68k_write_z80_ram(offs_t offset, uint16_t data, uint16_t mem_mask)
 {
+	//logerror("write z80 ram\n");
+
 	if ((m_genz80.z80_has_bus == 0) && (m_genz80.z80_is_reset == 0))
 	{
 		if (!ACCESSING_BITS_0_7) // byte (MSB) access
@@ -523,33 +505,30 @@ void md_base_state::megadriv_68k_write_z80_ram(offs_t offset, uint16_t data, uin
 		{
 			m_genz80.z80_prgram[(offset<<1)^1] = (data & 0x00ff);
 		}
-		else
+		else // for WORD access only the MSB is used, LSB is ignored
 		{
-			// for WORD access only the MSB is used, LSB is ignored
 			m_genz80.z80_prgram[(offset<<1)] = (data & 0xff00) >> 8;
 		}
 	}
 	else
 	{
-		LOG("%06x: 68000 attempting to access Z80 (write) address space without bus\n", m_maincpu->pc());
+		logerror("%06x: 68000 attempting to access Z80 (write) address space without bus\n", m_maincpu->pc());
 	}
 }
 
-/*
- * ddragon, beast, superoff, and timekill have buggy sound programs.
- * They request the bus, then have a loop which waits for the bus
- * to be unavailable, checking for a 0 value due to bad coding.  The real hardware
- * appears to return bits of the next instruction in the unused bits, thus meaning
- * the value is never zero.  Time Killers is the most fussy, and doesn't like the
- * read_next_instruction function from system16, so I just return a random value
- * in the unused bits
- */
+
 uint16_t md_base_state::megadriv_68k_check_z80_bus(offs_t offset, uint16_t mem_mask)
 {
 	uint16_t retvalue;
 
-
-	uint16_t nextvalue = machine().rand(); //read_next_instruction(space)&0xff00;
+	/* Double Dragon, Shadow of the Beast, Super Off Road, and Time Killers have buggy
+	   sound programs.  They request the bus, then have a loop which waits for the bus
+	   to be unavailable, checking for a 0 value due to bad coding.  The real hardware
+	   appears to return bits of the next instruction in the unused bits, thus meaning
+	   the value is never zero.  Time Killers is the most fussy, and doesn't like the
+	   read_next_instruction function from system16, so I just return a random value
+	   in the unused bits */
+	uint16_t nextvalue = machine().rand();//read_next_instruction(space)&0xff00;
 
 
 	/* Check if the 68k has the z80 bus */
@@ -558,13 +537,13 @@ uint16_t md_base_state::megadriv_68k_check_z80_bus(offs_t offset, uint16_t mem_m
 		if (m_genz80.z80_has_bus || m_genz80.z80_is_reset) retvalue = nextvalue | 0x0100;
 		else retvalue = (nextvalue & 0xfeff);
 
-		LOGAUDIOBUS("%06x: 68000 check z80 Bus (byte MSB access) returning %04x mask %04x\n", m_maincpu->pc(),retvalue, mem_mask);
+		//logerror("%06x: 68000 check z80 Bus (byte MSB access) returning %04x mask %04x\n", m_maincpu->pc(),retvalue, mem_mask);
 		return retvalue;
 
 	}
 	else if (!ACCESSING_BITS_8_15) // is this valid?
 	{
-		LOGAUDIOBUS("%06x: 68000 check z80 Bus (byte LSB access) %04x\n", m_maincpu->pc(), mem_mask);
+		//logerror("%06x: 68000 check z80 Bus (byte LSB access) %04x\n", m_maincpu->pc(),mem_mask);
 		if (m_genz80.z80_has_bus || m_genz80.z80_is_reset) retvalue = 0x0001;
 		else retvalue = 0x0000;
 
@@ -572,7 +551,7 @@ uint16_t md_base_state::megadriv_68k_check_z80_bus(offs_t offset, uint16_t mem_m
 	}
 	else
 	{
-		LOGAUDIOBUS("%06x: 68000 check z80 Bus (word access) %04x\n", m_maincpu->pc(),mem_mask);
+		//logerror("%06x: 68000 check z80 Bus (word access) %04x\n", m_maincpu->pc(),mem_mask);
 		if (m_genz80.z80_has_bus || m_genz80.z80_is_reset) retvalue = nextvalue | 0x0100;
 		else retvalue = (nextvalue & 0xfeff);
 
@@ -585,7 +564,6 @@ uint16_t md_base_state::megadriv_68k_check_z80_bus(offs_t offset, uint16_t mem_m
 TIMER_CALLBACK_MEMBER(md_base_state::megadriv_z80_run_state)
 {
 	/* Is the z80 RESET line pulled? */
-	// TODO: Z80 /RESET
 	if (m_genz80.z80_is_reset)
 	{
 		m_z80snd->reset();
@@ -595,7 +573,6 @@ TIMER_CALLBACK_MEMBER(md_base_state::megadriv_z80_run_state)
 	else
 	{
 		/* Check if z80 has the bus */
-		// TODO: Z80 /BUSREQ
 		if (m_genz80.z80_has_bus)
 			m_z80snd->resume(SUSPEND_REASON_HALT);
 		else
@@ -611,12 +588,12 @@ void md_base_state::megadriv_68k_req_z80_bus(offs_t offset, uint16_t data, uint1
 	{
 		if (data & 0x0100)
 		{
-			LOGAUDIOBUS("%06x: 68000 request z80 Bus (byte MSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 request z80 Bus (byte MSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_has_bus = 0;
 		}
 		else
 		{
-			LOGAUDIOBUS("%06x: 68000 return z80 Bus (byte MSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 return z80 Bus (byte MSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_has_bus = 1;
 		}
 	}
@@ -624,12 +601,12 @@ void md_base_state::megadriv_68k_req_z80_bus(offs_t offset, uint16_t data, uint1
 	{
 		if (data & 0x0001)
 		{
-			LOGAUDIOBUS("%06x: 68000 request z80 Bus (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 request z80 Bus (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_has_bus = 0;
 		}
 		else
 		{
-			LOGAUDIOBUS("%06x: 68000 return z80 Bus (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 return z80 Bus (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_has_bus = 1;
 		}
 	}
@@ -637,12 +614,12 @@ void md_base_state::megadriv_68k_req_z80_bus(offs_t offset, uint16_t data, uint1
 	{
 		if (data & 0x0100)
 		{
-			LOGAUDIOBUS("%06x: 68000 request z80 Bus (word access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 request z80 Bus (word access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_has_bus = 0;
 		}
 		else
 		{
-			LOGAUDIOBUS("%06x: 68000 return z80 Bus (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 return z80 Bus (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_has_bus = 1;
 		}
 	}
@@ -658,12 +635,12 @@ void md_base_state::megadriv_68k_req_z80_reset(offs_t offset, uint16_t data, uin
 	{
 		if (data & 0x0100)
 		{
-			LOGAUDIORESET("%06x: 68000 clear z80 reset (byte MSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 clear z80 reset (byte MSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_is_reset = 0;
 		}
 		else
 		{
-			LOGAUDIORESET("%06x: 68000 start z80 reset (byte MSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 start z80 reset (byte MSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_is_reset = 1;
 		}
 	}
@@ -671,12 +648,12 @@ void md_base_state::megadriv_68k_req_z80_reset(offs_t offset, uint16_t data, uin
 	{
 		if (data & 0x0001)
 		{
-			LOGAUDIORESET("%06x: 68000 clear z80 reset (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 clear z80 reset (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_is_reset = 0;
 		}
 		else
 		{
-			LOGAUDIORESET("%06x: 68000 start z80 reset (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 start z80 reset (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_is_reset = 1;
 		}
 	}
@@ -684,12 +661,12 @@ void md_base_state::megadriv_68k_req_z80_reset(offs_t offset, uint16_t data, uin
 	{
 		if (data & 0x0100)
 		{
-			LOGAUDIORESET("%06x: 68000 clear z80 reset (word access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 clear z80 reset (word access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_is_reset = 0;
 		}
 		else
 		{
-			LOGAUDIORESET("%06x: 68000 start z80 reset (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
+			//logerror("%06x: 68000 start z80 reset (byte LSB access) %04x %04x\n", m_maincpu->pc(),data,mem_mask);
 			m_genz80.z80_is_reset = 1;
 		}
 	}
@@ -779,7 +756,7 @@ void md_base_state::megadriv_z80_map(address_map &map)
 void md_base_state::megadriv_z80_io_map(address_map &map)
 {
 	map.global_mask(0xff);
-	map(0x00, 0xff).noprw();
+	map(0x0000, 0xff).noprw();
 }
 
 uint32_t md_base_state::screen_update_megadriv(screen_device &screen, bitmap_rgb32 &bitmap, const rectangle &cliprect)

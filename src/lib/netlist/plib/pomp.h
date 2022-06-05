@@ -71,6 +71,11 @@ inline std::size_t get_max_threads() noexcept
 #endif
 }
 
+
+// ----------------------------------------------------------------------------------------
+// pdynlib: dynamic loading of libraries  ...
+// ----------------------------------------------------------------------------------------
+
 } // namespace plib::omp
 
 #endif // PSTRING_H_

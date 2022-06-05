@@ -144,9 +144,9 @@ namespace netlist
 	///
 
 	using device_arena = std::conditional_t<config::use_mempool::value,
-		plib::mempool_arena<plib::aligned_arena<>, config::mempool_align::value>,
-		plib::aligned_arena<>>;
-	using host_arena   = plib::aligned_arena<>;
+		plib::mempool_arena<plib::aligned_arena, config::mempool_align::value>,
+		plib::aligned_arena>;
+	using host_arena   = plib::aligned_arena;
 
 	using log_type =  plib::plog_base<NL_DEBUG>;
 
@@ -154,7 +154,7 @@ namespace netlist
 	//  Types needed by various includes
 	//============================================================
 
-	/// \brief Time step type.
+	/// \brief Timestep type.
 	///
 	/// May be either FORWARD or RESTORE
 	///

@@ -232,7 +232,7 @@ ALLFILES = $(ALLSOURCES) $(VSFILES) $(DOCS) $(OTHERFILES)
 MAKEFILE_TARGETS_WITHOUT_INCLUDE := \
 	clang clang-5 clang-libc gcc9 mingw native nvcc \
 	clean depend doc generated manpages maketree \
-	runtests tidy fix_permissions precommit srcclean
+	runtests tidy
 
 BUILD_DIRS = $(OBJDIRS) man html
 
@@ -304,8 +304,8 @@ clang:
 		-Wno-exit-time-destructors -Winconsistent-missing-destructor-override \
 		-Wno-embedded-directive \
 		-Wno-undefined-reinterpret-cast \
-		-Wunreachable-code -Wno-gnu-alignof-expression \
-		-Wmissing-prototypes -Wno-error=deprecated"
+		-Wunreachable-code \
+		-Wmissing-prototypes"
 
 clang-libc:
 	#clang-11 currently broken

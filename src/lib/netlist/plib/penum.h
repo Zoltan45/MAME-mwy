@@ -13,10 +13,9 @@
 namespace plib
 {
 
-	///
-	/// \brief strongly typed enumeration
-	///
-	///
+	//============================================================
+	//  penum - strongly typed enumeration
+	//============================================================
 	struct penum_base
 	{
 	protected:

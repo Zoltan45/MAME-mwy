@@ -10,14 +10,12 @@
 
 #pragma once
 
-#include "input_common.h"
+// standard windows headers
+#include <windows.h>
+#undef interface
 
 #include "window.h"
 #include "winmain.h"
-
-// standard windows headers
-#include <windows.h>
-
 
 //============================================================
 //  TYPEDEFS
