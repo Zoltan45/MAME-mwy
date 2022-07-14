@@ -5,8 +5,8 @@
 
 Build status:
 
-| OS/Compiler   | Status        | 
-| ------------- |:-------------:| 
+| OS/Compiler   | Status        |
+| ------------- |:-------------:|
 | Linux/GCC and clang | ![CI (Linux)](https://github.com/mamedev/mame/workflows/CI%20(Linux)/badge.svg) |
 | Windows/MinGW GCC | ![CI (Windows)](https://github.com/mamedev/mame/workflows/CI%20(Windows)/badge.svg) |
 | macOS/clang | ![CI (macOS)](https://github.com/mamedev/mame/workflows/CI%20(macOS)/badge.svg) |
@@ -39,13 +39,22 @@ for a MAME build,
 make SUBTARGET=arcade
 ```
 
-for an arcade-only build, or
+for an arcade-only build,
 
 ```
 make SUBTARGET=mess
 ```
 
-for a MESS build.
+for a MESS build, or
+
+```
+make SOURCES=src/mame/drivers/midtunit.cpp,src/mame/drivers/midwunit.cpp
+```
+
+for a Midway T-Unit and Wolf Unit only build,
+
+
+
 
 See the [Compiling MAME](http://docs.mamedev.org/initialsetup/compilingmame.html) page on our documentation site for more information, including prerequisites for macOS and popular Linux distributions.
 
