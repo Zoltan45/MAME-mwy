@@ -39,19 +39,14 @@ for a MAME build,
 make SUBTARGET=arcade
 ```
 
-for an arcade-only build,
+for an arcade-only build, or
 
 ```
 make SUBTARGET=mess
 ```
 
-for a MESS build, or
+for a MESS build.
 
-```
-make SOURCES=src/mame/drivers/midtunit.cpp,src/mame/drivers/midwunit.cpp
-```
-
-for a Midway T-Unit and Wolf Unit only build,
 
 
 
