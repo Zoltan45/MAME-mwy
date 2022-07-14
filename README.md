@@ -119,3 +119,22 @@ is required to use the "MAME" name, logo, or wordmark.
     more details.
 
 Please see COPYING for more details.
+
+
+
+What is MAME-mkp?
+=============
+
+MAME-mkp is a slightly modified version of MAME that includes support for the games Mortal Kombat II + and Ultimate Mortal Kombat 3 +.
+
+
+How to compile a Mortal Kombat only build?
+===============
+
+Follow the tips above and use the command
+
+```
+make SOURCES=src/mame/drivers/midtunit.cpp,src/mame/drivers/midwunit.cpp
+```
+
+for a Midway Mortal Kombat (T-unit and Wolf unit) only build.
