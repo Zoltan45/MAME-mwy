@@ -5,8 +5,8 @@
 
 Build status:
 
-| OS/Compiler   | Status        |
-| ------------- |:-------------:|
+| OS/Compiler   | Status        | 
+| ------------- |:-------------:| 
 | Linux/GCC and clang | ![CI (Linux)](https://github.com/mamedev/mame/workflows/CI%20(Linux)/badge.svg) |
 | Windows/MinGW GCC | ![CI (Windows)](https://github.com/mamedev/mame/workflows/CI%20(Windows)/badge.svg) |
 | macOS/clang | ![CI (macOS)](https://github.com/mamedev/mame/workflows/CI%20(macOS)/badge.svg) |
@@ -46,10 +46,6 @@ make SUBTARGET=mess
 ```
 
 for a MESS build.
-
-
-
-
 
 See the [Compiling MAME](http://docs.mamedev.org/initialsetup/compilingmame.html) page on our documentation site for more information, including prerequisites for macOS and popular Linux distributions.
 
@@ -134,7 +130,7 @@ How to compile a Mortal Kombat only build?
 Follow the tips above and use the command
 
 ```
-make SOURCES=src/mame/drivers/midtunit.cpp,src/mame/drivers/midwunit.cpp
+make SOURCES=src/mame/midway/midtunit.cpp,src/mame/midway/midwunit.cpp
 ```
 
 for a Midway Mortal Kombat (T-unit and Wolf unit) only build.
