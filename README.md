@@ -130,7 +130,7 @@ How to compile a Mortal Kombat only build?
 Follow the tips above and use the command
 
 ```
-make SOURCES=src/mame/midway/midtunit.cpp,src/mame/midway/midwunit.cpp
+make SOURCES=midway/midtunit.cpp,midway/midwunit.cpp
 ```
 
 for a Midway Mortal Kombat (T-unit and Wolf unit) only build.
