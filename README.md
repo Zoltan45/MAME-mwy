@@ -5,8 +5,8 @@
 
 Build status:
 
-| OS/Compiler   | Status        | 
-| ------------- |:-------------:| 
+| OS/Compiler   | Status        |
+| ------------- |:-------------:|
 | Linux/GCC and clang | ![CI (Linux)](https://github.com/mamedev/mame/workflows/CI%20(Linux)/badge.svg) |
 | Windows/MinGW GCC | ![CI (Windows)](https://github.com/mamedev/mame/workflows/CI%20(Windows)/badge.svg) |
 | macOS/clang | ![CI (macOS)](https://github.com/mamedev/mame/workflows/CI%20(macOS)/badge.svg) |
@@ -121,7 +121,7 @@ Please see COPYING for more details.
 What is MAME-mkp?
 =============
 
-MAME-mkp is a slightly modified version of MAME that includes support for the games Mortal Kombat II + and Ultimate Mortal Kombat 3 +.
+MAME-mkp is a slightly modified version of MAME that includes support for the games Mortal Kombat II +, Ultimate Mortal Kombat 3 +, and NBA JAM TE Rewind.
 
 
 How to compile a Mortal Kombat only build?
