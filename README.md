@@ -5,8 +5,8 @@
 
 Build status:
 
-| OS/Compiler   | Status        |
-| ------------- |:-------------:|
+| OS/Compiler   | Status        | 
+| ------------- |:-------------:| 
 | Linux/GCC and clang | ![CI (Linux)](https://github.com/mamedev/mame/workflows/CI%20(Linux)/badge.svg) |
 | Windows/MinGW GCC | ![CI (Windows)](https://github.com/mamedev/mame/workflows/CI%20(Windows)/badge.svg) |
 | macOS/clang | ![CI (macOS)](https://github.com/mamedev/mame/workflows/CI%20(macOS)/badge.svg) |
