@@ -21,9 +21,10 @@ up to 50kHz. This is probably exaggerated due to components getting worn out
 after many decades. TMS1000 RC curve is documented in the data manual, but
 not for newer ones (rev. E or TMS1400 MCUs). TMS0970/0980 osc. is on-die.
 
-ROM source notes when dumped from another publisher, but confident it's the same:
+ROM source notes when dumped from another title, but confident it's the same:
 - arrball: Tandy Zingo
 - bcheetah: Fundimensions Incredible Brain Buggy
+- cchime: Videomaster Door Tunes
 - cmsport: Conic Basketball
 - cnbaskb: Cardinal Electronic Basketball
 - cnfball: Elecsonic Football
@@ -67,8 +68,9 @@ on Joerg Woerner's datamath.org: http://www.datamath.org/IC_List.htm
 --------------------------------------------------------------------
  @CP0904A  TMS0970   1977, Milton Bradley Comp IV
  @MP0905B  TMS0970   1977, Parker Brothers Codename Sector
- *MP0027   TMS1000   1977, Chromatronics Chroma-Chime
+ @MP0027A  TMS1000   1977, Texas Instruments OEM melody chip (used in eg. Chromatronics Chroma-Chime)
  *MP0057   TMS1000   1978, APH Student Speech+ (same ROM contents as TSI Speech+?)
+ *MP0121   TMS1000   1979, Waddingtons Compute-A-Tune
  @MP0154   TMS1000   1979, Fonas 2 Player Baseball
  @MP0158   TMS1000   1979, Entex Soccer (6003)
  @MP0163   TMS1000   1979, A-One LSI Match Number/LJN Electronic Concentration
@@ -97,7 +99,7 @@ on Joerg Woerner's datamath.org: http://www.datamath.org/IC_List.htm
  @MP1185   TMS1100   1979, Fonas 3 in 1: Football, Basketball, Soccer
  @MP1193   TMS1100   1980, Tandy Championship Football (model 60-2150)
  @MP1204   TMS1100   1980, Entex Baseball 3 (6007)
- *MP1209   TMS1100   1980, U.S. Games Space Cruiser/Strategy Football
+ @MP1209   TMS1100   1980, U.S. Games Space Cruiser
  @MP1211   TMS1100   1980, Entex Space Invader (6012)
  @MP1215   TMS1100   1980, Tiger Playmaker
  @MP1218   TMS1100   1980, Entex Basketball 2 (6010)
@@ -108,6 +110,7 @@ on Joerg Woerner's datamath.org: http://www.datamath.org/IC_List.htm
  @MP1296   TMS1100   1982, Entex Black Knight Pinball (6081)
  @MP1311   TMS1100   1981, Bandai TC7: Air Traffic Control
  @MP1312   TMS1100   1981, Gakken FX-Micom R-165/Radio Shack Science Fair Microcomputer Trainer
+ *MP1343   TMS1100   1989, Micronta Vox Clock 3
  *MP1359   TMS1100?  1985, Capsela CRC2000
  @MP1525   TMS1170   1980, Coleco Head to Head: Electronic Baseball
  @MP1604   TMS1370   1982, Gakken Invader 2000/Tandy Cosmic Fire Away 3000
@@ -126,14 +129,14 @@ on Joerg Woerner's datamath.org: http://www.datamath.org/IC_List.htm
  *MP3207   TMS1000   1978, Concept 2000 Lite 'n Learn: Electronic Organ (model 554)
  @MP3208   TMS1000   1977, Milton Bradley Electronic Battleship (1977, model 4750B)
  @MP3226   TMS1000   1978, Milton Bradley Simon (Rev A)
- *MP3228   TMS1000   1979, Texas Instruments melody chip
+ *MP3228   TMS1000   1979, Texas Instruments OEM melody chip
  *MP3232   TMS1000   1979, Fonas 2 Player Baseball (no "MP" on chip label)
  @MP3260   TMS1000   1979, Electroplay Quickfire
  @MP3300   TMS1000   1979, Milton Bradley Simon (Rev F)
  @MP3301A  TMS1000   1979, Milton Bradley Big Trak
- *MP3310   TMS1000   1979, Texas Instruments melody chip
+ *MP3310   TMS1000   1979, Texas Instruments OEM melody chip
  *MP3312   TMS1000   1980, Nathan Mega 10000
- *MP3318   TMS1000   1979, Texas Instruments melody chip
+ *MP3318   TMS1000   1979, Texas Instruments OEM melody chip
  @MP3320A  TMS1000   1979, Coleco Head to Head: Electronic Basketball
  @MP3321A  TMS1000   1979, Coleco Head to Head: Electronic Hockey
  @MP3352   TMS1200   1979, Tiger Sub Wars (model 7-490)
@@ -189,7 +192,7 @@ on Joerg Woerner's datamath.org: http://www.datamath.org/IC_List.htm
  @MPF553   TMS1670   1980, Gakken/Entex Jackpot: Gin Rummy & Black Jack (6008) (note: assume F to be a misprint)
   MP7573   TMS1670   1981, Entex Select-A-Game cartridge: Football 4 -> entex/sag.cpp
  *M30026   TMS2370   1983, Yaesu FT-757 Display Unit part
- @M95041   TMS2670   1983, Tsukuda Game Pachinko
+ @M95041   TMS2670   1983, Tsukuda Slot Elepachi
 
   inconsistent:
 
@@ -219,6 +222,8 @@ on Joerg Woerner's datamath.org: http://www.datamath.org/IC_List.htm
 #include "softlist_dev.h"
 #include "screen.h"
 #include "speaker.h"
+
+#include "utf8.h"
 
 // internal artwork
 #include "t7in1ss.lh"
@@ -287,6 +292,7 @@ on Joerg Woerner's datamath.org: http://www.datamath.org/IC_List.htm
 #include "qfire.lh" // clickable
 #include "quizwizc.lh"
 #include "raisedvl.lh"
+#include "scruiser.lh"
 #include "simon.lh" // clickable
 #include "speechp.lh"
 #include "splitsec.lh"
@@ -1445,6 +1451,183 @@ ROM_START( palmmd8 )
 	ROM_LOAD( "tms1000_common2_micro.pla", 0, 867, CRC(d33da3cf) SHA1(13c4ebbca227818db75e6db0d45b66ba5e207776) )
 	ROM_REGION( 365, "maincpu:opla", 0 )
 	ROM_LOAD( "tms1000_palmmd8_output.pla", 0, 365, CRC(e999cece) SHA1(c5012877cd030a4dc66228f109fa23eec1867873) )
+ROM_END
+
+
+
+
+
+/***************************************************************************
+
+  Chromatronics Chroma-Chime
+  * PCB label: DESIGNED BY CHROMATRONICS, 118-2-003
+  * TMS1000NL MP0027A (die label: 1000B, MP0027A)
+  * 1-bit sound with volume decay
+
+  It was sold as a kit (so, the buyer had to assemble the PCB themselves).
+  Chromatronics claims it's the first ever processor-based musical doorbell.
+  It's likely they asked TI for a generic melody chip. It would be odd for
+  a UK product to play the US anthem (B2) much longer than the UK one (B1).
+
+  known releases:
+  - UK(1): Chroma-Chime, published by Chromatronics
+  - UK(2): Door Tunes, published by Videomaster (Chromatronics PCB, not a kit)
+
+  The MCU was also used in Bell-Fruit Oranges and Lemons (slot machine).
+
+***************************************************************************/
+
+class cchime_state : public hh_tms1k_state
+{
+public:
+	cchime_state(const machine_config &mconfig, device_type type, const char *tag) :
+		hh_tms1k_state(mconfig, type, tag),
+		m_volume(*this, "volume"),
+		m_tempo_timer(*this, "tempo")
+	{ }
+
+	void cchime(machine_config &config);
+
+protected:
+	virtual void machine_start() override;
+
+private:
+	required_device<filter_volume_device> m_volume;
+	required_device<timer_device> m_tempo_timer;
+
+	void write_o(u16 data);
+	void write_r(u32 data);
+	u8 read_k();
+
+	TIMER_DEVICE_CALLBACK_MEMBER(speaker_decay_sim);
+	double m_speaker_volume = 0.0;
+};
+
+void cchime_state::machine_start()
+{
+	hh_tms1k_state::machine_start();
+	save_item(NAME(m_speaker_volume));
+}
+
+// handlers
+
+TIMER_DEVICE_CALLBACK_MEMBER(cchime_state::speaker_decay_sim)
+{
+	m_volume->flt_volume_set_volume(m_speaker_volume);
+
+	// volume decays when speaker is off, decay scale is determined by tone knob
+	const double step = (1.005 - 1.0005) / 100.0; // approximation
+	m_speaker_volume /= 1.005 - (double)(u8)m_inputs[4]->read() * step;
+}
+
+void cchime_state::write_r(u32 data)
+{
+	// R9: trigger tempo knob timer
+	if (m_r & ~data & 0x200)
+	{
+		const double step = 50 / 100.0; // approximation
+		m_tempo_timer->adjust(attotime::from_msec(50 + (u8)m_inputs[3]->read() * step));
+	}
+
+	// R10: power off when low (combined with doorbell)
+	if (~data & 0x400 && !m_inputs[2]->read())
+		power_off();
+
+	m_r = data;
+}
+
+void cchime_state::write_o(u16 data)
+{
+	// O6+O7: speaker out
+	m_speaker->level_w(BIT(~data, 6) & BIT(~data, 7));
+
+	// O2: trigger speaker on
+	if (~m_o & data & 4)
+		m_volume->flt_volume_set_volume(m_speaker_volume = 1.0);
+
+	m_o = data;
+}
+
+u8 cchime_state::read_k()
+{
+	u8 inp = 0;
+
+	// R0-R7 + K1-K4: selected tune
+	u8 rs = m_inputs[0]->read();
+	u8 ks = m_inputs[1]->read();
+	inp |= (m_r & rs) ? ks : 0;
+
+	// K4: rear doorbell
+	inp |= m_inputs[2]->read() << 1 & 4;
+
+	// K8: tempo knob state
+	if (m_tempo_timer->enabled())
+		inp |= 8;
+
+	return inp;
+}
+
+// config
+
+static INPUT_PORTS_START( cchime )
+	PORT_START("IN.0") // R0-R7
+	PORT_CONFNAME( 0xff, 0x01, "Switch 1")
+	PORT_CONFSETTING(    0x01, "A" )
+	PORT_CONFSETTING(    0x02, "B" )
+	PORT_CONFSETTING(    0x04, "C" )
+	PORT_CONFSETTING(    0x08, "D" )
+	PORT_CONFSETTING(    0x10, "E" )
+	PORT_CONFSETTING(    0x20, "F" )
+	PORT_CONFSETTING(    0x40, "G" )
+	PORT_CONFSETTING(    0x80, "H" )
+
+	PORT_START("IN.1") // K1-K4
+	PORT_CONFNAME( 0x07, 0x01, "Switch 2")
+	PORT_CONFSETTING(    0x01, "1" )
+	PORT_CONFSETTING(    0x02, "2" )
+	PORT_CONFSETTING(    0x04, "3" )
+
+	PORT_START("IN.2")
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_BUTTON1 ) PORT_NAME("Front Doorbell") PORT_CHANGED_MEMBER(DEVICE_SELF, hh_tms1k_state, power_button, true)
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_BUTTON2 ) PORT_NAME("Rear Doorbell") PORT_CHANGED_MEMBER(DEVICE_SELF, hh_tms1k_state, power_button, true)
+
+	PORT_START("IN.3")
+	PORT_ADJUSTER(50, "Tempo Knob")
+
+	PORT_START("IN.4")
+	PORT_ADJUSTER(50, "Tone Knob")
+INPUT_PORTS_END
+
+void cchime_state::cchime(machine_config &config)
+{
+	// basic machine hardware
+	TMS1000(config, m_maincpu, 400000); // approximation - RC osc. R=39K, C=47pF
+	m_maincpu->read_k().set(FUNC(cchime_state::read_k));
+	m_maincpu->write_o().set(FUNC(cchime_state::write_o));
+	m_maincpu->write_r().set(FUNC(cchime_state::write_r));
+
+	TIMER(config, "tempo").configure_generic(nullptr);
+
+	// no visual feedback!
+
+	// sound hardware
+	SPEAKER(config, "mono").front_center();
+	SPEAKER_SOUND(config, m_speaker).add_route(ALL_OUTPUTS, "volume", 0.25);
+	FILTER_VOLUME(config, m_volume).add_route(ALL_OUTPUTS, "mono", 1.0);
+
+	TIMER(config, "speaker_decay").configure_periodic(FUNC(cchime_state::speaker_decay_sim), attotime::from_msec(1));
+}
+
+// roms
+
+ROM_START( cchime )
+	ROM_REGION( 0x0400, "maincpu", 0 )
+	ROM_LOAD( "mp0027a.n1", 0x0000, 0x0400, CRC(8b5e2c4d) SHA1(5364d2836e9daefee2529a20c022e811bb3c7d89) )
+
+	ROM_REGION( 867, "maincpu:mpla", 0 )
+	ROM_LOAD( "tms1000_common2_micro.pla", 0, 867, CRC(d33da3cf) SHA1(13c4ebbca227818db75e6db0d45b66ba5e207776) )
+	ROM_REGION( 365, "maincpu:opla", 0 )
+	ROM_LOAD( "tms1000_cchime_output.pla", 0, 365, CRC(75d68c56) SHA1(85abde0ca0bcc605720551bea360498db350a7af) )
 ROM_END
 
 
@@ -2899,9 +3082,9 @@ public:
 
 protected:
 	void update_display();
-	virtual void write_o(u16 data);
-	virtual void write_r(u32 data);
-	virtual u8 read_k();
+	void write_o(u16 data);
+	void write_r(u32 data);
+	u8 read_k();
 };
 
 // handlers
@@ -5215,7 +5398,7 @@ ROM_END
   Entex Musical Marvin
   * TMS1100 MP1228 (no decap)
   * 1 7seg LED, 8 other leds, 1-bit sound with volume decay
-  * dials for speed, tone (volume decay), volume (also off/on switch)
+  * knobs for speed, tone (volume decay), volume (also off/on switch)
 
   The design patent was assigned to Hanzawa (Japan), so it's probably
   manufactured by them.
@@ -5261,8 +5444,8 @@ TIMER_DEVICE_CALLBACK_MEMBER(mmarvin_state::speaker_decay_sim)
 {
 	m_volume->flt_volume_set_volume(m_speaker_volume);
 
-	// volume decays when speaker is off, decay scale is determined by tone dial
-	double step = (1.01 - 1.003) / 255.0; // approximation
+	// volume decays when speaker is off, decay scale is determined by tone knob
+	const double step = (1.01 - 1.003) / 100.0; // approximation
 	m_speaker_volume /= 1.01 - (double)(u8)m_inputs[5]->read() * step;
 }
 
@@ -5277,10 +5460,10 @@ void mmarvin_state::write_r(u32 data)
 	// R2-R5: input mux
 	m_inp_mux = data >> 2 & 0xf;
 
-	// R6: trigger speed dial timer
-	if (m_r & 0x40 && ~data & 0x40)
+	// R6: trigger speed knob timer
+	if (m_r & ~data & 0x40)
 	{
-		double step = (2100 - 130) / 255.0; // duration range is around 0.13s to 2.1s
+		const double step = (2100 - 130) / 100.0; // duration range is around 0.13s to 2.1s
 		m_speed_timer->adjust(attotime::from_msec(2100 - (u8)m_inputs[4]->read() * step));
 	}
 
@@ -5288,7 +5471,7 @@ void mmarvin_state::write_r(u32 data)
 	m_speaker->level_w(BIT(m_r, 10));
 
 	// R9: trigger speaker on
-	if (m_r & 0x200 && ~data & 0x200)
+	if (m_r & ~data & 0x200)
 		m_volume->flt_volume_set_volume(m_speaker_volume = 1.0);
 
 	// R0,R1: digit/led select
@@ -5307,7 +5490,7 @@ void mmarvin_state::write_o(u16 data)
 u8 mmarvin_state::read_k()
 {
 	// K1-K4: multiplexed inputs
-	// K8: speed dial state
+	// K8: speed knob state
 	return (read_inputs(4) & 7) | (m_speed_timer->enabled() ? 0 : 8);
 }
 
@@ -5335,10 +5518,10 @@ static INPUT_PORTS_START( mmarvin )
 	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_KEYPAD ) PORT_CODE(KEYCODE_S) PORT_NAME("Space")
 
 	PORT_START("IN.4")
-	PORT_BIT( 0xff, 0x80, IPT_PADDLE ) PORT_SENSITIVITY(15) PORT_KEYDELTA(15) PORT_CENTERDELTA(0) PORT_PLAYER(1) PORT_NAME("Speed Dial")
+	PORT_ADJUSTER(50, "Speed Knob")
 
 	PORT_START("IN.5")
-	PORT_BIT( 0xff, 0x80, IPT_PADDLE ) PORT_SENSITIVITY(15) PORT_KEYDELTA(15) PORT_CENTERDELTA(0) PORT_PLAYER(2) PORT_NAME("Tone Dial")
+	PORT_ADJUSTER(50, "Tone Knob")
 INPUT_PORTS_END
 
 void mmarvin_state::mmarvin(machine_config &config)
@@ -5978,9 +6161,9 @@ public:
 
 private:
 	void update_display();
-	virtual void write_r(u32 data);
-	virtual void write_o(u16 data);
-	virtual u8 read_k();
+	void write_r(u32 data);
+	void write_o(u16 data);
+	u8 read_k();
 };
 
 // handlers
@@ -6104,9 +6287,9 @@ public:
 
 private:
 	void update_display();
-	virtual void write_r(u32 data);
-	virtual void write_o(u16 data);
-	virtual u8 read_k();
+	void write_r(u32 data);
+	void write_o(u16 data);
+	u8 read_k();
 };
 
 // handlers
@@ -6233,9 +6416,9 @@ private:
 	void expander_w(offs_t offset, u8 data);
 
 	void update_display();
-	virtual void write_r(u32 data);
-	virtual void write_o(u16 data);
-	virtual u8 read_k();
+	void write_r(u32 data);
+	void write_o(u16 data);
+	u8 read_k();
 };
 
 // handlers
@@ -10556,7 +10739,7 @@ ROM_END
   Tandy 3 in 1 Sports Arena (model 60-2178)
   * PCB label: HP-804
   * TMS1100 (just a datestamp label (8331), die label: 1100B, MP1231)
-  * 2x2-digit 7seg LED display + 47 other LEDs, 1-bit sound
+  * 2x2-digit 7seg LED display + 45+2 other LEDs, 1-bit sound
 
   For Tandy Sports Arena (model 60-2158), see cmsport, this is a different game.
   This version is very similar to ssports4 released a few years earlier.
@@ -10594,17 +10777,17 @@ void t3in1sa_state::update_display()
 
 void t3in1sa_state::write_r(u32 data)
 {
-	// R10: speaker out
-	m_speaker->level_w(data >> 10 & 1);
-
-	// R0,R1,R5,R7-R9: input mux
-	m_inp_mux = (data & 3) | (data >> 3 & 4) | (data >> 4 & 0x38);
-
 	// R2: led data high
 	// R3-R7: led select
 	// R0,R1,R8,R9: digit select
 	m_r = data;
 	update_display();
+
+	// R0,R1,R5,R7-R9: input mux
+	m_inp_mux = (data & 3) | (data >> 3 & 4) | (data >> 4 & 0x38);
+
+	// R10: speaker out
+	m_speaker->level_w(BIT(data, 10));
 }
 
 void t3in1sa_state::write_o(u16 data)
@@ -10745,9 +10928,9 @@ private:
 	required_device<s14001a_device> m_speech;
 
 	void update_display();
-	virtual void write_r(u32 data);
-	virtual void write_o(u16 data);
-	virtual u8 read_k();
+	void write_r(u32 data);
+	void write_o(u16 data);
+	u8 read_k();
 };
 
 // handlers
@@ -12389,10 +12572,10 @@ public:
 private:
 	required_device<tmc0999_device> m_ram;
 
-	virtual void update_display();
-	virtual void write_o(u16 data);
-	virtual void write_r(u32 data);
-	virtual u8 read_k();
+	void update_display();
+	void write_o(u16 data);
+	void write_r(u32 data);
+	u8 read_k();
 };
 
 // handlers
@@ -14267,7 +14450,7 @@ ROM_END
 
 /***************************************************************************
 
-  Tsukuda Game Pachinko
+  Tsukuda Slot Elepachi 「スロットエレパチ」
   * PCB label: TOFL003
   * TMS2670 M95041 (die label: TMS2400, M95041, 40H-01D-ND02-PHI0032-TTL O300-R300)
   * TMS1024 I/O expander
@@ -14279,33 +14462,33 @@ ROM_END
 
 ***************************************************************************/
 
-class tgpachi_state : public hh_tms1k_state
+class slepachi_state : public hh_tms1k_state
 {
 public:
-	tgpachi_state(const machine_config &mconfig, device_type type, const char *tag) :
+	slepachi_state(const machine_config &mconfig, device_type type, const char *tag) :
 		hh_tms1k_state(mconfig, type, tag),
 		m_expander(*this, "expander")
 	{ }
 
-	void tgpachi(machine_config &config);
+	void slepachi(machine_config &config);
 
 private:
 	required_device<tms1024_device> m_expander;
 	void expander_w(offs_t offset, u8 data);
 
 	void update_display();
-	virtual void write_r(u32 data);
-	virtual void write_o(u16 data);
+	void write_r(u32 data);
+	void write_o(u16 data);
 };
 
 // handlers
 
-void tgpachi_state::update_display()
+void slepachi_state::update_display()
 {
 	m_display->matrix(m_grid, m_plate);
 }
 
-void tgpachi_state::expander_w(offs_t offset, u8 data)
+void slepachi_state::expander_w(offs_t offset, u8 data)
 {
 	// TMS1024 port 4-7: VFD plate
 	int shift = (offset - tms1024_device::PORT4) * 4;
@@ -14313,7 +14496,7 @@ void tgpachi_state::expander_w(offs_t offset, u8 data)
 	update_display();
 }
 
-void tgpachi_state::write_r(u32 data)
+void slepachi_state::write_r(u32 data)
 {
 	// R13: speaker out
 	m_speaker->level_w(BIT(data, 13));
@@ -14330,7 +14513,7 @@ void tgpachi_state::write_r(u32 data)
 	update_display();
 }
 
-void tgpachi_state::write_o(u16 data)
+void slepachi_state::write_o(u16 data)
 {
 	// O0-O3: TMS1024 H1-H4 + VFD plate
 	m_expander->write_h(data & 0xf);
@@ -14340,7 +14523,7 @@ void tgpachi_state::write_o(u16 data)
 
 // config
 
-static INPUT_PORTS_START( tgpachi )
+static INPUT_PORTS_START( slepachi )
 	PORT_START("IN.0") // K
 	PORT_CONFNAME( 0x01, 0x00, "Factory Test" )
 	PORT_CONFSETTING(    0x00, DEF_STR( Off ) )
@@ -14356,20 +14539,20 @@ static INPUT_PORTS_START( tgpachi )
 	PORT_CONFSETTING(    0x08, "2" )
 INPUT_PORTS_END
 
-void tgpachi_state::tgpachi(machine_config &config)
+void slepachi_state::slepachi(machine_config &config)
 {
 	// basic machine hardware
 	TMS2670(config, m_maincpu, 450000); // approximation - RC osc. R=47K, C=47pF
 	m_maincpu->read_k().set_ioport("IN.0");
 	m_maincpu->read_j().set_ioport("IN.1");
-	m_maincpu->write_r().set(FUNC(tgpachi_state::write_r));
-	m_maincpu->write_o().set(FUNC(tgpachi_state::write_o));
+	m_maincpu->write_r().set(FUNC(slepachi_state::write_r));
+	m_maincpu->write_o().set(FUNC(slepachi_state::write_o));
 
 	TMS1024(config, m_expander).set_ms(1); // MS tied high
-	m_expander->write_port4_callback().set(FUNC(tgpachi_state::expander_w));
-	m_expander->write_port5_callback().set(FUNC(tgpachi_state::expander_w));
-	m_expander->write_port6_callback().set(FUNC(tgpachi_state::expander_w));
-	m_expander->write_port7_callback().set(FUNC(tgpachi_state::expander_w));
+	m_expander->write_port4_callback().set(FUNC(slepachi_state::expander_w));
+	m_expander->write_port5_callback().set(FUNC(slepachi_state::expander_w));
+	m_expander->write_port6_callback().set(FUNC(slepachi_state::expander_w));
+	m_expander->write_port7_callback().set(FUNC(slepachi_state::expander_w));
 
 	// video hardware
 	screen_device &screen(SCREEN(config, "screen", SCREEN_TYPE_SVG));
@@ -14387,17 +14570,17 @@ void tgpachi_state::tgpachi(machine_config &config)
 
 // roms
 
-ROM_START( tgpachi )
+ROM_START( slepachi )
 	ROM_REGION( 0x1000, "maincpu", 0 )
 	ROM_LOAD( "m95041", 0x0000, 0x1000, CRC(18b39629) SHA1(46bbe2028717ab4a1ca92f45496f7636e1c81fcf) )
 
 	ROM_REGION( 759, "maincpu:mpla", 0 )
 	ROM_LOAD( "tms2100_common1_micro.pla", 0, 759, CRC(4a60382f) SHA1(f66ed530ca3869367fc7afacd0b985d555781ba2) )
 	ROM_REGION( 557, "maincpu:opla", 0 )
-	ROM_LOAD( "tms2100_tgpachi_output.pla", 0, 557, CRC(90849b91) SHA1(ed19444b655c48bbf2a662478d46c045d900080d) )
+	ROM_LOAD( "tms2100_slepachi_output.pla", 0, 557, CRC(90849b91) SHA1(ed19444b655c48bbf2a662478d46c045d900080d) )
 
 	ROM_REGION( 140540, "screen", 0)
-	ROM_LOAD( "tgpachi.svg", 0, 140540, CRC(95ad7b9f) SHA1(f2f5550ff6a406bcf8310674e55f1ab8ec21f5d2) )
+	ROM_LOAD( "slepachi.svg", 0, 140540, CRC(95ad7b9f) SHA1(f2f5550ff6a406bcf8310674e55f1ab8ec21f5d2) )
 ROM_END
 
 
@@ -14406,9 +14589,164 @@ ROM_END
 
 /***************************************************************************
 
-  U.S. Games Super Sports-4
+  U.S. Games Space Cruiser (model TF2)
+  * PCB label: TF2
+  * TMS1100 MP1209 (no decap)
+  * 4 7seg LEDs, 40+2 other LEDs, 1-bit sound
+
+  It's a 2-in-1 handheld, Strategy Football and Space Game. MAME external
+  artwork is recommended for the switchable overlays.
+
+***************************************************************************/
+
+class scruiser_state : public hh_tms1k_state
+{
+public:
+	scruiser_state(const machine_config &mconfig, device_type type, const char *tag) :
+		hh_tms1k_state(mconfig, type, tag)
+	{ }
+
+	void scruiser(machine_config &config);
+
+private:
+	void update_display();
+	void update_input();
+	void write_r(u32 data);
+	void write_o(u16 data);
+	u8 read_k();
+};
+
+// handlers
+
+void scruiser_state::update_display()
+{
+	m_display->matrix(m_r, m_o | (m_r & 0x300));
+}
+
+void scruiser_state::update_input()
+{
+	// switches from O7+R7
+	m_inp_mux = (m_r & 0xf) | (BIT(m_o, 7) << ((BIT(m_r, 7)) + 4));
+}
+
+void scruiser_state::write_r(u32 data)
+{
+	// R0-R3: 7seg select
+	// R4-R7: led select
+	// R8,R9: led data
+	m_r = data;
+	update_display();
+
+	// R0-R3,R7: input mux
+	update_input();
+
+	// R10: speaker out
+	m_speaker->level_w(BIT(data, 10));
+}
+
+void scruiser_state::write_o(u16 data)
+{
+	// O0-O7: led data
+	m_o = data;
+	update_display();
+
+	// O7: select switches
+	update_input();
+}
+
+u8 scruiser_state::read_k()
+{
+	// K: multiplexed inputs
+	return read_inputs(6);
+}
+
+// config
+
+static INPUT_PORTS_START( scruiser )
+	PORT_START("IN.0") // R0
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_JOYSTICK_DOWN ) PORT_COCKTAIL PORT_16WAY
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_JOYSTICK_UP ) PORT_COCKTAIL PORT_16WAY
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_JOYSTICK_RIGHT ) PORT_COCKTAIL PORT_16WAY
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_JOYSTICK_LEFT ) PORT_COCKTAIL PORT_16WAY
+
+	PORT_START("IN.1") // R1
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_JOYSTICK_UP ) PORT_16WAY
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_JOYSTICK_DOWN ) PORT_16WAY
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_JOYSTICK_LEFT ) PORT_16WAY
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_JOYSTICK_RIGHT ) PORT_16WAY
+
+	PORT_START("IN.2") // R2
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_BUTTON2 ) PORT_COCKTAIL PORT_NAME("P2 Info")
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_BUTTON3 ) PORT_COCKTAIL PORT_NAME("P2 Kick")
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_BUTTON4 ) PORT_COCKTAIL PORT_NAME("P2 QB / WB")
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_BUTTON1 ) PORT_COCKTAIL PORT_NAME("P2 Pass")
+
+	PORT_START("IN.3") // R3
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_BUTTON2 ) PORT_NAME("P1 Info")
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_BUTTON3 ) PORT_NAME("P1 Kick")
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_BUTTON4 ) PORT_NAME("P1 QB / WB")
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_BUTTON1 ) PORT_NAME("P1 Pass")
+
+	PORT_START("IN.4") // O7+!R7
+	PORT_CONFNAME( 0x02, 0x02, "Game Select" )
+	PORT_CONFSETTING(    0x02, "Space" )
+	PORT_CONFSETTING(    0x00, "Football" )
+	PORT_BIT( 0x0d, IP_ACTIVE_HIGH, IPT_UNUSED )
+
+	PORT_START("IN.5") // O7+R7
+	PORT_BIT( 0x03, IP_ACTIVE_HIGH, IPT_UNUSED )
+	PORT_CONFNAME( 0x04, 0x04, DEF_STR( Players ) )
+	PORT_CONFSETTING(    0x04, "1" )
+	PORT_CONFSETTING(    0x00, "2" )
+	PORT_CONFNAME( 0x08, 0x00, "Speed" )
+	PORT_CONFSETTING(    0x08, "Fast" ) // F
+	PORT_CONFSETTING(    0x00, "Slow" ) // S
+INPUT_PORTS_END
+
+void scruiser_state::scruiser(machine_config &config)
+{
+	// basic machine hardware
+	TMS1100(config, m_maincpu, 350000); // approximation - RC osc. R=47K, C=47pF
+	m_maincpu->read_k().set(FUNC(scruiser_state::read_k));
+	m_maincpu->write_r().set(FUNC(scruiser_state::write_r));
+	m_maincpu->write_o().set(FUNC(scruiser_state::write_o));
+
+	// video hardware
+	PWM_DISPLAY(config, m_display).set_size(8, 10);
+	m_display->set_segmask(0xf, 0x7f);
+	m_display->set_bri_levels(0.0075, 0.075); // offense leds are brighter
+	config.set_default_layout(layout_scruiser);
+
+	// sound hardware
+	SPEAKER(config, "mono").front_center();
+	SPEAKER_SOUND(config, m_speaker);
+	m_speaker->add_route(ALL_OUTPUTS, "mono", 0.25);
+}
+
+// roms
+
+ROM_START( scruiser )
+	ROM_REGION( 0x0800, "maincpu", 0 )
+	ROM_LOAD( "mp1209", 0x0000, 0x0800, CRC(a0280de4) SHA1(52beb30d8a5e4c85433db5722024f4011a07345b) )
+
+	ROM_REGION( 867, "maincpu:mpla", 0 )
+	ROM_LOAD( "tms1100_common2_micro.pla", 0, 867, BAD_DUMP CRC(7cc90264) SHA1(c6e1cf1ffb178061da9e31858514f7cd94e86990) ) // not verified
+	ROM_REGION( 365, "maincpu:opla", ROMREGION_ERASE00 )
+	ROM_LOAD( "tms1100_scruiser_output.pla", 0, 365, NO_DUMP )
+
+	ROM_REGION16_LE( 0x40, "maincpu:opla_b", ROMREGION_ERASE00 ) // verified, electronic dump
+	ROM_LOAD16_BYTE( "tms1100_scruiser_output.bin", 0, 0x20, CRC(cd6f162f) SHA1(3348edb697e996b5ab82be54076b9cd444e0f2b1) )
+ROM_END
+
+
+
+
+
+/***************************************************************************
+
+  U.S. Games Super Sports-4 (model TH42)
   * TMS1100 MP1219 (no decap)
-  * 4 7seg LEDs, 49 other LEDs, 1-bit sound
+  * 4 7seg LEDs, 47+2 other LEDs, 1-bit sound
 
   The game is very similar to t3in1sa, even parts of the ROM match. But by
   the time that one was released (in 1983 or 1984), U.S. Games did not exist
@@ -14430,6 +14768,7 @@ public:
 
 private:
 	void update_display();
+	void update_input();
 	void write_r(u32 data);
 	void write_o(u16 data);
 	u8 read_k();
@@ -14439,19 +14778,28 @@ private:
 
 void ssports4_state::update_display()
 {
-	// note: R2 is an extra column
 	m_display->matrix(m_r, m_o | (m_r << 6 & 0x100));
+}
+
+void ssports4_state::update_input()
+{
+	// switches from O7+R5
+	m_inp_mux = (m_r & 3) | (m_r >> 6 & 0xc) | (BIT(m_o, 7) << ((BIT(m_r, 5)) + 4));
 }
 
 void ssports4_state::write_r(u32 data)
 {
-	// R10: speaker out
-	m_speaker->level_w(data >> 10 & 1);
-
-	// R0-R9: led select/data
-	// R0,R1 and R8,R9 are 7segs
+	// R0,R1,R8,R9: 7seg select
+	// R3-R7: led select
+	// R2: led data
 	m_r = data;
 	update_display();
+
+	// R0,R1,R5,R8,R9: input mux
+	update_input();
+
+	// R10: speaker out
+	m_speaker->level_w(BIT(data, 10));
 }
 
 void ssports4_state::write_o(u16 data)
@@ -14459,12 +14807,14 @@ void ssports4_state::write_o(u16 data)
 	// O0-O7: led data
 	m_o = data;
 	update_display();
+
+	// O7: select switches
+	update_input();
 }
 
 u8 ssports4_state::read_k()
 {
-	// input mux is from R0,1,5,8,9 and O7
-	m_inp_mux = (m_r & 3) | (m_r >> 3 & 4) | (m_r >> 5 & 0x18) | (m_o >> 2 & 0x20);
+	// K: multiplexed inputs
 	return read_inputs(6);
 }
 
@@ -14483,34 +14833,34 @@ static INPUT_PORTS_START( ssports4 )
 	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_JOYSTICK_RIGHT ) PORT_COCKTAIL PORT_16WAY
 	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_JOYSTICK_LEFT ) PORT_COCKTAIL PORT_16WAY
 
-	PORT_START("IN.2") // R5
-	PORT_BIT( 0x03, IP_ACTIVE_HIGH, IPT_UNUSED )
-	PORT_CONFNAME( 0x04, 0x00, DEF_STR( Difficulty ) )
-	PORT_CONFSETTING(    0x00, "1" )
-	PORT_CONFSETTING(    0x04, "2" )
-	PORT_CONFNAME( 0x08, 0x08, DEF_STR( Players ) )
-	PORT_CONFSETTING(    0x08, "1" )
-	PORT_CONFSETTING(    0x00, "2" )
+	PORT_START("IN.2") // R8
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_BUTTON1 ) PORT_NAME("P1 Up-Left / Kick")
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_BUTTON2 ) PORT_NAME("P1 Up-Right / Info")
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_BUTTON3 ) PORT_NAME("P1 Pass")
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_BUTTON4 ) PORT_NAME("P1 O.P.") // offensive player (modifier button)
 
-	PORT_START("IN.3") // R8
-	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_BUTTON1 ) PORT_16WAY PORT_NAME("P1 Up-Left / Kick")
-	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_BUTTON2 ) PORT_16WAY PORT_NAME("P1 Up-Right / Info")
-	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_BUTTON3 ) PORT_16WAY PORT_NAME("P1 Pass")
-	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_BUTTON4 ) PORT_16WAY PORT_NAME("P1 O.P.") // offensive player (modifier button)
+	PORT_START("IN.3") // R9
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_BUTTON1 ) PORT_COCKTAIL PORT_NAME("P2 Up-Left / Kick")
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_BUTTON2 ) PORT_COCKTAIL PORT_NAME("P2 Up-Right / Info")
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_BUTTON3 ) PORT_COCKTAIL PORT_NAME("P2 Pass")
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_BUTTON4 ) PORT_COCKTAIL PORT_NAME("P2 O.P.")
 
-	PORT_START("IN.4") // R9
-	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_BUTTON1 ) PORT_COCKTAIL PORT_16WAY PORT_NAME("P2 Up-Left / Kick")
-	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_BUTTON2 ) PORT_COCKTAIL PORT_16WAY PORT_NAME("P2 Up-Right / Info")
-	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_BUTTON3 ) PORT_COCKTAIL PORT_16WAY PORT_NAME("P2 Pass")
-	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_BUTTON4 ) PORT_COCKTAIL PORT_16WAY PORT_NAME("P2 O.P.")
-
-	PORT_START("IN.5") // O7
+	PORT_START("IN.4") // O7+!R5
 	PORT_CONFNAME( 0x03, 0x00, "Game Select" )
 	PORT_CONFSETTING(    0x02, "Basketball" )
 	PORT_CONFSETTING(    0x00, "Football" )
 	PORT_CONFSETTING(    0x01, "Soccer" )
 	PORT_CONFSETTING(    0x03, "Hockey" )
 	PORT_BIT( 0x0c, IP_ACTIVE_HIGH, IPT_UNUSED )
+
+	PORT_START("IN.5") // O7+R5
+	PORT_BIT( 0x03, IP_ACTIVE_HIGH, IPT_UNUSED )
+	PORT_CONFNAME( 0x04, 0x00, "Speed" )
+	PORT_CONFSETTING(    0x04, "High" ) // HI
+	PORT_CONFSETTING(    0x00, "Low" )  // LO
+	PORT_CONFNAME( 0x08, 0x08, DEF_STR( Players ) )
+	PORT_CONFSETTING(    0x08, "1" )
+	PORT_CONFSETTING(    0x00, "2" )
 INPUT_PORTS_END
 
 void ssports4_state::ssports4(machine_config &config)
@@ -14749,6 +15099,8 @@ CONS( 1981, tc7atc,     0,         0, tc7atc,    tc7atc,    tc7atc_state,    emp
 COMP( 1977, palmf31,    0,         0, palmf31,   palmf31,   palmf31_state,   empty_init, "Canon", "Palmtronic F-31", MACHINE_SUPPORTS_SAVE | MACHINE_NO_SOUND_HW )
 COMP( 1977, palmmd8,    0,         0, palmmd8,   palmmd8,   palmmd8_state,   empty_init, "Canon", "Palmtronic MD-8 (Multi 8)", MACHINE_SUPPORTS_SAVE | MACHINE_NO_SOUND_HW )
 
+SYST( 1977, cchime,     0,         0, cchime,    cchime,    cchime_state,    empty_init, "Chromatronics", "Chroma-Chime", MACHINE_SUPPORTS_SAVE )
+
 CONS( 1978, amaztron,   0,         0, amaztron,  amaztron,  amaztron_state,  empty_init, "Coleco", "Amaze-A-Tron", MACHINE_SUPPORTS_SAVE | MACHINE_CLICKABLE_ARTWORK | MACHINE_IMPERFECT_CONTROLS ) // ***
 COMP( 1979, zodiac,     0,         0, zodiac,    zodiac,    zodiac_state,    empty_init, "Coleco", "Zodiac - The Astrology Computer", MACHINE_SUPPORTS_SAVE | MACHINE_CLICKABLE_ARTWORK )
 CONS( 1978, cqback,     0,         0, cqback,    cqback,    cqback_state,    empty_init, "Coleco", "Electronic Quarterback", MACHINE_SUPPORTS_SAVE )
@@ -14868,8 +15220,9 @@ CONS( 1979, tbreakup,   0,         0, tbreakup,  tbreakup,  tbreakup_state,  emp
 CONS( 1980, phpball,    0,         0, phpball,   phpball,   phpball_state,   empty_init, "Tomy", "Power House Pinball", MACHINE_SUPPORTS_SAVE | MACHINE_REQUIRES_ARTWORK )
 
 CONS( 1982, tdracula,   0,         0, tdracula,  tdracula,  tdracula_state,  empty_init, "Tsukuda", "The Dracula (Tsukuda)", MACHINE_SUPPORTS_SAVE )
-CONS( 1983, tgpachi,    0,         0, tgpachi,   tgpachi,   tgpachi_state,   empty_init, "Tsukuda", "Game Pachinko", MACHINE_SUPPORTS_SAVE )
+CONS( 1983, slepachi,   0,         0, slepachi,  slepachi,  slepachi_state,  empty_init, "Tsukuda", "Slot Elepachi", MACHINE_SUPPORTS_SAVE )
 
+CONS( 1980, scruiser,   0,         0, scruiser,  scruiser,  scruiser_state,  empty_init, "U.S. Games", "Space Cruiser (U.S. Games)", MACHINE_SUPPORTS_SAVE | MACHINE_REQUIRES_ARTWORK )
 CONS( 1980, ssports4,   0,         0, ssports4,  ssports4,  ssports4_state,  empty_init, "U.S. Games", "Super Sports-4", MACHINE_SUPPORTS_SAVE | MACHINE_REQUIRES_ARTWORK )
 
 CONS( 1983, xl25,       0,         0, xl25,      xl25,      xl25_state,      empty_init, "Vulcan Electronics", "XL 25", MACHINE_SUPPORTS_SAVE | MACHINE_CLICKABLE_ARTWORK )

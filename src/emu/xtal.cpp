@@ -102,6 +102,7 @@ const double XTAL::known_xtals[] = {
 	  3'579'000, /* 3.579_MHz_XTAL         BeebOPL */
 	  3'579'545, /* 3.579545_MHz_XTAL      NTSC color subcarrier, extremely common, used on 100's of PCBs (Keytronic custom part #48-300-010 is equivalent) */
 	  3'579'575, /* 3.579575_MHz_XTAL      Atari 2600 NTSC */
+	  3'680'000, /* 3.68_MHz_XTAL          Resonator - Baud rate clock for the 6551 in the MTU-130 */
 	  3'686'400, /* 3.6864_MHz_XTAL        Baud rate clock for MC68681 and similar UARTs */
 	  3'840'000, /* 3.84_MHz_XTAL          Fairlight CMI Alphanumeric Keyboard */
 	  3'900'000, /* 3.9_MHz_XTAL           Resonator - Used on some Fidelity boards */
@@ -122,6 +123,7 @@ const double XTAL::known_xtals[] = {
 	  5'185'000, /* 5.185_MHz_XTAL         Intel INTELLEC® 4 */
 	  5'370'000, /* 5.37_MHz_XTAL          HP 95LX */
 	  5'460'000, /* 5.46_MHz_XTAL          ec1840 and ec1841 keyboard */
+	  5'500'000, /* 5.5_MHz_XTAL           Yamaha PSS-480 */
 	  5'529'600, /* 5.5296_MHz_XTAL        Kontron PSI98 keyboard */
 	  5'626'000, /* 5.626_MHz_XTAL         RCA CDP1869 PAL dot clock */
 	  5'659'200, /* 5.6592_MHz_XTAL        Digilog 320 dot clock */
@@ -161,6 +163,7 @@ const double XTAL::known_xtals[] = {
 	  9'000'000, /* 9_MHz_XTAL             Homedata PCBs */
 	  9'216'000, /* 9.216_MHz_XTAL         Univac UTS 20 */
 	  9'400'000, /* 9.4_MHz_XTAL           Yamaha MU-5 and TG-100 */
+	  9'426'500, /* 9.4265_MHz_XTAL        Yamaha DX7, and DX9 */
 	  9'600'000, /* 9.6_MHz_XTAL           WD37C65 second clock (for 300 KB/sec rate) */
 	  9'732'000, /* 9.732_MHz_XTAL         CTA Invader */
 	  9'828'000, /* 9.828_MHz_XTAL         Universal PCBs */

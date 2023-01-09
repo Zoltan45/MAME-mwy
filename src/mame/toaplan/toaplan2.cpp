@@ -431,18 +431,8 @@ WRITE_LINE_MEMBER(toaplan2_state::toaplan2_reset)
 }
 
 
-MACHINE_RESET_MEMBER(toaplan2_state,toaplan2)
-{
-	// All games execute a RESET instruction on init, presumably to reset the sound CPU.
-	// This is important for games with common RAM; the RAM test will fail
-	// when leaving service mode if the sound CPU is not reset.
-	m_maincpu->set_reset_callback(*this, FUNC(toaplan2_state::toaplan2_reset));
-}
-
-
 MACHINE_RESET_MEMBER(toaplan2_state,ghox)
 {
-	MACHINE_RESET_CALL_MEMBER(toaplan2);
 	m_old_p1_paddle_h = 0;
 	m_old_p2_paddle_h = 0;
 }
@@ -450,7 +440,6 @@ MACHINE_RESET_MEMBER(toaplan2_state,ghox)
 
 MACHINE_RESET_MEMBER(toaplan2_state,bgaregga)
 {
-	MACHINE_RESET_CALL_MEMBER(toaplan2);
 	for (int chip = 0; chip < 2; chip++)
 	{
 		for (int i = 0; i < 8; i++)
@@ -3343,6 +3332,7 @@ void toaplan2_state::tekipaki(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 10_MHz_XTAL);         // 10MHz Oscillator
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::tekipaki_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	hd647180x_device &audiocpu(HD647180X(config, m_audiocpu, 10_MHz_XTAL));
 	// 16k byte ROM and 512 byte RAM are internal
@@ -3350,8 +3340,6 @@ void toaplan2_state::tekipaki(machine_config &config)
 	audiocpu.in_pa_callback().set(FUNC(toaplan2_state::tekipaki_cmdavailable_r));
 
 	config.set_maximum_quantum(attotime::from_hz(600));
-
-	MCFG_MACHINE_RESET_OVERRIDE(toaplan2_state,toaplan2)
 
 	/* video hardware */
 	SCREEN(config, m_screen, SCREEN_TYPE_RASTER);
@@ -3387,6 +3375,7 @@ void toaplan2_state::ghox(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 10_MHz_XTAL);         /* verified on pcb */
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::ghox_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	HD647180X(config, m_audiocpu, 10_MHz_XTAL);
 	m_audiocpu->set_addrmap(AS_PROGRAM, &toaplan2_state::ghox_hd647180_mem_map);
@@ -3475,6 +3464,7 @@ void toaplan2_state::dogyuun(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 25_MHz_XTAL/2);           /* verified on pcb */
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::dogyuun_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	v25_device &audiocpu(V25(config, m_audiocpu, 25_MHz_XTAL/2));         /* NEC V25 type Toaplan marked CPU ??? */
 	audiocpu.set_addrmap(AS_PROGRAM, &toaplan2_state::v25_mem);
@@ -3518,6 +3508,7 @@ void toaplan2_state::kbash(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 16_MHz_XTAL);         /* 16MHz Oscillator */
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::kbash_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	/* ROM based v25 */
 	v25_device &audiocpu(V25(config, m_audiocpu, 16_MHz_XTAL));         /* NEC V25 type Toaplan marked CPU ??? */
@@ -3562,6 +3553,7 @@ void toaplan2_state::kbash2(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 16_MHz_XTAL);         /* 16MHz Oscillator */
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::kbash2_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	/* video hardware */
 	SCREEN(config, m_screen, SCREEN_TYPE_RASTER);
@@ -3598,6 +3590,7 @@ void toaplan2_state::truxton2(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 16_MHz_XTAL);         /* verified on pcb */
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::truxton2_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	/* video hardware */
 	SCREEN(config, m_screen, SCREEN_TYPE_RASTER);
@@ -3642,13 +3635,12 @@ void toaplan2_state::pipibibs(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 10_MHz_XTAL);         // verified on PCB
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::pipibibs_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	Z80(config, m_audiocpu, 27_MHz_XTAL/8);         // verified on PCB
 	m_audiocpu->set_addrmap(AS_PROGRAM, &toaplan2_state::pipibibs_sound_z80_mem);
 
 	config.set_maximum_quantum(attotime::from_hz(600));
-
-	MCFG_MACHINE_RESET_OVERRIDE(toaplan2_state,toaplan2)
 
 	/* video hardware */
 	SCREEN(config, m_screen, SCREEN_TYPE_RASTER);
@@ -3684,13 +3676,12 @@ void toaplan2_state::pipibibsbl(machine_config &config)
 	M68000(config, m_maincpu, 12_MHz_XTAL); // ??? (position labeled "68000-12" but 10 MHz-rated parts used)
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::pipibibi_bootleg_68k_mem);
 	m_maincpu->set_addrmap(m68000_base_device::AS_CPU_SPACE, &toaplan2_state::cpu_space_pipibibsbl_map);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	Z80(config, m_audiocpu, 12_MHz_XTAL / 2); // GoldStar Z8400B; clock source and divider unknown
 	m_audiocpu->set_addrmap(AS_PROGRAM, &toaplan2_state::pipibibs_sound_z80_mem);
 
 	config.set_maximum_quantum(attotime::from_hz(600));
-
-	MCFG_MACHINE_RESET_OVERRIDE(toaplan2_state,toaplan2)
 
 	/* video hardware */
 	SCREEN(config, m_screen, SCREEN_TYPE_RASTER);
@@ -3760,6 +3751,7 @@ void toaplan2_state::fixeight(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 16_MHz_XTAL);         // verified on PCB
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::fixeight_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	v25_device &audiocpu(V25(config, m_audiocpu, 16_MHz_XTAL));           // NEC V25 type Toaplan marked CPU ???
 	audiocpu.set_addrmap(AS_PROGRAM, &toaplan2_state::fixeight_v25_mem);
@@ -3802,6 +3794,7 @@ void toaplan2_state::fixeightbl(machine_config &config)
 	M68000(config, m_maincpu, XTAL(10'000'000));         /* 10MHz Oscillator */
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::fixeightbl_68k_mem);
 	m_maincpu->set_addrmap(m68000_base_device::AS_CPU_SPACE, &toaplan2_state::cpu_space_fixeightbl_map);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	/* video hardware */
 	SCREEN(config, m_screen, SCREEN_TYPE_RASTER);
@@ -3837,6 +3830,7 @@ void toaplan2_state::vfive(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 20_MHz_XTAL/2);   // verified on PCB
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::vfive_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	v25_device &audiocpu(V25(config, m_audiocpu, 20_MHz_XTAL/2)); // Verified on PCB, NEC V25 type Toaplan mark scratched out
 	audiocpu.set_addrmap(AS_PROGRAM, &toaplan2_state::vfive_v25_mem);
@@ -3874,6 +3868,7 @@ void toaplan2_state::batsugun(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 32_MHz_XTAL/2);           // 16MHz, 32MHz Oscillator
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::batsugun_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	v25_device &audiocpu(V25(config, m_audiocpu, 32_MHz_XTAL/2));         // NEC V25 type Toaplan marked CPU ???
 	audiocpu.set_addrmap(AS_PROGRAM, &toaplan2_state::v25_mem);
@@ -3935,6 +3930,7 @@ void toaplan2_state::pwrkick(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 16_MHz_XTAL);
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::pwrkick_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	UPD4992(config, m_rtc, 32'768);
 
@@ -3970,6 +3966,7 @@ void toaplan2_state::othldrby(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 16_MHz_XTAL);
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::othldrby_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	UPD4992(config, m_rtc, 32'768);
 
@@ -4004,6 +4001,7 @@ void toaplan2_state::enmadaio(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 20_MHz_XTAL/2);
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::enmadaio_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	/* video hardware */
 	SCREEN(config, m_screen, SCREEN_TYPE_RASTER);
@@ -4036,6 +4034,7 @@ void toaplan2_state::snowbro2(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 16_MHz_XTAL);
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::snowbro2_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	/* video hardware */
 	SCREEN(config, m_screen, SCREEN_TYPE_RASTER);
@@ -4071,13 +4070,12 @@ void toaplan2_state::mahoudai(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 32_MHz_XTAL/2);   // 16MHz, 32MHz Oscillator
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::mahoudai_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	Z80(config, m_audiocpu, 32_MHz_XTAL/8);     // 4MHz, 32MHz Oscillator
 	m_audiocpu->set_addrmap(AS_PROGRAM, &toaplan2_state::raizing_sound_z80_mem);
 
 	config.set_maximum_quantum(attotime::from_hz(600));
-
-	MCFG_MACHINE_RESET_OVERRIDE(toaplan2_state,toaplan2)
 
 	/* video hardware */
 	SCREEN(config, m_screen, SCREEN_TYPE_RASTER);
@@ -4121,6 +4119,7 @@ void toaplan2_state::bgaregga(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 32_MHz_XTAL/2);   // 16MHz, 32MHz Oscillator
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::bgaregga_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	Z80(config, m_audiocpu, 32_MHz_XTAL/8);     // 4MHz, 32MHz Oscillator
 	m_audiocpu->set_addrmap(AS_PROGRAM, &toaplan2_state::bgaregga_sound_z80_mem);
@@ -4177,6 +4176,7 @@ void toaplan2_state::batrider(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 32_MHz_XTAL/2);   // 16MHz, 32MHz Oscillator (verified)
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::batrider_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	Z80(config, m_audiocpu, 32_MHz_XTAL/6);     // 5.333MHz, 32MHz Oscillator (verified)
 	m_audiocpu->set_addrmap(AS_PROGRAM, &toaplan2_state::batrider_sound_z80_mem);
@@ -4240,6 +4240,7 @@ void toaplan2_state::bbakraid(machine_config &config)
 	/* basic machine hardware */
 	M68000(config, m_maincpu, 32_MHz_XTAL/2);   // 16MHz, 32MHz Oscillator
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::bbakraid_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	Z80(config, m_audiocpu, XTAL(32'000'000)/6);     /* 5.3333MHz , 32MHz Oscillator */
 	m_audiocpu->set_addrmap(AS_PROGRAM, &toaplan2_state::bbakraid_sound_z80_mem);
@@ -4247,8 +4248,6 @@ void toaplan2_state::bbakraid(machine_config &config)
 	m_audiocpu->set_periodic_int(FUNC(toaplan2_state::bbakraid_snd_interrupt), attotime::from_hz(XTAL(32'000'000) / 6 / 12000)); // sound CPU clock (divider unverified)
 
 	config.set_maximum_quantum(attotime::from_hz(600));
-
-	MCFG_MACHINE_RESET_OVERRIDE(toaplan2_state,toaplan2)
 
 	EEPROM_93C66_8BIT(config, "eeprom");
 
@@ -4299,6 +4298,7 @@ void toaplan2_state::nprobowl(machine_config &config)
 	// basic machine hardware
 	M68000(config, m_maincpu, 32_MHz_XTAL / 2);   // 32MHz Oscillator, divisor not verified
 	m_maincpu->set_addrmap(AS_PROGRAM, &toaplan2_state::nprobowl_68k_mem);
+	m_maincpu->reset_cb().set(FUNC(toaplan2_state::toaplan2_reset));
 
 	ADDRESS_MAP_BANK(config, m_dma_space, 0);
 	m_dma_space->set_addrmap(0, &toaplan2_state::batrider_dma_mem);
@@ -6044,6 +6044,22 @@ ROM_START( nprobowl )
 	ROM_LOAD( "newprobowl-adpcm1-u0835", 0x80000, 0x80000, CRC(8c191e60) SHA1(f81c2849ffc553d921fc680cd50c2997b834c44a) )
 ROM_END
 
+ROM_START( probowl2 ) // identical to New Pro Bowl but for slight mods to the GFX ROMs to display the different title
+	ROM_REGION( 0x200000, "maincpu", 0 )
+	ROM_LOAD16_BYTE( "probowl2.prg0.u021", 0x000000, 0x080000, CRC(3a57f122) SHA1(cc361c295f23bc0479ba49eb15de2ec6ca535a56) ) // 11xxxxxxxxxxxxxxxxx = 0xFF
+	ROM_LOAD16_BYTE( "probowl2.prg1.u024", 0x000001, 0x080000, CRC(9e9bb58a) SHA1(3d2159bde418dee5d89e3df9a248b4b1989e6ee9) ) // 11xxxxxxxxxxxxxxxxx = 0xFF
+
+	ROM_REGION( 0x200000, "gp9001_0", 0 )
+	ROM_LOAD16_BYTE( "probowl2.chr1.u0519", 0x000000, 0x80000, CRC(66a5c9cd) SHA1(b8edc6a66e3929af2a1399e5fb6fc341b9789136) )
+	ROM_LOAD16_BYTE( "probowl2.chr0.u0518", 0x000001, 0x80000, CRC(b4439673) SHA1(5ca19d9c3c3cce9485fb9bd5224f0b14abe07f49) )
+	ROM_LOAD16_BYTE( "probowl2.chr2.u0520", 0x100000, 0x80000, CRC(e05be3a0) SHA1(922c6f094358cf3df790063e68d5dd4a32d46b06) )
+	ROM_LOAD16_BYTE( "probowl2.chr3.u0521", 0x100001, 0x80000, CRC(55e2565f) SHA1(b6a570b736a9b30e26d2a59b53f218ef5cd6f0f6) )
+
+	ROM_REGION( 0x100000, "oki1", 0 )
+	ROM_LOAD( "probowl2.adpcm0.u0834", 0x00000, 0x80000, CRC(be2fb43f) SHA1(f3f9bc522f4668852b751f291cef0000bb86b779) )
+	ROM_LOAD( "probowl2.adpcm1.u0835", 0x80000, 0x80000, CRC(8c191e60) SHA1(f81c2849ffc553d921fc680cd50c2997b834c44a) )
+ROM_END
+
 
 // The following is in order of Toaplan Board/game numbers
 // See list at top of file
@@ -6156,4 +6172,5 @@ GAME( 1999, bbakraidj,   bbakraid, bbakraid,   bbakraid,   toaplan2_state, init_
 GAME( 1999, bbakraidja,  bbakraid, bbakraid,   bbakraid,   toaplan2_state, init_bbakraid,   ROT270, "Eighting", "Battle Bakraid (Japan) (Wed Apr 7 1999)", MACHINE_SUPPORTS_SAVE )
 
 // dedicated PCB
-GAME( 1996, nprobowl,    0,        nprobowl,   nprobowl,   toaplan2_state, empty_init,      ROT0,   "Zuck / Able Corp", "New Pro Bowl", MACHINE_NOT_WORKING | MACHINE_IMPERFECT_GRAPHICS | MACHINE_IMPERFECT_SOUND | MACHINE_MECHANICAL | MACHINE_SUPPORTS_SAVE ) // bad GFXs, no sound banking, controls, etc
+GAME( 1996, nprobowl,    0,        nprobowl,   nprobowl,   toaplan2_state, empty_init,      ROT0,   "Zuck / Able Corp", "New Pro Bowl", MACHINE_NOT_WORKING | MACHINE_IMPERFECT_SOUND | MACHINE_MECHANICAL | MACHINE_SUPPORTS_SAVE ) // bad GFXs, no sound banking, controls, etc
+GAME( 1996, probowl2,    nprobowl, nprobowl,   nprobowl,   toaplan2_state, empty_init,      ROT0,   "Zuck / Able Corp", "Pro Bowl 2",   MACHINE_NOT_WORKING | MACHINE_IMPERFECT_SOUND | MACHINE_MECHANICAL | MACHINE_SUPPORTS_SAVE ) // bad GFXs, no sound banking, controls, etc
