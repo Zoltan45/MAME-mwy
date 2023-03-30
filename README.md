@@ -122,10 +122,10 @@ Please see COPYING for more details.
 
 
 
-What is MAME-mkp?
+What is MAME-mwy?
 =============
 
-MAME-mkp is a slightly modified version of MAME that includes support for the games Mortal Kombat II +, Ultimate Mortal Kombat 3 +, and NBA JAM TE Rewind.
+MAME-mwy is a slightly modified version of MAME that includes support for the games Mortal Kombat II +, Ultimate Mortal Kombat 3 +, and NBA JAM TE Rewind.
 
 
 How to compile a Mortal Kombat only build?
