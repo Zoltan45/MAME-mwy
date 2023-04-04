@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU), TehDrewsus
+Artwork - BloodyDrake -->
+
+<mamelayout version="2">
+	<element name="border">
+		<image file="mk3_bezel.png"/>
+	</element>
+	<element name="portrait" defstate="30">
+		<image state="0" file="../umk3p/kano.png" />
+		<image state="1" file="../umk3p/sonya.png" />
+		<image state="2" file="../umk3p/jax.png" />
+		<image state="3" file="../umk3p/nightwolf.png" />
+		<image state="4" file="../umk3p/u_sub_zero.png" />
+		<image state="5" file="../umk3p/stryker.png" />
+		<image state="6" file="../umk3p/sindel.png" />
+		<image state="7" file="../umk3p/sektor.png" />
+		<image state="8" file="../umk3p/cyrax.png" />
+		<image state="9" file="../umk3p/kung_lao.png" />
+		<image state="10" file="../umk3p/kabal.png" />
+		<image state="11" file="../umk3p/sheeva.png" />
+		<image state="12" file="../umk3p/shang_tsung.png" />
+		<image state="13" file="../umk3p/liu_kang.png" />
+		<image state="14" file="../umk3p/c_smoke.png" />
+<!--	<image state="15" file="../umk3p/kitana.png" />
+		<image state="16" file="../umk3p/jade.png" />
+		<image state="17" file="../umk3p/mileena.png" />
+		<image state="18" file="../umk3p/scorpion.png" />
+		<image state="19" file="../umk3p/reptile.png" />
+		<image state="20" file="../umk3p/ermac.png" />
+		<image state="21" file="../umk3p/c_sub_zero.png" />
+		<image state="22" file="../umk3p/h_smoke.png" />
+		<image state="23" file="../umk3p/noob_saibot.png" />
+		<image state="25" file="../umk3p/shao_kahn.png" />
+		<image state="26" file="../umk3p/rain.png" />
+		<image state="27" file="../umk3p/chameleon.png" />
+		<image state="28" file="../umk3p/triborg.png" />
+		<image state="29" file="../umk3p/khameleon.png" />  -->
+		<image state="30" file="../umk3p/blankpt.png" />
+	</element>
+	<element name="background" defstate="0">
+		<image state="0" file="../umk3p/blankbg.png" />
+		<image state="1" file="../umk3p/bg.png" />
+	</element>
+	<element name="movelist" defstate="30">
+		<image state="0" file="../umk3p/kano_ml.png" />
+		<image state="1" file="../umk3p/sonya_ml.png" />
+		<image state="2" file="../umk3p/jax_ml.png" />
+		<image state="3" file="../umk3p/nightwolf_ml.png" />
+		<image state="4" file="../umk3p/u_sub_zero_ml.png" />
+		<image state="5" file="../umk3p/stryker_ml.png" />
+		<image state="6" file="../umk3p/sindel_ml.png" />
+		<image state="7" file="../umk3p/sektor_ml.png" />
+		<image state="8" file="../umk3p/cyrax_ml.png" />
+		<image state="9" file="../umk3p/kung_lao_ml.png" />
+		<image state="10" file="../umk3p/kabal_ml.png" />
+		<image state="11" file="../umk3p/sheeva_ml.png" />
+		<image state="12" file="../umk3p/shang_tsung_ml.png" />
+		<image state="13" file="../umk3p/liu_kang_ml.png" />
+		<image state="14" file="../umk3p/c_smoke_ml.png" />
+<!--	<image state="15" file="../umk3p/kitana_ml.png" />
+		<image state="16" file="../umk3p/jade_ml.png" />
+		<image state="17" file="../umk3p/mileena_ml.png" />
+		<image state="18" file="../umk3p/scorpion_ml.png" />
+		<image state="19" file="../umk3p/reptile_ml.png" />
+		<image state="20" file="../umk3p/ermac_ml.png" />
+		<image state="21" file="../umk3p/c_sub_zero_ml.png" />
+		<image state="22" file="../umk3p/h_smoke_ml.png" />
+		<image state="23" file="../umk3p/noob_saibot_ml.png" />
+		<image state="25" file="../umk3p/shao_kahn_ml.png" />
+		<image state="26" file="../umk3p/rain_ml.png" />
+		<image state="27" file="../umk3p/question.png" />
+		<image state="28" file="../umk3p/question.png" />
+		<image state="29" file="../umk3p/question.png" />  -->
+		<image state="30" file="../umk3p/blankml.png" />
+	</element>
+	<view name="bezel">
+		<screen index="0">
+			<bounds x="365" y="90" width="1200" height="900"/>
+		</screen>
+		<element ref="border">
+			<bounds x="0" y="0" width="1920" height="1080"/>
+		</element>
+		<element id="bg_p1" ref="background">
+			<bounds x="0" y="466" width="417" height="614" />
+		</element>
+		<element id="bg_p2" ref="background">
+			<orientation flipX="yes"/>
+			<bounds x="1503" y="466" width="417" height="614" />
+		</element>	
+		<element id="pt_p1" ref="portrait">
+			<bounds x="0" y="10" width="380" height="467" />
+		</element>
+		<element id="pt_p2" ref="portrait">
+			<orientation flipX="yes"/>
+			<bounds x="1540" y="10" width="380" height="467" />
+		</element>
+		<element id="ml_p1" ref="movelist">
+			<bounds x="29" y="580" width="241" height="360" />
+		</element>
+		<element id="ml_p2" ref="movelist">
+			<bounds x="1650" y="580" width="241" height="360" />
+		</element>
+	</view>
+	<script><![CDATA[
+        file:set_resolve_tags_callback(
+		function()
+			local cpu = file.device:subdevice(":maincpu")
+			local mem = cpu.spaces["program"]
+			local p1char = file.views["bezel"].items["pt_p1"]
+			local p2char = file.views["bezel"].items["pt_p2"]
+			local p1bg = file.views["bezel"].items["bg_p1"]
+			local p2bg = file.views["bezel"].items["bg_p2"]
+			local p1ml = file.views["bezel"].items["ml_p1"]
+			local p2ml = file.views["bezel"].items["ml_p2"]
+			file.views["bezel"]:set_prepare_items_callback(
+				function()
+					
+					-- Grab non match screens and display blank.png
+					
+					if 
+						mem:read_u8(0x01060960) == 1 and (mem:read_u16(0x0105C3F0) == 0 or mem:read_u16(0x0105C3F0) == 12576 or mem:read_u16(0x0105C3F0) == 13424 or mem:read_u16(0x0105C3F0) == 15872 or mem:read_u16(0x0105C3F0) == 15504) or
+						mem:read_u8(0x01060960) == 0 or
+						mem:read_u8(0x01060960) == 3 or
+						mem:read_u8(0x01060960) == 8 or
+						mem:read_u8(0x01060960) == 11 or
+						mem:read_u8(0x01060960) == 16 or 
+						mem:read_u8(0x01060960) == 18 or
+						mem:read_u8(0x01060960) == 19 or
+						mem:read_u8(0x01060960) == 20 or
+						mem:read_u8(0x01060960) == 22 then
+							p1bg:set_state(0)
+							p2bg:set_state(0)
+							p1char:set_state(30)
+							p2char:set_state(30)
+							p1ml:set_state(30)
+							p2ml:set_state(30)
+						
+					else
+						
+					-- If only P1 active on charselect screen, display P1 set P2 as blank	
+						
+					if mem:read_u8(0x010615C0) == 255 then
+							p1bg:set_state(1)
+							p2bg:set_state(0)
+							p1char:set_state(mem:read_i8(0x01060A10))
+							p2char:set_state(30)
+							p1ml:set_state(mem:read_i8(0x01060A10))
+							p2ml:set_state(30)
+							
+					-- If only P2 active on charselect screen, display P2 set P1 as blank	
+						
+						elseif mem:read_u8(0x01060A10) == 255 then
+							p1bg:set_state(0)
+							p2bg:set_state(1)
+							p1char:set_state(30)
+							p2char:set_state(mem:read_i8(0x010615C0))
+							p1ml:set_state(30)
+							p2ml:set_state(mem:read_i8(0x010615C0))
+						else
+							p1bg:set_state(1)
+							p2bg:set_state(1)
+							p1char:set_state(mem:read_i8(0x01060A10))
+							p2char:set_state(mem:read_i8(0x010615C0))
+							p1ml:set_state(mem:read_i8(0x01060A10))
+							p2ml:set_state(mem:read_i8(0x010615C0))
+						end
+					end
+				end)
+			end)
+]]></script>
+</mamelayout>
