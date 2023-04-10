@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+
+<!-- Authors - InigoMontoya, Hugo_Stiglitz_DA, TehDrewsus
+Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
+
+<mamelayout version="2">
+	<element name="border">
+		<image file="mk2_bezel.png"/>
+	</element>
+	<element name="background" defstate="17">
+		<image state="0" file="tab_left.png" />
+		<image state="1" file="tab_right.png" />
+		<image state="17" file="tab_blank.png" />
+	</element>
+	<element name="movelist_left" defstate="17">
+		<image state="0x00" file="kung_lao_ml_l.png" />
+		<image state="0x01" file="liu_kang_ml_l.png" />
+		<image state="0x02" file="cage_ml_l.png" />
+		<image state="0x03" file="baraka_mk2p_ml_l.png" />
+		<image state="0x04" file="kitana_ml_l.png" />
+		<image state="0x05" file="mileena_ml_l.png" />
+		<image state="0x06" file="shang_tsung_ml_l.png" />
+		<image state="0x07" file="raiden_ml_l.png" />
+		<image state="0x08" file="sub_zero_mk2p_ml_l.png" />
+		<image state="0x09" file="reptile_mk2p_ml_l.png" />
+		<image state="0x0A" file="scorpion_mk2p_ml_l.png" />
+		<image state="0x0B" file="jax_ml_l.png" />
+		<image state="0x0C" file="kintaro_mk2p_ml_l.png" />
+		<image state="0x0D" file="shao_kahn_mk2p_ml_l.png" />
+		<image state="0x0E" file="smoke_mk2p_ml_l.png" />
+		<image state="0x10" file="jade_mk2p_ml_l.png" />
+		<image state="0x0F" file="noob_saibot_mk2p_ml_l.png" />
+		<image state="0X11" file="ml_blank.png" />
+	</element>
+	<element name="movelist_right" defstate="17">
+		<image state="0x00" file="kung_lao_ml_r.png" />
+		<image state="0x01" file="liu_kang_ml_r.png" />
+		<image state="0x02" file="cage_ml_r.png" />
+		<image state="0x03" file="baraka_mk2p_ml_r.png" />
+		<image state="0x04" file="kitana_ml_r.png" />
+		<image state="0x05" file="mileena_ml_r.png" />
+		<image state="0x06" file="shang_tsung_ml_r.png" />
+		<image state="0x07" file="raiden_ml_r.png" />
+		<image state="0x08" file="sub_zero_mk2p_ml_r.png" />
+		<image state="0x09" file="reptile_mk2p_ml_r.png" />
+		<image state="0x0A" file="scorpion_mk2p_ml_r.png" />
+		<image state="0x0B" file="jax_ml_r.png" />
+		<image state="0x0C" file="kintaro_mk2p_ml_r.png" />
+		<image state="0x0D" file="shao_kahn_mk2p_ml_r.png" />
+		<image state="0x0E" file="smoke_mk2p_ml_r.png" />
+		<image state="0x10" file="jade_mk2p_ml_r.png" />
+		<image state="0x0F" file="noob_saibot_mk2p_ml_r.png" />
+		<image state="0X11" file="ml_blank.png" />
+	</element>
+	<element name="portrait" defstate="17">
+		<image state="0x00" file="kung_lao.png" />
+		<image state="0x01" file="liu_kang.png" />
+		<image state="0x02" file="cage.png" />
+		<image state="0x03" file="baraka.png" />
+		<image state="0x04" file="kitana.png" />
+		<image state="0x05" file="mileena.png" />
+		<image state="0x06" file="shang_tsung.png" />
+		<image state="0x07" file="raiden.png" />
+		<image state="0x08" file="sub_zero.png" />
+		<image state="0x09" file="reptile.png" />
+		<image state="0x0A" file="scorpion.png" />
+		<image state="0x0B" file="jax.png" />
+		<image state="0x0C" file="kintaro.png" />
+		<image state="0x0D" file="shao_kahn.png" />
+		<image state="0x0E" file="smoke.png" />
+		<image state="0x10" file="jade.png" />
+		<image state="0x0F" file="noob_saibot.png" />
+		<image state="0X11" file="pt_blank.png" />
+	</element>	
+		<view name="Bezel">
+			<screen index="0">
+				<bounds x="360" y="98" width="1204" height="884"/>
+			</screen>
+			<element ref="border">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="bg_p1" ref="background">
+				<bounds x="0" y="195" width="330" height="488"/>
+			</element>
+			<element id="bg_p2" ref="background">
+				<bounds x="1590" y="195" width="330" height="488"/>
+			</element>
+			<element id="ml_p1" ref="movelist_left">
+				<bounds x="35" y="252" width="259" height="374"/>
+			</element>
+			<element id="ml_p2" ref="movelist_right">
+				<bounds x="1624" y="252" width="259" height="374"/>
+			</element>			
+			<element id="pt_p1" ref="portrait">
+				<bounds x="0" y="596" width="508" height="484"/>
+			</element>
+			<element id="pt_p2" ref="portrait">
+				<orientation flipX="yes"/>
+				<bounds x="1412" y="596" width="508" height="484"/>
+			</element>
+		</view>
+	<script><![CDATA[
+		file:set_resolve_tags_callback(
+			function()
+				local cpu = file.device:subdevice(":maincpu")
+				local mem = cpu.spaces["program"]
+				local p1bg = file.views["Bezel"].items["bg_p1"]
+				local p2bg = file.views["Bezel"].items["bg_p2"]
+				local p1ml = file.views["Bezel"].items["ml_p1"]
+				local p2ml = file.views["Bezel"].items["ml_p2"]
+				local p1char = file.views["Bezel"].items["pt_p1"]
+				local p2char = file.views["Bezel"].items["pt_p2"]
+				file.views["Bezel"]:set_prepare_items_callback(
+					function()
+					
+					-- Grab non match screens and display blank.png
+					
+						if 
+							mem:read_u8(0x010601D0) == 1 and (mem:read_u16(0x0105D0C0) == 0 or mem:read_u16(0x0105D0C0) == 17184 or mem:read_u16(0x0105D0C0) == 20224 or mem:read_u16(0x0105D0C0) == 55088) or
+							mem:read_u8(0x010601D0) == 0 or
+							mem:read_u8(0x010601D0) == 3 or
+							mem:read_u8(0x010601D0) == 8 or
+							mem:read_u8(0x010601D0) == 11 or
+							mem:read_u8(0x010601D0) == 16 or 
+							mem:read_u8(0x010601D0) == 18 or
+							mem:read_u8(0x010601D0) == 19 or
+							mem:read_u8(0x010601D0) == 20 or
+							mem:read_u8(0x010601D0) == 22 then
+							p1bg:set_state(17)
+							p2bg:set_state(17)
+							p1ml:set_state(0x11)
+							p2ml:set_state(0x11)
+							p1char:set_state(0x11)
+							p2char:set_state(0x11)
+						else
+					
+					-- If only P1 active on charselect screen, display P1 set P2 as blank	
+						
+						if mem:read_u8(0x01060E50) == 255 then
+							p1bg:set_state(0)
+							p2bg:set_state(17)
+							p1char:set_state(mem:read_i8(0x01060280))
+							p2char:set_state(17)
+							p1ml:set_state(mem:read_i8(0x01060280))
+							p2ml:set_state(17)
+							
+					-- If only P2 active on charselect screen, display P2 set P1 as blank	
+						
+						elseif mem:read_u8(0x01060280) == 255 then
+							p1bg:set_state(17)
+							p2bg:set_state(1)
+							p1char:set_state(17)
+							p2char:set_state(mem:read_i8(0x01060E50))
+							p1ml:set_state(17)
+							p2ml:set_state(mem:read_i8(0x01060E50))
+						else		
+							p1bg:set_state(0)
+							p2bg:set_state(1)
+							p1ml:set_state(mem:read_u8(0x01060280))
+							p2ml:set_state(mem:read_u8(0x01060E50))
+							p1char:set_state(mem:read_u8(0x01060280))
+							p2char:set_state(mem:read_u8(0x01060E50))
+					end
+				end
+			end)	
+		end)	
+	]]></script>
+</mamelayout>
