@@ -157,7 +157,7 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 					-- Grab non match screens and display blank.png
 					
 					if 
-						mem:read_u8(0x01060960) == 1 and (mem:read_u16(0x0105C3F0) == 0 or mem:read_u16(0x0105C3F0) == 21152 or mem:read_u16(0x0105C3F0) == 37520 or mem:read_u16(0x0105C3F0) == 21456 or mem:read_u16(0x0105C3F0) == 31024) or
+						mem:read_u8(0x01060960) == 1 and (mem:read_u16(0x0105C3F0) == 0 or mem:read_u16(0x0105C3F0) == 21152 or mem:read_u16(0x0105C3F0) == 21456 or mem:read_u16(0x0105C3F0) == 31024 or mem:read_u16(0x0105C3F0) == 37520 or mem:read_u16(0x0105C3F0) == 44256) or
 						mem:read_u8(0x01060960) == 0 or
 						mem:read_u8(0x01060960) == 3 or
 						mem:read_u8(0x01060960) == 8 or
@@ -212,7 +212,7 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 					-- Grab non match screens and display blank.png
 					
 					if 
-						mem:read_u8(0x01060960) == 1 and (mem:read_u16(0x0105C3F0) == 0 or mem:read_u16(0x0105C3F0) == 21152 or mem:read_u16(0x0105C3F0) == 37520 or mem:read_u16(0x0105C3F0) == 21456 or mem:read_u16(0x0105C3F0) == 31024) or
+						mem:read_u8(0x01060960) == 1 and (mem:read_u16(0x0105C3F0) == 0 or mem:read_u16(0x0105C3F0) == 44256 or mem:read_u16(0x0105C3F0) == 21152 or mem:read_u16(0x0105C3F0) == 37520 or mem:read_u16(0x0105C3F0) == 21456 or mem:read_u16(0x0105C3F0) == 31024) or
 						mem:read_u8(0x01060960) == 0 or
 						mem:read_u8(0x01060960) == 3 or
 						mem:read_u8(0x01060960) == 8 or
