@@ -153,9 +153,7 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 			local p2ml_nb = file.views["no_bezel"].items["ml_p2"]
 			file.views["bezel"]:set_prepare_items_callback(
 				function()
-					
-					-- Grab non match screens and display blank.png
-					
+				-- Grab non match screens and display blank.png
 					if 
 						mem:read_u8(0x01060960) == 1 and (mem:read_u16(0x0105C3F0) == 0 or mem:read_u16(0x0105C3F0) == 21152 or mem:read_u16(0x0105C3F0) == 21456 or mem:read_u16(0x0105C3F0) == 31024 or mem:read_u16(0x0105C3F0) == 37520 or mem:read_u16(0x0105C3F0) == 44256) or
 						mem:read_u8(0x01060960) == 0 or
@@ -173,11 +171,8 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 							p2char:set_state(30)
 							p1ml:set_state(30)
 							p2ml:set_state(30)
-						
 					else
-						
 					-- If only P1 active on charselect screen, display P1 set P2 as blank	
-						
 						if mem:read_u8(0x010615E0) == 255 then
 							p1bg:set_state(1)
 							p2bg:set_state(0)
@@ -185,9 +180,7 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 							p2char:set_state(30)
 							p1ml:set_state(mem:read_i8(0x01060A30))
 							p2ml:set_state(30)
-							
 					-- If only P2 active on charselect screen, display P2 set P1 as blank	
-						
 						elseif mem:read_u8(0x01060A30) == 255 then
 							p1bg:set_state(0)
 							p2bg:set_state(1)
@@ -205,12 +198,9 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 						end
 					end
 				end)
-				
 				file.views["no_bezel"]:set_prepare_items_callback(
 				function()
-					
 					-- Grab non match screens and display blank.png
-					
 					if 
 						mem:read_u8(0x01060960) == 1 and (mem:read_u16(0x0105C3F0) == 0 or mem:read_u16(0x0105C3F0) == 44256 or mem:read_u16(0x0105C3F0) == 21152 or mem:read_u16(0x0105C3F0) == 37520 or mem:read_u16(0x0105C3F0) == 21456 or mem:read_u16(0x0105C3F0) == 31024) or
 						mem:read_u8(0x01060960) == 0 or
@@ -228,11 +218,8 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 							p2char_nb:set_state(30)
 							p1ml_nb:set_state(30)
 							p2ml_nb:set_state(30)
-						
 					else
-						
 					-- If only P1 active on charselect screen, display P1 set P2 as blank	
-						
 						if mem:read_u8(0x010615E0) == 255 then
 							p1bg_nb:set_state(1)
 							p2bg_nb:set_state(0)
@@ -240,9 +227,7 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 							p2char_nb:set_state(30)
 							p1ml_nb:set_state(mem:read_i8(0x01060A30))
 							p2ml_nb:set_state(30)
-							
 					-- If only P2 active on charselect screen, display P2 set P1 as blank	
-						
 						elseif mem:read_u8(0x01060A30) == 255 then
 							p1bg_nb:set_state(0)
 							p2bg_nb:set_state(1)
@@ -260,7 +245,6 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 						end
 					end
 				end)
-				
-		end)
+			end)
 ]]></script>
 </mamelayout>
