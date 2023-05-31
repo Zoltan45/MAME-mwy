@@ -1830,7 +1830,7 @@ GAME( 1994, umk3r10,     umk3,     wunit_picemu, mk3,      midwunit_state, init_
 // Ultimate Mortal Kombat 3 rev 2.0.35 (TE? Hack?) version known to exist
 
 GAME( 2022, umk3p,       0,        wunit_picsim, mk3,      midwunit_state, init_umk3,     ROT0, "Team Plus", "Ultimate Mortal Kombat 3 + (Beta II)", MACHINE_SUPPORTS_SAVE )
-GAME( 2019, umk3pb1,     umk3,     wunit_picsim, mk3,      midwunit_state, init_umk3,     ROT0, "Team Plus", "Ultimate Mortal Kombat 3 + (Beta 1)", MACHINE_SUPPORTS_SAVE )
+GAME( 2019, umk3pb1,     umk3p,    wunit_picsim, mk3,      midwunit_state, init_umk3,     ROT0, "Team Plus", "Ultimate Mortal Kombat 3 + (Beta 1)", MACHINE_SUPPORTS_SAVE )
 
 GAME( 1995, wwfmania,    0,        wunit_picsim, wwfmania, midwunit_state, init_wwfmania, ROT0, "Midway", "WWF: Wrestlemania (rev 1.30 08/10/95)", MACHINE_SUPPORTS_SAVE )
 GAME( 1995, wwfmaniab,   wwfmania, wunit_picsim, wwfmania, midwunit_state, init_wwfmania, ROT0, "Midway", "WWF: Wrestlemania (rev 1.20 08/02/95)", MACHINE_SUPPORTS_SAVE )
