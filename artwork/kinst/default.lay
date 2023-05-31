@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU),
+Artwork - BloodyDrake -->
+
+<mamelayout version="2">
+	<element name="border">
+		<image file="Bezel.png" />
+	</element>
+	<element name="portrait_left" defstate="0x0B">
+		<image state="0x00" file="combo_left.png" />
+		<image state="0x01" file="jago_left.png" />
+		<image state="0x02" file="thunder_left.png" />
+		<image state="0x03" file="glacius_left.png" />
+		<image state="0x04" file="orchid_left.png" />
+		<image state="0x05" file="cinder_left.png" />
+		<image state="0x06" file="sabrewulf_left.png" />
+		<image state="0x07" file="riptor_left.png" />
+		<image state="0x08" file="spinal_left.png" />
+		<image state="0x09" file="fulgore_left.png" />
+		<image state="0x0A" file="eyedol_left.png" />
+		<image state="0x0B" file="blank.png" />
+	</element>
+	<element name="portrait_right" defstate="0x0B">
+		<image state="0x00" file="combo_right.png" />
+		<image state="0x01" file="jago_right.png" />
+		<image state="0x02" file="thunder_right.png" />
+		<image state="0x03" file="glacius_right.png" />
+		<image state="0x04" file="orchid_right.png" />
+		<image state="0x05" file="cinder_right.png" />
+		<image state="0x06" file="sabrewulf_right.png" />
+		<image state="0x07" file="riptor_right.png" />
+		<image state="0x08" file="spinal_right.png" />
+		<image state="0x09" file="fulgore_right.png" />
+		<image state="0x0A" file="eyedol_right.png" />
+		<image state="0x0B" file="blank.png" />
+	</element>
+	<view name="Bezel">
+			<screen index="0">
+				<bounds x="360" y="98" width="1204" height="884"/>
+			</screen>
+			<element ref="border">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p1" ref="portrait_left">
+				<bounds x="0" y="0" width="416" height="1080"/>
+			</element>
+			<element id="pt_p2" ref="portrait_right">
+				<bounds x="1504" y="0" width="416" height="1080"/>
+			</element>
+	</view>
+	<script><![CDATA[
+		file:set_resolve_tags_callback(
+			function()
+				local cpu = file.device:subdevice(":maincpu")
+				local mem = cpu.spaces["program"]
+				local p1char = file.views["Bezel"].items["pt_p1"]
+				local p2char = file.views["Bezel"].items["pt_p2"]
+				file.views["Bezel"]:set_prepare_items_callback(
+					function()
+						if
+							mem:readv_u32(0x8808F2D7) ~= 41984 and 
+							mem:readv_u32(0x8808F2D7) ~= 41985 and 
+							mem:readv_u32(0x8808F2D7) ~= 6401 and 
+							mem:readv_u32(0x8808F2D7) ~= 6400 and 
+							mem:readv_u32(0x8808F2D7) ~= 24576 and 
+							mem:readv_u32(0x8808F2D7) ~= 24577 and
+							mem:readv_u32(0x8808F2D7) ~= 45568 and
+							mem:readv_u32(0x8808F2D7) ~= 30721 then
+								p1char:set_state(0x0B)
+								p2char:set_state(0x0B)
+						elseif mem:readv_u32(0x8808f38b) == 33617152 or mem:readv_u32(0x8808f38b) == 16826112 or mem:readv_u32(0x8808f280) == 32767 or mem:readv_u32(0x8808f38b) == 16839936 then
+							p1char:set_state(mem:readv_u8(0x8808F314))
+							p2char:set_state(mem:readv_u8(0x8808F37C))
+						elseif mem:readv_u8(0x8808f418) == 224 and mem:readv_u32(0x8808f414) ~= 1 and mem:readv_u32(0x8808f38b) ~= 33617152 then
+							p1char:set_state(mem:readv_u8(0x8808F314))
+							p2char:set_state(0x0B)
+						elseif mem:readv_u8(0x8808f418) == 72 and mem:readv_u32(0x8808f414) ~= 1 and mem:readv_u32(0x8808f38b) ~= 33617152 then
+							p1char:set_state(0x0B)
+							p2char:set_state(mem:readv_u8(0x8808F37C))
+						end
+				end)
+			end)
+	]]></script>
+</mamelayout>

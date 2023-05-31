@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU),
+Artwork - BloodyDrake -->
+
+
+<mamelayout version="2">
+	<element name="border">
+		<image file="bezel.png"/>
+	</element>
+	<element name="portrait_left" defstate="0x20">
+		<image state="0x00" file="ryu_left.png" />
+		<image state="0x01" file="ken_left.png" />
+		<image state="0x02" file="akuma_left.png" />
+		<image state="0x03" file="charlie_left.png" />
+		<image state="0x04" file="chun_li_left.png" />
+		<image state="0x05" file="adon_left.png" />
+		<image state="0x06" file="sodom_left.png" />
+		<image state="0x07" file="guy_left.png" />
+		<image state="0x08" file="birdie_left.png" />
+		<image state="0x09" file="rose_left.png" />
+		<image state="0x0A" file="m_bison_left.png" />
+		<image state="0x0B" file="sagat_left.png" />
+		<image state="0x0C" file="dan_left.png" />
+		<image state="0x0D" file="sakura_left.png" />
+		<image state="0x0E" file="rolento_left.png" />
+		<image state="0x0F" file="dhalsim_left.png" />
+		<image state="0x10" file="zangief_left.png" />
+		<image state="0X11" file="gen_left.png" />
+		<image state="0x13" file="gen_left.png" />
+		<image state="0x15" file="blank.png" />
+		<image state="0x16" file="cammy_left.png" />
+		<image state="0x18" file="e_honda_left.png" />
+		<image state="0x19" file="blanka_left.png" />
+		<image state="0x1A" file="mika_left.png" />
+		<image state="0x1B" file="cody_left.png" />
+		<image state="0x1C" file="vega_left.png" />
+		<image state="0x1D" file="karin_left.png" />
+		<image state="0x1E" file="blank.png" />
+		<image state="0x1F" file="blank.png" />
+		
+		<image state="0x20" file="blank.png" />
+	</element>
+	<element name="portrait_right" defstate="0x20">
+		<image state="0x00" file="ryu_right.png" />
+		<image state="0x01" file="ken_right.png" />
+		<image state="0x02" file="akuma_right.png" />
+		<image state="0x03" file="charlie_right.png" />
+		<image state="0x04" file="chun_li_right.png" />
+		<image state="0x05" file="adon_right.png" />
+		<image state="0x06" file="sodom_right.png" />
+		<image state="0x07" file="guy_right.png" />
+		<image state="0x08" file="birdie_right.png" />
+		<image state="0x09" file="rose_right.png" />
+		<image state="0x0A" file="m_bison_right.png" />
+		<image state="0x0B" file="sagat_right.png" />
+		<image state="0x0C" file="dan_right.png" />
+		<image state="0x0D" file="sakura_right.png" />
+		<image state="0x0E" file="rolento_right.png" />
+		<image state="0x0F" file="dhalsim_right.png" />
+		<image state="0x10" file="zangief_right.png" />
+		<image state="0X11" file="gen_right.png" />
+		<image state="0x13" file="gen_right.png" />
+		<image state="0x15" file="blank.png" />
+		<image state="0x16" file="cammy_right.png" />
+		<image state="0x18" file="e_honda_right.png" />
+		<image state="0x19" file="blanka_right.png" />
+		<image state="0x1A" file="mika_right.png" />
+		<image state="0x1B" file="cody_right.png" />
+		<image state="0x1C" file="vega_right.png" />
+		<image state="0x1D" file="karin_right.png" />
+		<image state="0x1E" file="blank.png" />
+		<image state="0x1F" file="blank.png" />
+		
+		<image state="0x20" file="blank.png" />
+	</element>
+		<view name="Bezel">
+			<screen index="0">
+				<bounds x="360" y="98" width="1204" height="884"/>
+			</screen>
+			<element ref="border">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p1" ref="portrait_left">
+				<bounds x="0" y="0" width="471" height="1080"/>
+			</element>
+			<element id="pt_p2" ref="portrait_right">
+				<bounds x="1449" y="0" width="471" height="1080"/>
+			</element>
+		</view>
+
+	<script><![CDATA[
+		file:set_resolve_tags_callback(
+			function()
+				local cpu = file.device:subdevice(":maincpu")
+				local mem = cpu.spaces["program"]
+				local p1char = file.views["Bezel"].items["pt_p1"]
+				local p2char = file.views["Bezel"].items["pt_p2"]
+				file.views["Bezel"]:set_prepare_items_callback(
+					function()
+						if mem:read_u16(0xff8550) > 0 or mem:read_u16(0xff06b8) == 65535 or mem:read_u8(0xff8640) == 1 then
+							p1char:set_state(mem:read_u8(0xFF8502))
+							p2char:set_state(mem:read_u8(0xFF8902))
+						elseif mem:read_u16(0xff06b8) ~= 65535 and 
+							mem:read_u16(0xff06b8) ~= 0 and 
+							mem:read_u16(0xff86B0) == 0 and 
+							mem:read_u16(0xFF02EC) == 192 and
+							mem:read_u16(0xff06b8) ~= 57456 then
+								p1char:set_state(mem:read_u8(0xFF8502))
+								p2char:set_state(0x20)
+						elseif mem:read_u16(0xff06b8) ~= 65535 and 
+							mem:read_u16(0xff06b8) ~= 0 and 
+							mem:read_u16(0xff86B0) == 0 and 
+							mem:read_u16(0xFF02EC) == 192 and
+							mem:read_u16(0xff06b8) == 57456 then
+								p1char:set_state(0x20)
+								p2char:set_state(mem:read_u8(0xFF8902))
+						elseif mem:read_u16(0xff8550) > 0 or mem:read_u16(0xff06b8) == 65535 or mem:read_u8(0xff8640) == 1 then
+							p1char:set_state(mem:read_u8(0xFF8502))
+							p2char:set_state(mem:read_u8(0xFF8902))
+						else 
+							p1char:set_state(0x20)
+							p2char:set_state(0x20)
+						end
+				end)
+			end)
+	]]></script>
+</mamelayout>
+

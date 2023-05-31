@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU),
+Artwork - BloodyDrake -->
+
+<mamelayout version="2">
+	<element name="border">
+		<image file="msh_bezel.png"/>
+	</element>
+	<element name="portrait_left" defstate="30">
+		<image state="0x00" file="spiderman_left.png" />
+		<image state="0x02" file="captain_america_left.png" />
+		<image state="0x04" file="hulk_left.png" />
+		<image state="0x06" file="iron_man_left.png" />
+		<image state="0x08" file="wolverine_left.png" />
+		<image state="0x0A" file="psylocke_left.png" />
+		<image state="0x0C" file="blackheart_left.png" />
+		<image state="0x0E" file="shama_gorath_left.png" />
+		<image state="0x10" file="juggernaut_left.png" />
+		<image state="0X12" file="magneto_left.png" />
+		<image state="0x14" file="dr_doom_left.png" />
+		<image state="0x16" file="thanos_left.png" />
+		<image state="0x18" file="anita_left.png" />
+		<image state="0x1E" file="blank.png" />
+	</element>
+		<element name="portrait_right" defstate="30">
+		<image state="0x00" file="spiderman_right.png" />
+		<image state="0x02" file="captain_america_right.png" />
+		<image state="0x04" file="hulk_right.png" />
+		<image state="0x06" file="iron_man_right.png" />
+		<image state="0x08" file="wolverine_right.png" />
+		<image state="0x0A" file="psylocke_right.png" />
+		<image state="0x0C" file="blackheart_right.png" />
+		<image state="0x0E" file="shama_gorath_right.png" />
+		<image state="0x10" file="juggernaut_right.png" />
+		<image state="0X12" file="magneto_right.png" />
+		<image state="0x14" file="dr_doom_right.png" />
+		<image state="0x16" file="thanos_right.png" />
+		<image state="0x18" file="anita_right.png" />
+		<image state="0x1E" file="blank.png" />
+	</element>	
+		<view name="Bezel">
+			<screen index="0">
+				<bounds x="360" y="98" width="1204" height="884"/>
+			</screen>
+			<element ref="border">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p1" ref="portrait_left">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p2" ref="portrait_right">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+		</view>
+	<script><![CDATA[
+		file:set_resolve_tags_callback(
+			function()
+				local cpu = file.device:subdevice(":maincpu")
+				local mem = cpu.spaces["program"]
+				local p1char = file.views["Bezel"].items["pt_p1"]
+				local p2char = file.views["Bezel"].items["pt_p2"]
+				file.views["Bezel"]:set_prepare_items_callback(
+					function()
+						if mem:read_u8(0xFFD581) > 0 then
+							p1char:set_state(mem:read_u8(0xFF4051))
+							p2char:set_state(mem:read_u8(0xFF4451))
+						else
+							p1char:set_state(0x19)
+							p2char:set_state(0x19)
+						end
+				end)
+			end)
+	]]></script>
+</mamelayout>

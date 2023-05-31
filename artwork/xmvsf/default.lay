@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU),
+Artwork - BloodyDrake -->
+
+<mamelayout version="2">
+	<element name="border">
+		<image file="xmvsf_bezel.png"/>
+	</element>
+	<element name="portrait_left" defstate="30">
+		<image state="0x00" file="wolverine_left.png" />
+		<image state="0x02" file="cyclops_left.png" />
+		<image state="0x04" file="storm_left.png" />
+		<image state="0x06" file="rogue_left.png" />
+		<image state="0x08" file="gambit_left.png" />
+		<image state="0x0A" file="sabretooth_left.png" />
+		<image state="0x0C" file="juggernaut_left.png" />
+		<image state="0x0E" file="magneto_left.png" />
+		<image state="0x10" file="blank.png" />
+		<image state="0X12" file="ryu_left.png" />
+		<image state="0x14" file="ken_left.png" />
+		<image state="0x16" file="chun_li_left.png" />
+		<image state="0x18" file="dhalsim_left.png" />
+		<image state="0x1A" file="zangief_left.png" />
+		<image state="0x1C" file="m_bison_left.png" />
+		<image state="0X1E" file="akuma_left.png" />
+		<image state="0x20" file="charlie_left.png" />
+		<image state="0x22" file="cammy_left.png" />
+		<image state="0x24" file="chun_li_left.png" />
+		<image state="0x26" file="blank.png"/>
+	</element>
+	<element name="portrait_right" defstate="30">
+		<image state="0x00" file="wolverine_right.png" />
+		<image state="0x02" file="cyclops_right.png" />
+		<image state="0x04" file="storm_right.png" />
+		<image state="0x06" file="rogue_right.png" />
+		<image state="0x08" file="gambit_right.png" />
+		<image state="0x0A" file="sabretooth_right.png" />
+		<image state="0x0C" file="juggernaut_right.png" />
+		<image state="0x0E" file="magneto_right.png" />
+		<image state="0x10" file="blank.png" />
+		<image state="0X12" file="ryu_right.png" />
+		<image state="0x14" file="ken_right.png" />
+		<image state="0x16" file="chun_li_right.png" />
+		<image state="0x18" file="dhalsim_right.png" />
+		<image state="0x1A" file="zangief_right.png" />
+		<image state="0x1C" file="m_bison_right.png" />
+		<image state="0X1E" file="akuma_right.png" />
+		<image state="0x20" file="charlie_right.png" />
+		<image state="0x22" file="cammy_right.png" />
+		<image state="0x24" file="chun_li_right.png" />
+		<image state="0x26" file="blank.png"/>
+	</element>
+		<view name="Bezel">
+			<screen index="0">
+				<bounds x="360" y="98" width="1204" height="884"/>
+			</screen>
+			<element ref="border">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p1" ref="portrait_left">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p2" ref="portrait_right">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+		</view>
+	<script><![CDATA[
+		file:set_resolve_tags_callback(
+			function()
+				local cpu = file.device:subdevice(":maincpu")
+				local mem = cpu.spaces["program"]
+				local p1char = file.views["Bezel"].items["pt_p1"]
+				local p2char = file.views["Bezel"].items["pt_p2"]
+				file.views["Bezel"]:set_prepare_items_callback(
+					function()
+							if
+								mem:read_u8(0xFF0080) == 1 or
+								(mem:read_u8(0xFF0000) ~= 0 and mem:read_u8(0xFFA005) == 255) or
+								(mem:read_u8(0xFFA005) == 100 and mem:read_u8(0xFF4403) == 1 and mem:read_u8(0xFF4003) == 1) then
+								p1char:set_state(mem:read_u8(0xFF4053))
+								p2char:set_state(mem:read_u8(0xFF4453))
+							elseif mem:read_u8(0xFFA005) == 100 and mem:read_u8(0xFF4403) == 0 then
+								p1char:set_state(mem:read_u8(0xFF4053))
+								p2char:set_state(0x26)
+							elseif mem:read_u8(0xFFA005) == 100 and mem:read_u8(0xFF4003) == 0 then	
+								p1char:set_state(0x26)
+								p2char:set_state(mem:read_u8(0xFF4453))
+							else
+								p1char:set_state(0x26)
+								p2char:set_state(0x26)
+						end
+				end)
+			end)
+	]]></script>
+</mamelayout>

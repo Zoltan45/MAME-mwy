@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU),
+Artwork - BloodyDrake -->
+
+<mamelayout version="2">
+	<element name="border">
+		<image file="vsav2_bezel.png"/>
+	</element>
+	<element name="portrait_left" defstate="0x22">
+		<image state="0x00" file="bulleta_left.png" />
+		<image state="0x01" file="demitri_left.png" />
+		<image state="0x02" file="blank.png" />
+		<image state="0x03" file="victor_left.png" />
+		<image state="0x04" file="zabel_left.png" />
+		<image state="0x05" file="morrigan_left.png" />
+		<image state="0x06" file="anakaris_left.png" />
+		<image state="0x07" file="felicia_left.png" />
+		<image state="0x08" file="bishamon_left.png" />
+		<image state="0x09" file="blank.png" />
+		<image state="0x0A" file="blank.png" />
+		<image state="0x0C" file="q_bee_left.png" />
+		<image state="0x0D" file="lei_lei_left.png" />
+		<image state="0x0E" file="lilith_left.png" />
+		<image state="0x0F" file="jedah_left.png" />
+		<image state="0x10" file="phobos_left.png" />
+		<image state="0x11" file="pyron_left.png" />
+		<image state="0x13" file="donovan_left.png" />
+		<image state="0x18" file="bishamon_left.png" />
+		<image state="0x19" file="bishamon_left.png" />
+		<image state="0x22" file="blank.png" />
+	</element>
+	<element name="portrait_right" defstate="0x22">
+		<image state="0x00" file="bulleta_right.png" />
+		<image state="0x01" file="demitri_right.png" />
+		<image state="0x02" file="blank.png" />
+		<image state="0x03" file="victor_right.png" />
+		<image state="0x04" file="zabel_right.png" />
+		<image state="0x05" file="morrigan_right.png" />
+		<image state="0x06" file="anakaris_right.png" />
+		<image state="0x07" file="felicia_right.png" />
+		<image state="0x08" file="bishamon_right.png" />
+		<image state="0x09" file="blank.png" />
+		<image state="0x0A" file="blank.png" />
+		<image state="0x0C" file="q_bee_right.png" />
+		<image state="0x0D" file="lei_lei_right.png" />
+		<image state="0x0E" file="lilith_right.png" />
+		<image state="0x0F" file="jedah_right.png" />
+		<image state="0x10" file="phobos_right.png" />
+		<image state="0x11" file="pyron_right.png" />
+		<image state="0x13" file="donovan_right.png" />
+		<image state="0x18" file="bishamon_right.png" />
+		<image state="0x19" file="bishamon_right.png" />
+		<image state="0x22" file="blank.png" />
+	</element>
+		<view name="Bezel">
+			<screen index="0">
+				<bounds x="360" y="98" width="1204" height="884"/>
+			</screen>
+			<element ref="border">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p1" ref="portrait_left">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p2" ref="portrait_right">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+		</view>
+	<script><![CDATA[
+		file:set_resolve_tags_callback(
+			function()
+				local cpu = file.device:subdevice(":maincpu")
+				local mem = cpu.spaces["program"]
+				local p1char = file.views["Bezel"].items["pt_p1"]
+				local p2char = file.views["Bezel"].items["pt_p2"]
+				file.views["Bezel"]:set_prepare_items_callback(
+					function()
+						if (mem:read_u8(0xFF027C) == 1 and mem:read_u8(0xFF8135) == 1) or
+							(mem:read_u8(0xFF02BC) ~= 0 and mem:read_u8(0xFF80D7) == 0) or
+							(mem:read_u8(0xFF02BC) ~= 0 and mem:read_u8(0xFF80D7) == 1) or
+							(mem:read_u8(0xFF80D7) == 255 and mem:read_u8(0xFF80A8) == 3) then
+							p1char:set_state(mem:read_u8(0xFF8782))
+							p2char:set_state(mem:read_u8(0xFF8B82))
+						elseif mem:read_u8(0xFF80D7) == 255 and mem:read_u8(0xFF80A8) == 1 then
+							p1char:set_state(mem:read_u8(0xFF8782))
+							p2char:set_state(0x22)
+						elseif mem:read_u8(0xFF80D7) == 255 and mem:read_u8(0xFF80A8) == 2 then
+							p1char:set_state(0x22)
+							p2char:set_state(mem:read_u8(0xFF8B82))
+						else
+							p1char:set_state(0x22)
+							p2char:set_state(0x22)
+					end
+				end)
+			end)
+	]]></script>
+</mamelayout>

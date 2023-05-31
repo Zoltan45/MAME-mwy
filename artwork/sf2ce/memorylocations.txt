@@ -1,0 +1,19 @@
+ff0000 1 at boot 0 at attract  0 at char select
+
+
+ff0020 0 at boot 1 during atttract mode 0 at character select
+
+
+ff0040 is 0 when you boot 0 at attract mode 1 when you put in coins 0 at character select
+
+ff0060 is 0 up until character select screen then 1 
+
+ff0080 is 0 up until character select then 1
+
+ff00a0 is 0 when you boot 0 at attract mode 1 when you put in coins 0 at char select
+
+ff0100 is 1 at boot 1 during attract mode 0 at char select
+
+ff0120 is 1 at boot 0 during attract mode  0 at char select
+
+
