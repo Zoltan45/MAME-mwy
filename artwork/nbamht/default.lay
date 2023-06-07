@@ -296,10 +296,10 @@
 			<bounds x="37" y="734" width="176" height="176" />
 		</element>
 		<element id="p3" ref="player">
-			<bounds x="1706" y="270" width="176" height="176" />
+			<bounds x="1707" y="270" width="176" height="176" />
 		</element>
 		<element id="p4" ref="player">
-			<bounds x="1706" y="734" width="176" height="176" />
+			<bounds x="1707" y="734" width="176" height="176" />
 		</element>
 		<element id="s1" ref="skills">
 			<bounds x="25" y="117" width="90" height="124" />
