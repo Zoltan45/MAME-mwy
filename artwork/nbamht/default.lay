@@ -446,7 +446,7 @@
 				[51] = 51,[52] = 52,[53] = 53,[54] = 54,[55] = 55,[56] = 56,[57] = 57,[58] = 58,[59] = 59,[60] = 60,
 				[61] = 61,[62] = 62,[63] = 63,[64] = 64,[65] = 65,[66] = 66,[67] = 67,[68] = 68,[69] = 69,[70] = 70,
 				[71] = 71,[72] = 72,[73] = 73,[74] = 74,[75] = 75,[76] = 76,[77] = 77,[78] = 78,[79] = 79,[80] = 80,
-				[81] = 81,[82] = 82,[83] = 83,[84] = 84,[85] = 85		
+				[81] = 81,[82] = 82,[83] = 83,[84] = 84,[85] = 85
 				}
 			local secretStat = {
 				[0] = {10,8,9,9,8,6}, -- Character state 0 stat states
@@ -538,8 +538,8 @@
 				-- Add stat states for other character states as needed
 				}
 			file.views["view"]:set_prepare_items_callback(
-				function()	
-					if 	mem:read_u8(0x0112F840) == 4 or 
+				function()
+					if 	mem:read_u8(0x0112F840) == 4 or
 						mem:read_u8(0x0112F840) == 1 or
 						mem:read_u8(0x0112F840) == 8 or
 						mem:read_u8(0x0112F840) == 9 or
@@ -608,7 +608,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))							
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113EF90) == 0 or mem:read_u8(0x0113EF90) == 1 or mem:read_u8(0x0113EF90) == 2 or mem:read_u8(0x0113EF90) == 3 then
 							p1char:set_state(328)
 							stat1:set_state(8)
@@ -658,7 +658,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])						
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -666,7 +666,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))	
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113EF90) == 0 or mem:read_u8(0x0113EF90) == 9 or mem:read_u8(0x0113EF90) == 13 or mem:read_u8(0x0113EF90) == 17 then
 							p2char:set_state(393)
 							stat7:set_state(6)
@@ -731,7 +731,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113EFA0) == 0 or mem:read_u8(0x0113EFA0) == 1 or mem:read_u8(0x0113EFA0) == 2 or mem:read_u8(0x0113EFA0) == 3 then
 							p1char:set_state(0x2B)
 							stat1:set_state(7)
@@ -781,7 +781,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -789,7 +789,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113EFA0) == 0 or mem:read_u8(0x0113EFA0) == 9 or mem:read_u8(0x0113EFA0) == 13 or mem:read_u8(0x0113EFA0) == 17 then
 							p2char:set_state(303)
 							stat7:set_state(6)
@@ -854,7 +854,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113EFB0) == 0 or mem:read_u8(0x0113EFB0) == 1 or mem:read_u8(0x0113EFB0) == 2 or mem:read_u8(0x0113EFB0) == 3 then
 							p1char:set_state(0x28)
 							stat1:set_state(8)
@@ -904,7 +904,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -912,7 +912,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113EFB0) == 0 or mem:read_u8(0x0113EFB0) == 9 or mem:read_u8(0x0113EFB0) == 13 or mem:read_u8(0x0113EFB0) == 17 then
 							p2char:set_state(0x29)
 							stat7:set_state(7)
@@ -929,7 +929,7 @@
 							stat10:set_state(6)
 							stat11:set_state(7)
 							stat12:set_state(5)
-						elseif mem:read_u8(0x0113EFB0) == 2 or mem:read_u8(0x0113EFB0) == 6 or mem:read_u8(0x0113EFB0) == 10 or mem:read_u8(0x0113EBA0) == 19 then
+						elseif mem:read_u8(0x0113EFB0) == 2 or mem:read_u8(0x0113EFB0) == 6 or mem:read_u8(0x0113EFB0) == 10 or mem:read_u8(0x0113EFB0) == 19 then
 							p2char:set_state(365)
 							stat7:set_state(5)
 							stat8:set_state(8)
@@ -978,7 +978,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113EFC0) == 0 or mem:read_u8(0x0113EFC0) == 1 or mem:read_u8(0x0113EFC0) == 2 or mem:read_u8(0x0113EFC0) == 3 then
 							p1char:set_state(400)
 							stat1:set_state(6)
@@ -1028,7 +1028,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -1036,7 +1036,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113EFC0) == 0 or mem:read_u8(0x0113EFC0) == 9 or mem:read_u8(0x0113EFC0) == 13 or mem:read_u8(0x0113EFC0) == 17 then
 							p2char:set_state(316)
 							stat7:set_state(7)
@@ -1102,7 +1102,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113EFD0) == 0 or mem:read_u8(0x0113EFD0) == 1 or mem:read_u8(0x0113EFD0) == 2 or mem:read_u8(0x0113EFD0) == 3 then
 							p1char:set_state(0x2C)
 							stat1:set_state(9)
@@ -1152,7 +1152,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -1160,7 +1160,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113EFD0) == 0 or mem:read_u8(0x0113EFD0) == 9 or mem:read_u8(0x0113EFD0) == 13 or mem:read_u8(0x0113EFD0) == 17 then
 							p2char:set_state(331)
 							stat7:set_state(6)
@@ -1225,7 +1225,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113EFE0) == 0 or mem:read_u8(0x0113EFE0) == 1 or mem:read_u8(0x0113EFE0) == 2 then
 							p1char:set_state(304)
 							stat1:set_state(7)
@@ -1267,7 +1267,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -1275,7 +1275,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113EFE0) == 0 or mem:read_u8(0x0113EFE0) == 7 or mem:read_u8(0x0113EFE0) == 10 then
 							p2char:set_state(387)
 							stat7:set_state(4)
@@ -1332,7 +1332,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113EFF0) == 0 or mem:read_u8(0x0113EFF0) == 1 or mem:read_u8(0x0113EFF0) == 2 then
 							p1char:set_state(0x2E)
 							stat1:set_state(9)
@@ -1374,7 +1374,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -1382,7 +1382,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113EFF0) == 0 or mem:read_u8(0x0113EFF0) == 7 or mem:read_u8(0x0113EFF0) == 10 then
 							p2char:set_state(349)
 							stat7:set_state(6)
@@ -1439,7 +1439,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F000) == 0 or mem:read_u8(0x0113F000) == 1 or mem:read_u8(0x0113F000) == 2 then
 							p1char:set_state(363)
 							stat1:set_state(9)
@@ -1481,7 +1481,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -1489,7 +1489,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F000) == 0 or mem:read_u8(0x0113F000) == 7 or mem:read_u8(0x0113F000) == 10 then
 							p2char:set_state(353)
 							stat7:set_state(4)
@@ -1546,7 +1546,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F010) == 0 or mem:read_u8(0x0113F010) == 1 or mem:read_u8(0x0113F010) == 2 then
 							p1char:set_state(0x2F)
 							stat1:set_state(7)
@@ -1588,7 +1588,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -1596,7 +1596,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F010) == 0 or mem:read_u8(0x0113F010) == 7 or mem:read_u8(0x0113F010) == 10 then
 							p2char:set_state(373)
 							stat7:set_state(4)
@@ -1653,7 +1653,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F020) == 0 or mem:read_u8(0x0113F020) == 1 or mem:read_u8(0x0113F020) == 2 or mem:read_u8(0x0113F020) == 3 then
 							p1char:set_state(0x30)
 							stat1:set_state(7)
@@ -1703,7 +1703,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -1711,7 +1711,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F020) == 0 or mem:read_u8(0x0113F020) == 9 or mem:read_u8(0x0113F020) == 13 or mem:read_u8(0x0113F020) == 17 then
 							p2char:set_state(338)
 							stat7:set_state(4)
@@ -1776,7 +1776,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F030) == 0 or mem:read_u8(0x0113F030) == 1 or mem:read_u8(0x0113F030) == 2 or mem:read_u8(0x0113F030) == 3 then
 							p1char:set_state(364)
 							stat1:set_state(5)
@@ -1826,7 +1826,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -1834,7 +1834,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F030) == 0 or mem:read_u8(0x0113F030) == 9 or mem:read_u8(0x0113F030) == 13 or mem:read_u8(0x0113F030) == 17 then
 							p2char:set_state(384)
 							stat7:set_state(6)
@@ -1899,7 +1899,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F040) == 0 or mem:read_u8(0x0113F040) == 1 or mem:read_u8(0x0113F040) == 2 or mem:read_u8(0x0113F040) == 3 then
 							p1char:set_state(372)
 							stat1:set_state(10)
@@ -1949,7 +1949,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -1957,7 +1957,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F040) == 0 or mem:read_u8(0x0113F040) == 9 or mem:read_u8(0x0113F040) == 13 or mem:read_u8(0x0113F040) == 17 then
 							p2char:set_state(315)
 							stat7:set_state(8)
@@ -2022,7 +2022,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F050) == 0 or mem:read_u8(0x0113F050) == 1 then
 							p1char:set_state(0x32)
 							stat1:set_state(8)
@@ -2056,7 +2056,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -2064,7 +2064,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F050) == 0 or mem:read_u8(0x0113F050) == 5 then
 							p2char:set_state(397)
 							stat7:set_state(9)
@@ -2113,7 +2113,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F060) == 0 or mem:read_u8(0x0113F060) == 1 or mem:read_u8(0x0113F060) == 2 or mem:read_u8(0x0113F060) == 3 then
 							p1char:set_state(403)
 							stat1:set_state(8)
@@ -2163,7 +2163,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -2171,7 +2171,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F060) == 0 or mem:read_u8(0x0113F060) == 9 or mem:read_u8(0x0113F060) == 13 or mem:read_u8(0x0113F060) == 17 then
 							p2char:set_state(379)
 							stat7:set_state(9)
@@ -2236,7 +2236,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F070) == 0 or mem:read_u8(0x0113F070) == 1 then
 							p1char:set_state(398)
 							stat1:set_state(7)
@@ -2270,7 +2270,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -2278,7 +2278,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F070) == 0 or mem:read_u8(0x0113F070) == 5 then
 							p2char:set_state(392)
 							stat7:set_state(8)
@@ -2327,7 +2327,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F080) == 0 or mem:read_u8(0x0113F080) == 1 or mem:read_u8(0x0113F080) == 2 or mem:read_u8(0x0113F080) == 3 then
 							p1char:set_state(356)
 							stat1:set_state(8)
@@ -2377,7 +2377,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -2385,7 +2385,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F080) == 0 or mem:read_u8(0x0113F080) == 9 or mem:read_u8(0x0113F080) == 13 or mem:read_u8(0x0113F080) == 17 then
 							p2char:set_state(358)
 							stat7:set_state(6)
@@ -2450,7 +2450,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F090) == 0 or mem:read_u8(0x0113F090) == 1 or mem:read_u8(0x0113F090) == 2 or mem:read_u8(0x0113F090) == 3 then
 							p1char:set_state(0x34)
 							stat1:set_state(6)
@@ -2500,7 +2500,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -2508,7 +2508,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F090) == 0 or mem:read_u8(0x0113F090) == 9 or mem:read_u8(0x0113F090) == 13 or mem:read_u8(0x0113F090) == 17 then
 							p2char:set_state(352)
 							stat7:set_state(5)
@@ -2573,7 +2573,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F0A0) == 0 or mem:read_u8(0x0113F0A0) == 1 or mem:read_u8(0x0113F0A0) == 2 or mem:read_u8(0x0113F0A0) == 3 then
 							p1char:set_state(0x36)
 							stat1:set_state(10)
@@ -2623,7 +2623,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -2631,7 +2631,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F0A0) == 0 or mem:read_u8(0x0113F0A0) == 9 or mem:read_u8(0x0113F0A0) == 13 or mem:read_u8(0x0113F0A0) == 17 then
 							p2char:set_state(385)
 							stat7:set_state(5)
@@ -2696,7 +2696,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F0B0) == 0 or mem:read_u8(0x0113F0B0) == 1 or mem:read_u8(0x0113F0B0) == 2 then
 							p1char:set_state(301)
 							stat1:set_state(9)
@@ -2738,7 +2738,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -2746,7 +2746,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F0B0) == 0 or mem:read_u8(0x0113F0B0) == 7 or mem:read_u8(0x0113F0B0) == 10 then
 							p2char:set_state(0x38)
 							stat7:set_state(8)
@@ -2803,7 +2803,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F0C0) == 0 or mem:read_u8(0x0113F0C0) == 1 or mem:read_u8(0x0113F0C0) == 2 or mem:read_u8(0x0113F0C0) == 3 then
 							p1char:set_state(360)
 							stat1:set_state(9)
@@ -2853,7 +2853,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -2861,7 +2861,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F0C0) == 0 or mem:read_u8(0x0113F0C0) == 9 or mem:read_u8(0x0113F0C0) == 13 or mem:read_u8(0x0113F0C0) == 17 then
 							p2char:set_state(407)
 							stat7:set_state(4)
@@ -2926,7 +2926,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F0D0) == 0 or mem:read_u8(0x0113F0D0) == 1 or mem:read_u8(0x0113F0D0) == 2 or mem:read_u8(0x0113F0D0) == 3 then
 							p1char:set_state(0x39)
 							stat1:set_state(8)
@@ -2976,7 +2976,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -2984,7 +2984,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F0D0) == 0 or mem:read_u8(0x0113F0D0) == 9 or mem:read_u8(0x0113F0D0) == 13 or mem:read_u8(0x0113F0D0) == 17 then
 							p2char:set_state(344)
 							stat7:set_state(7)
@@ -3049,7 +3049,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F0E0) == 0 or mem:read_u8(0x0113F0E0) == 1 or mem:read_u8(0x0113F0E0) == 2 or mem:read_u8(0x0113F0E0) == 3 then
 							p1char:set_state(307)
 							stat1:set_state(7)
@@ -3099,7 +3099,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -3107,7 +3107,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F0E0) == 0 or mem:read_u8(0x0113F0E0) == 9 or mem:read_u8(0x0113F0E0) == 13 or mem:read_u8(0x0113F0E0) == 17 then
 							p2char:set_state(366)
 							stat7:set_state(8)
@@ -3172,7 +3172,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F0F0) == 0 or mem:read_u8(0x0113F0F0) == 1 or mem:read_u8(0x0113F0F0) == 2 or mem:read_u8(0x0113F0F0) == 3 then
 							p1char:set_state(0x3B)
 							stat1:set_state(8)
@@ -3222,7 +3222,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -3230,7 +3230,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F0F0) == 0 or mem:read_u8(0x0113F0F0) == 9 or mem:read_u8(0x0113F0F0) == 13 or mem:read_u8(0x0113F0F0) == 17 then
 							p2char:set_state(0x3A)
 							stat7:set_state(8)
@@ -3295,7 +3295,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F100) == 0 or mem:read_u8(0x0113F100) == 1 or mem:read_u8(0x0113F100) == 2 or mem:read_u8(0x0113F100) == 3 then
 							p1char:set_state(0x3C)
 							stat1:set_state(8)
@@ -3345,7 +3345,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -3353,7 +3353,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F100) == 0 or mem:read_u8(0x0113F100) == 9 or mem:read_u8(0x0113F100) == 13 or mem:read_u8(0x0113F100) == 17 then
 							p2char:set_state(340)
 							stat7:set_state(10)
@@ -3418,7 +3418,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F110) == 0 or mem:read_u8(0x0113F110) == 1 or mem:read_u8(0x0113F110) == 2 or mem:read_u8(0x0113F110) == 3 then
 							p1char:set_state(314)
 							stat1:set_state(6)
@@ -3468,7 +3468,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -3476,7 +3476,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F110) == 0 or mem:read_u8(0x0113F110) == 9 or mem:read_u8(0x0113F110) == 13 or mem:read_u8(0x0113F110) == 17 then
 							p2char:set_state(367)
 							stat7:set_state(7)
@@ -3541,7 +3541,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F120) == 0 or mem:read_u8(0x0113F120) == 1 or mem:read_u8(0x0113F120) == 2 then
 							p1char:set_state(351)
 							stat1:set_state(7)
@@ -3583,7 +3583,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -3591,7 +3591,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F120) == 0 or mem:read_u8(0x0113F120) == 7 or mem:read_u8(0x0113F120) == 10 then
 							p2char:set_state(0x3D)
 							stat7:set_state(7)
@@ -3648,7 +3648,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F130) == 0 or mem:read_u8(0x0113F130) == 1 then
 							p1char:set_state(342)
 							stat1:set_state(8)
@@ -3682,7 +3682,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -3690,7 +3690,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F130) == 0 or mem:read_u8(0x0113F130) == 5 then
 							p2char:set_state(308)
 							stat7:set_state(7)
@@ -3739,7 +3739,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113F140) == 0 or mem:read_u8(0x0113F140) == 1 or mem:read_u8(0x0113F140) == 2 or mem:read_u8(0x0113F140) == 3 then
 							p1char:set_state(383)
 							stat1:set_state(8)
@@ -3789,7 +3789,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -3797,7 +3797,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113F140) == 0 or mem:read_u8(0x0113F140) == 9 or mem:read_u8(0x0113F140) == 13 or mem:read_u8(0x0113F140) == 17 then
 							p2char:set_state(0x3E)
 							stat7:set_state(8)
@@ -3862,7 +3862,7 @@
 							stat3:set_state(mem:read_u8(0x01139580))
 							stat4:set_state(mem:read_u8(0x01139590))
 							stat5:set_state(mem:read_u8(0x011395A0))
-							stat6:set_state(mem:read_u8(0x011395B0))			
+							stat6:set_state(mem:read_u8(0x011395B0))
 						elseif mem:read_u8(0x0113EF80) == 0 or mem:read_u8(0x0113EF80) == 1 or mem:read_u8(0x0113EF80) == 2 or mem:read_u8(0x0113EF80) == 3 then
 							p1char:set_state(370)
 							stat1:set_state(9)
@@ -3912,7 +3912,7 @@
 							stat9:set_state(stats[3])
 							stat10:set_state(stats[4])
 							stat11:set_state(stats[5])
-							stat12:set_state(stats[6])	
+							stat12:set_state(stats[6])
 						elseif mem:read_u8(0x011397A0) > 0 and mem:read_u8(0x011397A0) < 255 then
 							p2char:set_state(0x66)
 							stat7:set_state(mem:read_u8(0x011397C0))
@@ -3920,7 +3920,7 @@
 							stat9:set_state(mem:read_u8(0x011397E0))
 							stat10:set_state(mem:read_u8(0x011397F0))
 							stat11:set_state(mem:read_u8(0x01139800))
-							stat12:set_state(mem:read_u8(0x01139810))		
+							stat12:set_state(mem:read_u8(0x01139810))
 						elseif mem:read_u8(0x0113EF80) == 0 or mem:read_u8(0x0113EF80) == 9 or mem:read_u8(0x0113EF80) == 13 or mem:read_u8(0x0113EF80) == 17 then
 							p2char:set_state(0x2D)
 							stat7:set_state(6)
@@ -3965,7 +3965,7 @@
 -- enter next team 1 here
 					end
 				end
-				if 	mem:read_u8(0x0112F840) == 4 or 
+				if 	mem:read_u8(0x0112F840) == 4 or
 						mem:read_u8(0x0112F840) == 1 or
 						mem:read_u8(0x0112F840) == 8 or
 						mem:read_u8(0x0112F840) == 9 or
@@ -4034,7 +4034,7 @@
 							stat15:set_state(mem:read_u8(0x01139A40))
 							stat16:set_state(mem:read_u8(0x01139A50))
 							stat17:set_state(mem:read_u8(0x01139A60))
-							stat18:set_state(mem:read_u8(0x01139A70))		
+							stat18:set_state(mem:read_u8(0x01139A70))							
 						elseif mem:read_u8(0x0113F170) == 0 or mem:read_u8(0x0113F170) == 1 or mem:read_u8(0x0113F170) == 2 or mem:read_u8(0x0113F170) == 3 then
 							p3char:set_state(328)
 							stat13:set_state(8)
@@ -4059,7 +4059,7 @@
 							stat16:set_state(1)
 							stat17:set_state(7)
 							stat18:set_state(1)
-						elseif mem:read_u8(0x0113F170) == 12 or mem:read_u8(0x0113F170) == 13 or mem:read_u8(0x0113F170) == 14 or mem:read_u8(0x0113F170) == 15then
+						elseif mem:read_u8(0x0113F170) == 12 or mem:read_u8(0x0113F170) == 13 or mem:read_u8(0x0113F170) == 14 or mem:read_u8(0x0113F170) == 15 then
 							p3char:set_state(334)
 							stat13:set_state(7)
 							stat14:set_state(8)
@@ -4084,7 +4084,7 @@
 							stat21:set_state(stats[3])
 							stat22:set_state(stats[4])
 							stat23:set_state(stats[5])
-							stat24:set_state(stats[6])
+							stat24:set_state(stats[6])						
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -4134,7 +4134,7 @@
 							stat23:set_state(7)
 							stat24:set_state(1)
 						end
-						elseif mem:read_u8(0x0113EF70) == 28 then
+					elseif mem:read_u8(0x0113EF70) == 28 then
 						rlogo:set_state(0)
 						p3frame:set_state(2)
 						p4frame:set_state(2)
@@ -4182,7 +4182,7 @@
 							stat16:set_state(4)
 							stat17:set_state(5)
 							stat18:set_state(9)
-						elseif mem:read_u8(0x0113F180) == 12 or mem:read_u8(0x0113F180) == 13 or mem:read_u8(0x0113F180) == 14 or mem:read_u8(0x0113F180) == 15then
+						elseif mem:read_u8(0x0113F180) == 12 or mem:read_u8(0x0113F180) == 13 or mem:read_u8(0x0113F180) == 14 or mem:read_u8(0x0113F180) == 15 then
 							p3char:set_state(341)
 							stat13:set_state(3)
 							stat14:set_state(8)
@@ -4207,7 +4207,7 @@
 							stat21:set_state(stats[3])
 							stat22:set_state(stats[4])
 							stat23:set_state(stats[5])
-							stat24:set_state(stats[6])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -4226,12 +4226,12 @@
 							stat24:set_state(3)
 						elseif mem:read_u8(0x0113F180) == 1 or mem:read_u8(0x0113F180) == 5 or mem:read_u8(0x0113F180) == 14 or mem:read_u8(0x0113F180) == 18 then
 							p4char:set_state(405)
-							stat19:set_state(5)
-							stat20:set_state(8)
-							stat21:set_state(4)
-							stat22:set_state(4)
-							stat23:set_state(5)
-							stat24:set_state(9)
+							stat19:set_state(9)
+							stat20:set_state(1)
+							stat21:set_state(9)
+							stat22:set_state(1)
+							stat23:set_state(7)
+							stat24:set_state(1)
 						elseif mem:read_u8(0x0113F180) == 2 or mem:read_u8(0x0113F180) == 6 or mem:read_u8(0x0113F180) == 10 or mem:read_u8(0x0113F180) == 19 then
 							p4char:set_state(341)
 							stat19:set_state(3)
@@ -4328,9 +4328,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -4380,7 +4380,7 @@
 							stat23:set_state(9)
 							stat24:set_state(8)
 						end
-						
+
 					elseif mem:read_u8(0x0113EF70) == 1 then
 						rlogo:set_state(0)
 						p3frame:set_state(2)
@@ -4452,9 +4452,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -4504,6 +4504,7 @@
 							stat23:set_state(3)
 							stat24:set_state(6)
 						end
+
 					elseif mem:read_u8(0x0113EF70) == 2 then
 						rlogo:set_state(0)
 						p3frame:set_state(2)
@@ -4575,9 +4576,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -4690,9 +4691,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -4797,9 +4798,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -4904,9 +4905,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -4972,7 +4973,7 @@
 							stat16:set_state(mem:read_u8(0x01139A50))
 							stat17:set_state(mem:read_u8(0x01139A60))
 							stat18:set_state(mem:read_u8(0x01139A70))			
-						elseif mem:read_u8(0x0113F1F0) == 0 or mem:read_u8(0x0113F1F0) == 1 or mem:read_u8(0x0113F1F0) == 2 then
+						elseif mem:read_u8(0x01139A00) == 0 or mem:read_u8(0x01139A00) == 1 or mem:read_u8(0x01139A00) == 2 then
 							p3char:set_state(0x2F)
 							stat13:set_state(7)
 							stat14:set_state(10)
@@ -4980,7 +4981,7 @@
 							stat16:set_state(8)
 							stat17:set_state(7)
 							stat18:set_state(10)
-						elseif mem:read_u8(0x0113F1F0) == 3 or mem:read_u8(0x0113F1F0) == 4 or mem:read_u8(0x0113F1F0) == 5 then
+						elseif mem:read_u8(0x01139A00) == 3 or mem:read_u8(0x01139A00) == 4 or mem:read_u8(0x01139A00) == 5 then
 							p3char:set_state(373)
 							stat13:set_state(4)
 							stat14:set_state(9)
@@ -4988,7 +4989,7 @@
 							stat16:set_state(6)
 							stat17:set_state(2)
 							stat18:set_state(8)
-						elseif mem:read_u8(0x0113F1F0) == 6 or mem:read_u8(0x0113F1F0) == 7 or mem:read_u8(0x0113F1F0) == 8 then
+						elseif mem:read_u8(0x01139A00) == 6 or mem:read_u8(0x01139A00) == 7 or mem:read_u8(0x01139A00) == 8 then
 							p3char:set_state(321)
 							stat13:set_state(7)
 							stat14:set_state(3)
@@ -4996,7 +4997,7 @@
 							stat16:set_state(9)
 							stat17:set_state(8)
 							stat18:set_state(2)
-						elseif mem:read_u8(0x0113F1F0) == 9 or mem:read_u8(0x0113F1F0) == 10 or mem:read_u8(0x0113F1F0) == 11 then
+						elseif mem:read_u8(0x01139A00) == 9 or mem:read_u8(0x01139A00) == 10 or mem:read_u8(0x01139A00) == 11 then
 							p3char:set_state(361)
 							stat13:set_state(5)
 							stat14:set_state(9)
@@ -5011,9 +5012,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -5022,7 +5023,7 @@
 							stat22:set_state(mem:read_u8(0x01139CB0))
 							stat23:set_state(mem:read_u8(0x01139CC0))
 							stat24:set_state(mem:read_u8(0x01139CD0))		
-						elseif mem:read_u8(0x0113F1F0) == 0 or mem:read_u8(0x0113F1F0) == 7 or mem:read_u8(0x0113F1F0) == 10 then
+						elseif mem:read_u8(0x01139A00) == 0 or mem:read_u8(0x01139A00) == 7 or mem:read_u8(0x01139A00) == 10 then
 							p4char:set_state(373)
 							stat19:set_state(4)
 							stat20:set_state(9)
@@ -5030,7 +5031,7 @@
 							stat22:set_state(6)
 							stat23:set_state(2)
 							stat24:set_state(8)
-						elseif mem:read_u8(0x0113F1F0) == 1 or mem:read_u8(0x0113F1F0) == 4 or mem:read_u8(0x0113F1F0) == 11 then
+						elseif mem:read_u8(0x01139A00) == 1 or mem:read_u8(0x01139A00) == 4 or mem:read_u8(0x01139A00) == 11 then
 							p4char:set_state(321)
 							stat19:set_state(7)
 							stat20:set_state(3)
@@ -5038,7 +5039,7 @@
 							stat22:set_state(9)
 							stat23:set_state(8)
 							stat24:set_state(2)
-						elseif mem:read_u8(0x0113F1F0) == 2 or mem:read_u8(0x0113F1F0) == 5 or mem:read_u8(0x0113F1F0) == 8 then
+						elseif mem:read_u8(0x01139A00) == 2 or mem:read_u8(0x01139A00) == 5 or mem:read_u8(0x01139A00) == 8 then
 							p4char:set_state(361)
 							stat19:set_state(5)
 							stat20:set_state(9)
@@ -5046,7 +5047,7 @@
 							stat22:set_state(7)
 							stat23:set_state(4)
 							stat24:set_state(4)
-						elseif mem:read_u8(0x0113F1F0) == 3 or mem:read_u8(0x0113F1F0) == 6 or mem:read_u8(0x0113F1F0) == 9 then
+						elseif mem:read_u8(0x01139A00) == 3 or mem:read_u8(0x01139A00) == 6 or mem:read_u8(0x01139A00) == 9 then
 							p4char:set_state(0x2F)
 							stat19:set_state(7)
 							stat20:set_state(10)
@@ -5126,9 +5127,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -5249,9 +5250,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -5372,9 +5373,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -5421,7 +5422,7 @@
 							stat20:set_state(2)
 							stat21:set_state(7)
 							stat22:set_state(1)
-							stat23:set_state(8)
+							stat23:set_state(6)
 							stat24:set_state(1)
 						end
 					elseif mem:read_u8(0x0113EF70) == 10 then
@@ -5479,9 +5480,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -5586,9 +5587,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -5693,9 +5694,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -5800,9 +5801,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -5923,9 +5924,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -6046,9 +6047,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -6161,9 +6162,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -6276,9 +6277,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -6399,9 +6400,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -6522,9 +6523,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -6645,9 +6646,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -6768,9 +6769,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -6891,9 +6892,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -7006,9 +7007,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -7105,9 +7106,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -7212,9 +7213,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -7335,9 +7336,9 @@
 							stat19:set_state(stats[1])
 							stat20:set_state(stats[2])
 							stat21:set_state(stats[3])
-							stat21:set_state(stats[4])
-							stat22:set_state(stats[5])
-							stat23:set_state(stats[6])	
+							stat22:set_state(stats[4])
+							stat23:set_state(stats[5])
+							stat24:set_state(stats[6])	
 						elseif mem:read_u8(0x01139C60) > 0 and mem:read_u8(0x01139C60) < 255 then
 							p4char:set_state(0x66)
 							stat19:set_state(mem:read_u8(0x01139C80))
@@ -7387,10 +7388,10 @@
 							stat23:set_state(9)
 							stat24:set_state(1)
 						end
--- enter next team 2 here
+--enter next team 2 here
 					end
 				end
 			end)
 		end)
 ]]></script>
-</mamelayout>
+</mamelayout>						
