@@ -1,0 +1,584 @@
+Team Plus Games MAME FAQ
+
+by RustyDawg37, ZPaul2Fresh8, TehDrewsus
+
+https://discord.gg/hPtzkUX
+
+
+The main reason I wrote this guide/FAQ is to help others use these games with their current or
+planned MAME setup.  This FAQ includes accurate information relating to Mortal Kombat II + Beta 2 and Ultimate
+Mortal Kombat 3 + Beta 2 at time of writing, as well as information about past releases and testing builds
+when available.
+
+First a little introduction of the overarching ideas here.  The Team Plus games are arcade rom hacks of Mortal
+Kombat 2 and Ultimate Mortal Kombat 3.  Sometimes MAME can be fooled into playing a romhack by renaming the
+romzip, using command line, or a batch file. This is the case with Mortal Kombat 2 +, but the only way to
+play Ultimate Mortal Kombat 3 is to add it to the MAME program itself to create native support because it uses
+more rom chips than the original hardware and MAME does not account for them. In general this can be done by
+adding the game to its respective machine driver files and to the list of games included in MAME, and then
+compiling the program.  The methods for implementation may vary by MAME version.
+
+Along the way you may find terms regarding MAME that you might not be familiar with.  You may need to
+familiarize yourself with many aspects of MAME from building it all the way through modifying, but
+most of those topics are outside the scope of this FAQ.  If you wish to learn more, you can start by
+visiting https://www.mamedev.org.
+
+Please read the whole FAQ before requesting assistance on the discord server.
+
+
+
+
+1.  Windows users specifically, here is Paul's original FAQ from the site:
+
+	A.  Which version of MAME is best for me?
+
+	Mortal Kombat 2+ is compatible with any version of MAME between 0.119 and 0.203.
+
+		The version you use will depend on your computer processor. The newer version of MAME that
+		you use, the more accurate the game emulation is, thus requiring a faster computer processor
+		to run the games at full speed. If you have a 64-bit processor then you want to use a 64-bit
+		version of MAME (games can run up to 40% faster). It's best to use the newest version of MAME
+		as long as your computer processor can handle it. We recommend that you use the version of
+		MAME that is offered on the MortalKombatPlus.com Download page. This special version has been
+		modified to recognize Mortal Kombat 2 Plus as it's own game. You may chose to use a different
+		version of MAME, but you may get an error when trying to load MK2.zip. Don't worry! We will go
+		over how to get around such problems in a later section.
+
+	B. A special MK2+ version of MAME64 is available in the download section. To setup this version of
+	MAME, you first have to download it. Once downloaded you are going to extract MAME64.zip. Inside
+	our MAME64 folder we will find an EXE and a txt file.
+
+	Next create a new folder and name it "roms".
+
+	Our patched MK2+ rom file needs to be placed into this folder. Since this version of MAME will
+	find MK2+ as it's own program, we will need to rename the rom file from "mk2.zip" to "mk2p.zip".
+
+	Now that we have the rom in place, we can launch MAME64.exe, find "Mortal Kombat II Plus (Hack)"
+	on the list, and run it. If you are running windows 10 you may receive a warning message. Simply
+	click "more info" and then "run anyway".
+
+	While inside of MAME you can customize your buttons and settings by pressing the "Tab" key. To
+	change your button mappings you want to select "Input(this Machine)". To change MK2+ settings you
+	can do that in the "Dip Switches" menu by turning on "Test Switch". Keep in mind that you need to
+	turn "Test Switch" off again before it will allow you to get back into the game (the F2 button is
+	a shortcut button to toggle the "Test Switch" on and off).
+
+	C. With newer versions of MAME you will get this error ( incorrect checksum ) if you try to load MK2+
+
+	To Launch MK2+ you need to do it from command line. One method is to go to command prompt, change
+	directory to your MAME directory, and load MAME with this command
+
+  This method can be annoying, so the best thing to do is create a batch file (like a shortcut) to
+	load the game. To create a batch file simply load notepad and type in the following.
+
+  Once done, you're going to click "File > Save as...", change the save as type to "All files", name
+	the file "MK2Plus.bat", and save it in your MAME folder.
+
+	You now have a shortcut to play Mk2+
+
+
+
+2.  PC users in general.
+
+There will be bugs in MAME.  MAME is a tool used in development, but the
+target of the project is actual hardware.  If you experience bugs, you are encouraged to report them,
+but if they are in MAME only, they may not be addressed if they cannot be reproduced on actual hardware.
+
+Your options are to:
+
+	A. Download the special MAME versions compiled to be able to play the games, available in 32 or 64
+	bit versions, at https://drive.google.com/drive/folders/1Wdghx9Goyjc3hdM3fNMut_79wRnqL4CD.
+
+	Although a 32 bit version is available it is recommended to use the mame2003plus retroarch core in any 32 bit setup.
+
+	B. There is a repository on github with the current version	of MAME with the Team Plus games included
+	at https://github.com/Zoltan45/mame-mwy which you can compile using instructions from
+	https://docs.mamedev.org/initialsetup/compilingmame.html?highlight=compile#all-platforms and
+	https://www.mamedev.org/tools/.
+
+	C. Another modified version of MAME called HBMAME which includes support for the Team Plus games as well as a LOT of
+	other rom hacks can be found at:
+	https://hbmame.1emulation.com/
+
+
+	D. Use retroarch and download one of the emulation cores that are available that can play the game.
+	Currently there are 5 cores available - mame2003, mame2003plus, mame2010 (UMK3+ only), hbmame, and FBNeo.
+	If the game does not get added to your system playlist automatically, look for information on adding games manually to
+	playlists at https://docs.libretro.com/guides/roms-playlists-thumbnails/.
+
+
+	E.  Last, but certainly not least, the games will also work on FBNeo and Fightcade FBNeo.
+	https://neo-source.com/
+	https://www.fightcade.com/
+
+
+
+	Please note that each emulator mentioned above requires your rom files to be named in different ways detailed
+	below.  See documentation and source code for your chosen emulator to find out the correct naming of the rom
+	files inside the romzip.  The names will change from time to time.
+
+	https://github.com/libretro
+	https://github.com/mamedev/mame
+	https://github.com/finalburnneo/FBNeo
+	https://github.com/Robbbert/hbmame
+	https://github.com/Zoltan45/MAME-mwy
+	https://github.com/Zoltan45/Mame-mkp119
+
+
+
+3. Single board computer users
+
+If you are using a single board computer such as a raspberry pi, SNES Classic, etc.
+
+Your options are to:
+
+	A. Use retroarch or retropie and download the mame2003plus core.  There are other cores that may
+	run on single board computers, but mame2003plus has been optimized and heavily modified over time to give
+	many reasons to make it the only choice for these situations.
+
+	How to get retropie and retroarch setup on these platforms is beyond the scope of this document.
+	Please review documentation at the sites below if you need assistance with them.
+
+	https://hakchi.net/ for hacking NES Classic/Mini, SNES Classic/Mini, Sega Classic Mini
+	https://retropie.org.uk/
+	https://www.retroarch.com/
+
+
+
+4.  I want to do something else, what now?
+
+	A. You will likely have to make additions to the source code of your favorite or chosen emulator, and
+	compile it from source for your target platform.
+
+	There are two ways to do this. You can cross compile your program, which is to compile it on a machine
+	which is not the machine that you intend to run the program on, or native compile it on the intended
+	use machine.  I would suggest native compile for newer users.
+
+	Typically the files that need adjustments are the drivers for Midway T unit and Wolf unit machines as
+	well as the list of games in the emulator.
+
+	You will usually find the source code needed to make changes on Github.com.  If you are going to go
+	this route, you really need to familiarize yourself with how to use and get around github.  My
+	suggestion would be to fork the repository of the emulator you want to use.  That way even if the
+	developers of said emulator are not interested in adding the Team Plus games to their emulator, you
+	can still add it for your own personal use and have the ability to get outside assistance
+	with your code.
+
+	If you need examples of how plus games are added to an emulator, check out
+	https://github.com/libretro/mame2003-plus-libretro/blob/master/src/drivers/midwunit.c
+
+
+
+5. I have followed the instructions here/website/youtube and my rom does not work, what's wrong?
+
+	The questions that come up most often have to do with patching or rom naming.  The base rom for
+	the Mortal Kombat games has not changed much, if at all, over the last 25 or so years, so if you
+	look at	your romzip and the romfile names do not match what is being shown/demonstrated/required, you
+	can just change the file names or locate your rom from a different source and then attempt patching
+	again. Either solution will	work.
+
+	There are instructions and a tutorial video on how to patch the roms using lunar ips patcher,
+	an original rom, and the patch files for your chosen Team Plus game located	at https://www.youtube.com/watch?v=41Poao0eFYw&t=1s.
+	Some of the file names in your rom zip may not be identical to what the video shows, but none of them are so different
+	that you should not be able to figure out which romfile	should have each patch file applied to it.  The rom file names
+	usually include something referring to what chip the file corresponds to.  The instructions	have been poured over
+	many times and are spot on but the names of the individual rom files can and do change over time.
+
+	If you have trouble getting your rom working and you believe it has been patched correctly, in most
+	emulators, changing the name of the rom files to exactly what the emulator expects will make them work correctly.
+	Each of the emulators mentioned above uses a different naming convention and format, so even though
+	the rom is correct, in some instances an emulator will not start the game due to the conflict.
+
+
+	If you are using MAME-mkp 0.119 32 bit, the romzip for Mortal
+	Kombat 2 + should be named mk2p.zip, and the rom files inside should be named as below:
+
+		mk2plussu2.l1
+		su3.l1
+		su4.l1
+		su5.l1
+		su6.l1
+		su7.l1
+		mk2plusuj12.l31
+		mk2plusug12.l31
+		ug14-vid
+		mk2plusug16-vid
+		ug17-vid
+		uj14-vid
+		mk2plusuj16-vid
+		uj17-vid
+		ug19-vid
+		mk2plusug20-vid
+		ug22-vid
+		uj19-vid
+		mk2plusuj20-vid
+		uj22-vid
+
+
+	The romzip for Ultimate	Mortal Kombat 3 + beta II should be named umk3p.zip, and the rom files inside should be
+	named as below:
+
+		umk3plusu54.bin
+		umk3plusu63.bin
+		umk3plus-u2.bin
+		umk3-u3.bin
+		umk3-u4.bin
+		umk3-u5.bin
+		umk-u133.bin
+		umk-u132.bin
+		umk-u131.bin
+		umk-u130.bin
+		umk-u129.bin
+		umk-u128.bin
+		umk-u127.bin
+		umk-u126.bin
+		umk-u125.bin
+		umk-u124.bin
+		umk-u123.bin
+		umk-u122.bin
+		umk-u121.bin
+		umk-u120.bin
+		umk-u119.bin
+		umk-u118.bin
+		umk3plus-u117.bin
+		umk3plus-u116.bin
+		umk3plus-u115.bin
+		umk3plus-u114.bin
+		umk-u113.bin
+		umk-u112.bin
+		umk-u111.bin
+		umk-u110.bin
+
+	The romzip for Ultimate	Mortal Kombat 3 + beta I should be named umk3pb1.zip, and the rom files inside should be
+	named as below:
+
+		umk3plusbeta1u54.bin
+		umk3plusbeta1u63.bin
+		umk3plusbeta1-u2.bin
+		umk3-u3.bin
+		umk3-u4.bin
+		umk3-u5.bin
+		umk-u133.bin
+		umk-u132.bin
+		umk-u131.bin
+		umk-u130.bin
+		umk-u129.bin
+		umk-u128.bin
+		umk-u127.bin
+		umk-u126.bin
+		umk-u125.bin
+		umk-u124.bin
+		umk-u123.bin
+		umk-u122.bin
+		umk-u121.bin
+		umk-u120.bin
+		umk-u119.bin
+		umk-u118.bin
+		umk3plus-u117.bin
+		umk3plus-u116.bin
+		umk3plus-u115.bin
+		umk3plus-u114.bin
+		umk-u113.bin
+		umk-u112.bin
+		umk-u111.bin
+		umk-u110.bin
+
+	If you are using MAME-mwy, the romzip for Mortal Kombat II + should be named mk2p.zip and the romfiles inside
+	should be named as below:
+
+		mk2p.uj12
+		mk2p.ug12
+		mk2p.u2
+		l1_mortal_kombat_ii_sound_rom_u3.u3
+		l1_mortal_kombat_ii_sound_rom_u4.u4
+		l1_mortal_kombat_ii_sound_rom_u5.u5
+		l1_mortal_kombat_ii_sound_rom_u6.u6
+		l1_mortal_kombat_ii_sound_rom_u7.u7
+		l1_mortal_kombat_ii_game_rom_ug14.ug14
+		l1_mortal_kombat_ii_game_rom_uj14.uj14
+		l1_mortal_kombat_ii_game_rom_ug19.ug19
+		l1_mortal_kombat_ii_game_rom_uj19.uj19
+		mk2p.ug16
+		mk2p.uj16
+		mk2p.ug20
+		mk2p.uj20
+		l1_mortal_kombat_ii_game_rom_ug17.ug17
+		l1_mortal_kombat_ii_game_rom_uj17.uj17
+		l1_mortal_kombat_ii_game_rom_ug22.ug22
+		l1_mortal_kombat_ii_game_rom_uj22.uj22
+
+	The romzip for Ultimate Mortal Kombat 3 + Beta II should be named umk3p.zip and the romfiles inside should be named
+	as below:
+
+		u54_umk3plus.u54
+		u63_umk3plus.u63
+		l2.0_mortal_kombat_3_u2_umk3plus.u2
+		l1_mortal_kombat_3_u3_music_spch.u3
+		l1_mortal_kombat_3_u4_music_spch.u4
+		l1_mortal_kombat_3_u5_music_spch.u5
+		l1_mortal_kombat_3_u133_game_rom.u133
+		l1_mortal_kombat_3_u132_game_rom.u132
+		l1_mortal_kombat_3_u131_game_rom.u131
+		l1_mortal_kombat_3_u130_game_rom.u130
+		l1_mortal_kombat_3_u129_game_rom.u129
+		l1_mortal_kombat_3_u128_game_rom.u128
+		l1_mortal_kombat_3_u127_game_rom.u127
+		l1_mortal_kombat_3_u126_game_rom.u126
+		l1_mortal_kombat_3_u125_game_rom.u125
+		l1_mortal_kombat_3_u124_game_rom.u124
+		l1_mortal_kombat_3_u123_game_rom.u123
+		l1_mortal_kombat_3_u122_game_rom.u122
+		umk-u121.bin
+		umk-u120.bin
+		umk-u119.bin
+		umk-u118.bin
+		umk3p-u117.bin
+		umk3p-u116.bin
+		umk3p-u115.bin
+		umk3p-u114.bin
+		umk-u113.bin
+		umk-u112.bin
+		umk-u111.bin
+		umk-u110.bin
+
+	The romzip for Ultimate Mortal Kombat 3 + Beta I should be named umk3pb1.zip and the romfiles inside should be named
+	as below:
+
+		u54_umk3plusbeta1.u54
+		u63_umk3plusbeta1.u63
+		l2.0_mortal_kombat_3_u2_ultimate.u2
+		l1_mortal_kombat_3_u3_music_spch.u3
+		l1_mortal_kombat_3_u4_music_spch.u4
+		l1_mortal_kombat_3_u5_music_spch.u5
+		l1_mortal_kombat_3_u133_game_rom.u133
+		l1_mortal_kombat_3_u132_game_rom.u132
+		l1_mortal_kombat_3_u131_game_rom.u131
+		l1_mortal_kombat_3_u130_game_rom.u130
+		l1_mortal_kombat_3_u129_game_rom.u129
+		l1_mortal_kombat_3_u128_game_rom.u128
+		l1_mortal_kombat_3_u127_game_rom.u127
+		l1_mortal_kombat_3_u126_game_rom.u126
+		l1_mortal_kombat_3_u125_game_rom.u125
+		l1_mortal_kombat_3_u124_game_rom.u124
+		l1_mortal_kombat_3_u123_game_rom.u123
+		l1_mortal_kombat_3_u122_game_rom.u122
+		umk-u121.bin
+		umk-u120.bin
+		umk-u119.bin
+		umk-u118.bin
+		umk3p-u117.bin
+		umk3p-u116.bin
+		umk3p-u115.bin
+		umk3p-u114.bin
+		umk-u113.bin
+		umk-u112.bin
+		umk-u111.bin
+		umk-u110.bin
+
+
+
+	If you are using mame2003plus, the romzip for Mortal Kombat II + should be name mk2p.zip,
+	and the rom files inside should	be named as below:
+
+		su2.l1
+		su3.l1
+		su4.l1
+		su5.l1
+		su6.l1
+		su7.l1
+		uj12.l31
+		ug12.l31
+		ug14-vid
+		ug16-vid
+		ug17-vid
+		uj14-vid
+		uj16-vid
+		uj17-vid
+		ug19-vid
+		ug20-vid
+		ug22-vid
+		uj19-vid
+		uj20-vid
+		uj22-vid
+
+	The romzip for Ultimate Mortal Kombat 3 + should be named umk3p.zip and the rom files inside should be
+	named as below:
+
+		umk3-u3.bin
+		umk3-u4.bin
+		umk3-u5.bin
+		umk3plus-u2.bin
+		umk3plusu54.bin
+		umk3plusu63.bin
+		umk-u133.bin
+		umk-u132.bin
+		umk-u131.bin
+		umk-u130.bin
+		umk-u129.bin
+		umk-u128.bin
+		umk-u127.bin
+		umk-u126.bin
+		umk-u125.bin
+		umk-u124.bin
+		umk-u123.bin
+		umk-u122.bin
+		umk-u121.bin
+		umk-u120.bin
+		umk-u119.bin
+		umk-u118.bin
+		umk3plus-u117.bin
+		umk3plus-u116.bin
+		umk3plus-u115.bin
+		umk3plus-u114.bin
+		umk-u113.bin
+		umk-u112.bin
+		umk-u111.bin
+		umk-u110.bin
+
+
+
+	If you are using HBMAME, the romzip for Mortal Kombat II + should be named mk2pb2.zip and the
+	romfiles inside should be named as below:
+
+		mk2pb2.u2
+		l1_mortal_kombat_ii_sound_rom_u3.u3
+		l1_mortal_kombat_ii_sound_rom_u4.u4
+		l1_mortal_kombat_ii_sound_rom_u5.u5
+		l1_mortal_kombat_ii_sound_rom_u6.u6
+		l1_mortal_kombat_ii_sound_rom_u7.u7
+		mk2s04.uj12
+		mk2s04.ug12
+		l1_mortal_kombat_ii_game_rom_ug14.ug14
+		l1_mortal_kombat_ii_game_rom_uj14.uj14
+		l1_mortal_kombat_ii_game_rom_ug19.ug19midtunit
+		l1_mortal_kombat_ii_game_rom_uj19.uj19
+		mk2s04.ug16
+		mk2s04.uj16
+		mk2s04.ug20
+		mk2s04.uj20
+		l1_mortal_kombat_ii_game_rom_ug17.ug17
+		l1_mortal_kombat_ii_game_rom_uj17.uj17
+		l1_mortal_kombat_ii_game_rom_ug22.ug22
+		l1_mortal_kombat_ii_game_rom_uj22.uj22
+
+	The romzip for Ultimate Mortal Kombat 3 + should be named umk3plus20220307.zip and the
+	romfiles inside should be named as below:
+
+		umk3plus20220307.u2
+		l1_mortal_kombat_3_u3_music_spch.u3
+		l1_mortal_kombat_3_u4_music_spch.u4
+		l1_mortal_kombat_3_u5_music_spch.u5
+		umk3plus20220307.u54
+		umk3plus20220307.u63
+		463_mk3_ultimate.u64
+		l1_mortal_kombat_3_u133_game_rom.u133
+		l1_mortal_kombat_3_u132_game_rom.u132
+		l1_mortal_kombat_3_u131_game_rom.u131
+		l1_mortal_kombat_3_u130_game_rom.u130
+		l1_mortal_kombat_3_u129_game_rom.u129
+		l1_mortal_kombat_3_u128_game_rom.u128
+		l1_mortal_kombat_3_u127_game_rom.u127
+		l1_mortal_kombat_3_u126_game_rom.u126
+		l1_mortal_kombat_3_u125_game_rom.u125
+		l1_mortal_kombat_3_u124_game_rom.u124
+		l1_mortal_kombat_3_u123_game_rom.u123
+		l1_mortal_kombat_3_u122_game_rom.u122
+		umk-u121.bin
+		umk-u120.bin
+		umk-u119.bin
+		umk-u118.bin
+		umk3plus.u117
+		umk3plus.u116
+		umk3plus.u115
+		umk3plus.u114
+		umk-u113.bin
+		umk-u112.bin
+		umk-u111.bin
+		umk-u110.bin
+
+
+
+	If you are using FBNeo, the romzip for Mortal Kombat II + should be named mk2p.zip and the romfiles inside
+	should be named as below:
+
+		mk2p.uj12
+		mk2p.ug12
+		mk2p.u2
+		l1_mortal_kombat_ii_sound_rom_u3.u3wunit
+		l1_mortal_kombat_ii_sound_rom_u4.u4
+		l1_mortal_kombat_ii_sound_rom_u5.u5
+		l1_mortal_kombat_ii_sound_rom_u6.u6
+		l1_mortal_kombat_ii_sound_rom_u7.u7
+		l1_mortal_kombat_ii_game_rom_ug14.ug14
+		l1_mortal_kombat_ii_game_rom_uj14.uj14
+		l1_mortal_kombat_ii_game_rom_ug19.ug19
+		l1_mortal_kombat_ii_game_rom_uj19.uj19
+		mk2p.ug16
+		mk2p.uj16
+		mk2p.ug20
+		mk2p.uj20
+		l1_mortal_kombat_ii_game_rom_ug17.ug17
+		l1_mortal_kombat_ii_game_rom_uj17.uj17
+		l1_mortal_kombat_ii_game_rom_ug22.ug22
+		l1_mortal_kombat_ii_game_rom_uj22.uj22
+
+	The romzip for Ultimate Mortal Kombat 3 + should be named umk3p.zip and the romfiles inside should be named
+	as below:
+
+		u54_umk3plus.u54
+		u63_umk3plus.u63
+		l2.0_mortal_kombat_3_u2_umk3plus.u2
+		l1_mortal_kombat_3_u3_music_spch.u3
+		l1_mortal_kombat_3_u4_music_spch.u4
+		l1_mortal_kombat_3_u5_music_spch.u5
+		l1_mortal_kombat_3_u133_game_rom.u133
+		l1_mortal_kombat_3_u132_game_rom.u132
+		l1_mortal_kombat_3_u131_game_rom.u131
+		l1_mortal_kombat_3_u130_game_rom.u130
+		l1_mortal_kombat_3_u129_game_rom.u129
+		l1_mortal_kombat_3_u128_game_rom.u128
+		l1_mortal_kombat_3_u127_game_rom.u127
+		l1_mortal_kombat_3_u126_game_rom.u126
+		l1_mortal_kombat_3_u125_game_rom.u125
+		l1_mortal_kombat_3_u124_game_rom.u124
+		l1_mortal_kombat_3_u123_game_rom.u123
+		l1_mortal_kombat_3_u122_game_rom.u122
+		mortal_kombat_iii_ultimate_u121_video_image.u121
+		mortal_kombat_iii_ultimate_u120_video_image.u120
+		mortal_kombat_iii_ultimate_u119_video_image.u119
+		mortal_kombat_iii_ultimate_u118_video_image.u118
+		umk-u117.bin
+		umk-u116.bin
+		umk-u115.bin
+		umk-u114.bin
+		mortal_kombat_iii_ultimate_u113_video_image.u113
+		mortal_kombat_iii_ultimate_u112_video_image.u112
+		mortal_kombat_iii_ultimate_u111_video_image.u111
+		mortal_kombat_iii_ultimate_u110_video_image.u110
+		463_mk3_ultimate.u64
+
+
+
+    These are the most common possible methods to achieve a setup with a working Ultimate Mortal Kombat 3 + or
+Mortal Kombat II + game rom.  If you have something not addressed here, please try joining the discord server and seek
+assistance in the mame-related channel.
+
+  https://discord.gg/hPtzkUX
+
+
+
+6.  How do I play the Work In Progress or Kontributor builds?
+
+	These directions assume that your current setup already works with a MK1 romzip, MK2 romzip, and a UMK3+ romzip.
+	
+	If you are using MAME, rename the new kontributor or work in progress romfiles to match the similarly named romfiles
+	inside your working romzip, then replace the old files with the new files. IE if the kontributor files includes a
+	file with a name and/or extension including u2, rename it to match the u2 romfile filename inside your already working
+	Team Plus romzip.  Make sure you zip everything back up!  You may have to use the command line or batch
+	file to	execute the game after doing this depending on which MAME emulator above you are using.
+
+	A typical batch file would include something like "start mame umk3p"
+
+	If you are using FBNeo, name your Kontributor or work in progress builds romzip to match your original romzip.  Then
+	place the Kontributor or work in progress romzip into your fbneo/patched folder.  Consult the FBNeo release documentation
+	relating to your setup for the location of this folder in your build.
