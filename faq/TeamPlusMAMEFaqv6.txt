@@ -450,7 +450,7 @@ Your options are to:
 		mk2s04.ug12
 		l1_mortal_kombat_ii_game_rom_ug14.ug14
 		l1_mortal_kombat_ii_game_rom_uj14.uj14
-		l1_mortal_kombat_ii_game_rom_ug19.ug19midtunit
+		l1_mortal_kombat_ii_game_rom_ug19.ug19
 		l1_mortal_kombat_ii_game_rom_uj19.uj19
 		mk2s04.ug16
 		mk2s04.uj16
@@ -504,7 +504,7 @@ Your options are to:
 		mk2p.uj12
 		mk2p.ug12
 		mk2p.u2
-		l1_mortal_kombat_ii_sound_rom_u3.u3wunit
+		l1_mortal_kombat_ii_sound_rom_u3.u3
 		l1_mortal_kombat_ii_sound_rom_u4.u4
 		l1_mortal_kombat_ii_sound_rom_u5.u5
 		l1_mortal_kombat_ii_sound_rom_u6.u6
