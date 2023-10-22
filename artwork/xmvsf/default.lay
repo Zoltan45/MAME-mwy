@@ -7,7 +7,7 @@ Artwork - BloodyDrake -->
 	<element name="border">
 		<image file="xmvsf_bezel.png"/>
 	</element>
-	<element name="portrait_left" defstate="30">
+	<element name="portrait_left" defstate="0xFF">
 		<image state="0x00" file="wolverine_left.png" />
 		<image state="0x02" file="cyclops_left.png" />
 		<image state="0x04" file="storm_left.png" />
@@ -27,9 +27,9 @@ Artwork - BloodyDrake -->
 		<image state="0x20" file="charlie_left.png" />
 		<image state="0x22" file="cammy_left.png" />
 		<image state="0x24" file="chun_li_left.png" />
-		<image state="0x26" file="blank.png"/>
+		<image state="0xFF" file="blank.png"/>
 	</element>
-	<element name="portrait_right" defstate="30">
+	<element name="portrait_right" defstate="0xFF">
 		<image state="0x00" file="wolverine_right.png" />
 		<image state="0x02" file="cyclops_right.png" />
 		<image state="0x04" file="storm_right.png" />
@@ -49,7 +49,7 @@ Artwork - BloodyDrake -->
 		<image state="0x20" file="charlie_right.png" />
 		<image state="0x22" file="cammy_right.png" />
 		<image state="0x24" file="chun_li_right.png" />
-		<image state="0x26" file="blank.png"/>
+		<image state="0xFF" file="blank.png"/>
 	</element>
 		<view name="Bezel">
 			<screen index="0">
@@ -59,10 +59,10 @@ Artwork - BloodyDrake -->
 				<bounds x="0" y="0" width="1920" height="1080"/>
 			</element>
 			<element id="pt_p1" ref="portrait_left">
-				<bounds x="0" y="0" width="1920" height="1080"/>
+				<bounds x="0" y="0" width="598" height="1080"/>
 			</element>
 			<element id="pt_p2" ref="portrait_right">
-				<bounds x="0" y="0" width="1920" height="1080"/>
+				<bounds x="1322" y="0" width="598" height="1080"/>
 			</element>
 		</view>
 	<script><![CDATA[
@@ -82,13 +82,13 @@ Artwork - BloodyDrake -->
 								p2char:set_state(mem:read_u8(0xFF4453))
 							elseif mem:read_u8(0xFFA005) == 100 and mem:read_u8(0xFF4403) == 0 then
 								p1char:set_state(mem:read_u8(0xFF4053))
-								p2char:set_state(0x26)
+								p2char:set_state(0xFF)
 							elseif mem:read_u8(0xFFA005) == 100 and mem:read_u8(0xFF4003) == 0 then	
-								p1char:set_state(0x26)
+								p1char:set_state(0xFF)
 								p2char:set_state(mem:read_u8(0xFF4453))
 							else
-								p1char:set_state(0x26)
-								p2char:set_state(0x26)
+								p1char:set_state(0xFF)
+								p2char:set_state(0xFF)
 						end
 				end)
 			end)
