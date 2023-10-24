@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 
-<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU),
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx),
 Artwork - BloodyDrake -->
 
 <mamelayout version="2">
 	<element name="border">
-		<image file="Bezel.png"/>
+		<image file="ssf2t_bezel.png"/>
 	</element>
-	<element name="portrait_left" defstate="0x11">
+	<element name="portrait_left" defstate="0xFF">
 		<image state="0x00" file="ryu_left.png" />
 		<image state="0x01" file="e_honda_left.png" />
 		<image state="0x02" file="blanka_left.png" />
@@ -25,9 +25,9 @@ Artwork - BloodyDrake -->
 		<image state="0x0E" file="fei_long_left.png" />
 		<image state="0x0F" file="dee_jay_left.png" />
 		<image state="0x10" file="akuma_left.png" />
-		<image state="0x11" file="blank.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
-	<element name="portrait_right" defstate="0x11">
+	<element name="portrait_right" defstate="0xFF">
 		<image state="0x00" file="ryu_right.png" />
 		<image state="0x01" file="e_honda_right.png" />
 		<image state="0x02" file="blanka_right.png" />
@@ -45,7 +45,7 @@ Artwork - BloodyDrake -->
 		<image state="0x0E" file="fei_long_right.png" />
 		<image state="0x0F" file="dee_jay_right.png" />
 		<image state="0x10" file="akuma_right.png" />
-		<image state="0x11" file="blank.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
 		<view name="Bezel">
 			<screen index="0">
@@ -74,8 +74,8 @@ Artwork - BloodyDrake -->
 							p1char:set_state(mem:read_u8(0xFF87DF))
 							p2char:set_state(mem:read_u8(0xFF8BDF))
 						else
-							p1char:set_state(0x11)
-							p2char:set_state(0x11)			
+							p1char:set_state(0xFF)
+							p2char:set_state(0xFF)			
 						end
 				end)
 			end)

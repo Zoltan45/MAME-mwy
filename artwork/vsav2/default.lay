@@ -30,7 +30,7 @@ Artwork - BloodyDrake -->
 		<image state="0x19" file="bishamon_left.png" />
 		<image state="0xFF" file="blank.png" />
 	</element>
-	<element name="portrait_right" defstate="0x22">
+	<element name="portrait_right" defstate="0xFF">
 		<image state="0x00" file="bulleta_right.png" />
 		<image state="0x01" file="demitri_right.png" />
 		<image state="0x02" file="blank.png" />
