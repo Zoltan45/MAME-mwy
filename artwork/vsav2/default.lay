@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 
-<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU),
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx),
 Artwork - BloodyDrake -->
 
 <mamelayout version="2">
 	<element name="border">
 		<image file="vsav2_bezel.png"/>
 	</element>
-	<element name="portrait_left" defstate="0x22">
+	<element name="portrait_left" defstate="0xFF">
 		<image state="0x00" file="bulleta_left.png" />
 		<image state="0x01" file="demitri_left.png" />
 		<image state="0x02" file="blank.png" />
@@ -28,7 +28,7 @@ Artwork - BloodyDrake -->
 		<image state="0x13" file="donovan_left.png" />
 		<image state="0x18" file="bishamon_left.png" />
 		<image state="0x19" file="bishamon_left.png" />
-		<image state="0x22" file="blank.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
 	<element name="portrait_right" defstate="0x22">
 		<image state="0x00" file="bulleta_right.png" />
@@ -51,7 +51,7 @@ Artwork - BloodyDrake -->
 		<image state="0x13" file="donovan_right.png" />
 		<image state="0x18" file="bishamon_right.png" />
 		<image state="0x19" file="bishamon_right.png" />
-		<image state="0x22" file="blank.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
 		<view name="Bezel">
 			<screen index="0">
@@ -61,10 +61,10 @@ Artwork - BloodyDrake -->
 				<bounds x="0" y="0" width="1920" height="1080"/>
 			</element>
 			<element id="pt_p1" ref="portrait_left">
-				<bounds x="0" y="0" width="1920" height="1080"/>
+				<bounds x="0" y="0" width="387" height="1080"/>
 			</element>
 			<element id="pt_p2" ref="portrait_right">
-				<bounds x="0" y="0" width="1920" height="1080"/>
+				<bounds x="1533" y="0" width="387" height="1080"/>
 			</element>
 		</view>
 	<script><![CDATA[
