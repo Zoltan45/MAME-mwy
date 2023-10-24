@@ -84,13 +84,13 @@ Artwork - BloodyDrake -->
 							p2char:set_state(mem:read_u8(0xFF8B82))
 						elseif mem:read_u8(0xFF80D7) == 255 and mem:read_u8(0xFF80A8) == 1 then
 							p1char:set_state(mem:read_u8(0xFF8782))
-							p2char:set_state(0x22)
+							p2char:set_state(0xFF)
 						elseif mem:read_u8(0xFF80D7) == 255 and mem:read_u8(0xFF80A8) == 2 then
-							p1char:set_state(0x22)
+							p1char:set_state(0xFF)
 							p2char:set_state(mem:read_u8(0xFF8B82))
 						else
-							p1char:set_state(0x22)
-							p2char:set_state(0x22)
+							p1char:set_state(0xFF)
+							p2char:set_state(0xFF)
 					end
 				end)
 			end)
