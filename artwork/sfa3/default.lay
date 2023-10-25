@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 
-<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU),
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx),
 Artwork - BloodyDrake -->
 
 
 <mamelayout version="2">
 	<element name="border">
-		<image file="bezel.png"/>
+		<image file="sfa3_bezel.png"/>
 	</element>
-	<element name="portrait_left" defstate="0x20">
+	<element name="portrait_left" defstate="0xFF">
 		<image state="0x00" file="ryu_left.png" />
 		<image state="0x01" file="ken_left.png" />
 		<image state="0x02" file="akuma_left.png" />
@@ -38,10 +38,9 @@ Artwork - BloodyDrake -->
 		<image state="0x1D" file="karin_left.png" />
 		<image state="0x1E" file="blank.png" />
 		<image state="0x1F" file="blank.png" />
-		
-		<image state="0x20" file="blank.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
-	<element name="portrait_right" defstate="0x20">
+	<element name="portrait_right" defstate="0xFF">
 		<image state="0x00" file="ryu_right.png" />
 		<image state="0x01" file="ken_right.png" />
 		<image state="0x02" file="akuma_right.png" />
@@ -71,8 +70,7 @@ Artwork - BloodyDrake -->
 		<image state="0x1D" file="karin_right.png" />
 		<image state="0x1E" file="blank.png" />
 		<image state="0x1F" file="blank.png" />
-		
-		<image state="0x20" file="blank.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
 		<view name="Bezel">
 			<screen index="0">
@@ -107,20 +105,20 @@ Artwork - BloodyDrake -->
 							mem:read_u16(0xFF02EC) == 192 and
 							mem:read_u16(0xff06b8) ~= 57456 then
 								p1char:set_state(mem:read_u8(0xFF8502))
-								p2char:set_state(0x20)
+								p2char:set_state(0xFF)
 						elseif mem:read_u16(0xff06b8) ~= 65535 and 
 							mem:read_u16(0xff06b8) ~= 0 and 
 							mem:read_u16(0xff86B0) == 0 and 
 							mem:read_u16(0xFF02EC) == 192 and
 							mem:read_u16(0xff06b8) == 57456 then
-								p1char:set_state(0x20)
+								p1char:set_state(0xFF)
 								p2char:set_state(mem:read_u8(0xFF8902))
 						elseif mem:read_u16(0xff8550) > 0 or mem:read_u16(0xff06b8) == 65535 or mem:read_u8(0xff8640) == 1 then
 							p1char:set_state(mem:read_u8(0xFF8502))
 							p2char:set_state(mem:read_u8(0xFF8902))
 						else 
-							p1char:set_state(0x20)
-							p2char:set_state(0x20)
+							p1char:set_state(0xFF)
+							p2char:set_state(0xFF)
 						end
 				end)
 			end)
