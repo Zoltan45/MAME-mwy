@@ -1,14 +1,13 @@
 <?xml version="1.0"?>
 
-<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU),
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx),
 Artwork - BloodyDrake -->
 
 <mamelayout version="2">
 	<element name="border">
 		<image file="mshvsf_bezel.png"/>
 	</element>
-	<element name="portrait_left" defstate="00">
-		<image state="0x00" file="blank.png" />
+	<element name="portrait_left" defstate="0xFF">
 		<image state="0x02" file="cyclops_left.png" />
 		<image state="0x04" file="cap_america_left.png" />
 		<image state="0x06" file="hulk_left.png" />
@@ -25,7 +24,7 @@ Artwork - BloodyDrake -->
 		<image state="0x1C" file="m_bison_left.png" />
 		<image state="0X1E" file="akuma_left.png" />
 		<image state="0x20" file="sakura_left.png" />
-		<image state="0x22" file="norimaro_left.png" />
+		<image state="0x22" file="blank.png" />
 		<image state="0x24" file="dan_left.png" />
 		<image state="0x26" file="mech_akuma_left.png" />
 		<image state="0x28" file="mech_zangief_left.png" />
@@ -34,9 +33,9 @@ Artwork - BloodyDrake -->
 		<image state="0x2E" file="us_agent_left.png" />
 		<image state="0x30" file="mephisto_left.png" />
 		<image state="0x32" file="armor_spider_man_left.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
-	<element name="portrait_right" defstate="00">
-		<image state="0x00" file="blank.png" />
+	<element name="portrait_right" defstate="0xFF">
 		<image state="0x02" file="cyclops_right.png" />
 		<image state="0x04" file="cap_america_right.png" />
 		<image state="0x06" file="hulk_right.png" />
@@ -53,7 +52,7 @@ Artwork - BloodyDrake -->
 		<image state="0x1C" file="m_bison_right.png" />
 		<image state="0X1E" file="akuma_right.png" />
 		<image state="0x20" file="sakura_right.png" />
-		<image state="0x22" file="norimaro_right.png" />
+		<image state="0x22" file="blank.png" />
 		<image state="0x24" file="dan_right.png" />
 		<image state="0x26" file="mech_akuma_right.png" />
 		<image state="0x28" file="mech_zangief_right.png" />
@@ -62,6 +61,7 @@ Artwork - BloodyDrake -->
 		<image state="0x2E" file="us_agent_right.png" />
 		<image state="0x30" file="mephisto_right.png" />
 		<image state="0x32" file="armor_spider_man_right.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
 		<view name="Bezel">
 			<screen index="0">
@@ -71,10 +71,10 @@ Artwork - BloodyDrake -->
 				<bounds x="0" y="0" width="1920" height="1080"/>
 			</element>
 			<element id="pt_p1" ref="portrait_left">
-				<bounds x="0" y="0" width="1920" height="1080"/>
+				<bounds x="0" y="0" width="468" height="1080"/>
 			</element>
 			<element id="pt_p2" ref="portrait_right">
-				<bounds x="0" y="0" width="1920" height="1080"/>
+				<bounds x="1452" y="0" width="468" height="1080"/>
 			</element>
 		</view>
 	<script><![CDATA[
@@ -104,11 +104,11 @@ Artwork - BloodyDrake -->
 							p2char:set_state(mem:read_u8(0xFF4453))	
 						elseif (mem:read_u8(0xFF0000) ~= 0 and mem:read_u8(0xFF6F93) == 0 and mem:read_u8(0xFF3A92) == 255) or
 							(mem:read_u8(0xFF0000) ~= 0 and mem:read_u8(0xFF6F93) == 0 and mem:read_u8(0xFF3E92) == 255) then
-							p1char:set_state(0x00)
-							p2char:set_state(0x00)		
+							p1char:set_state(0xFF)
+							p2char:set_state(0xFF)		
 						else
-							p1char:set_state(0x00)
-							p2char:set_state(0x00)
+							p1char:set_state(0xFF)
+							p2char:set_state(0xFF)
 					end
 				end)
 			end)
