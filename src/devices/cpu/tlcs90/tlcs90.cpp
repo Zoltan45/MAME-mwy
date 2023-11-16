@@ -16,6 +16,9 @@
 #include "tlcs90.h"
 #include "tlcs90d.h"
 
+#define VERBOSE     0
+#include "logmacro.h"
+
 ALLOW_SAVE_TYPE(tlcs90_device::e_mode); // allow save_item on a non-fundamental type
 
 
@@ -157,7 +160,7 @@ void tlcs90_device::tmp90ph44_mem(address_map &map)
 tlcs90_device::tlcs90_device(const machine_config &mconfig, device_type type, const char *tag, device_t *owner, uint32_t clock, address_map_constructor program_map)
 	: cpu_device(mconfig, type, tag, owner, clock)
 	, m_program_config("program", ENDIANNESS_LITTLE, 8, 20, 0, program_map)
-	, m_port_read_cb(*this)
+	, m_port_read_cb(*this, 0xff)
 	, m_port_write_cb(*this)
 {
 }
@@ -2721,7 +2724,7 @@ void tlcs90_device::t90_start_timer(int i)
 
 	m_timer[i]->adjust(period, i, period);
 
-	logerror("%04X: CPU Timer %d started at %f Hz\n", m_pc.w.l, i, 1.0 / period.as_double());
+	LOG("%04X: CPU Timer %d started at %f Hz\n", m_pc.w.l, i, 1.0 / period.as_double());
 }
 
 void tlcs90_device::t90_start_timer4()
@@ -2743,14 +2746,14 @@ void tlcs90_device::t90_start_timer4()
 
 	m_timer[4]->adjust(period, 4, period);
 
-	logerror("%04X: CPU Timer 4 started at %f Hz\n", m_pc.w.l, 1.0 / period.as_double());
+	LOG("%04X: CPU Timer 4 started at %f Hz\n", m_pc.w.l, 1.0 / period.as_double());
 }
 
 
 void tlcs90_device::t90_stop_timer(int i)
 {
 	m_timer[i]->adjust(attotime::never, i);
-	logerror("%04X: CPU Timer %d stopped\n", m_pc.w.l, i);
+	LOG("%04X: CPU Timer %d stopped\n", m_pc.w.l, i);
 }
 
 void tlcs90_device::t90_stop_timer4()
@@ -2850,9 +2853,6 @@ TIMER_CALLBACK_MEMBER( tlcs90_device::t90_timer4_callback )
 
 void tlcs90_device::device_start()
 {
-	m_port_read_cb.resolve_all_safe(0xff);
-	m_port_write_cb.resolve_all_safe();
-
 	save_item(NAME(m_prvpc.w.l));
 	save_item(NAME(m_pc.w.l));
 	save_item(NAME(m_sp.w.l));

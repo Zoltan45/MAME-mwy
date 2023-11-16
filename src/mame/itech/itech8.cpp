@@ -565,7 +565,7 @@ TIMER_CALLBACK_MEMBER(itech8_state::irq_off)
 }
 
 
-WRITE_LINE_MEMBER(itech8_state::generate_nmi)
+void itech8_state::generate_nmi(int state)
 {
 	if (state)
 	{
@@ -577,7 +577,7 @@ WRITE_LINE_MEMBER(itech8_state::generate_nmi)
 	}
 }
 
-WRITE_LINE_MEMBER(itech8_state::ninclown_irq)
+void itech8_state::ninclown_irq(int state)
 {
 	// definitely doesn't like the generate_nmi code, so we just generate VBlank irq here instead
 	if (state)
@@ -734,7 +734,7 @@ void itech8_state::rimrockn_bank_w(uint8_t data)
  *
  *************************************/
 
-READ_LINE_MEMBER(itech8_state::special_r)
+int itech8_state::special_r()
 {
 	return m_pia_portb_data & 0x01;
 }
@@ -1687,7 +1687,7 @@ INPUT_PORTS_END
  *
  *************************************/
 
-WRITE_LINE_MEMBER(itech8_state::generate_tms34061_interrupt)
+void itech8_state::generate_tms34061_interrupt(int state)
 {
 	update_interrupts(-1, state, -1);
 
@@ -1783,7 +1783,7 @@ void itech8_state::itech8_sound_ym3812(machine_config &config)
 	MC6809(config, m_soundcpu, CLOCK_8MHz);
 	m_soundcpu->set_addrmap(AS_PROGRAM, &itech8_state::sound3812_map);
 
-	pia6821_device &pia(PIA6821(config, "pia", 0));
+	pia6821_device &pia(PIA6821(config, "pia"));
 	pia.readpb_handler().set("ticket", FUNC(ticket_dispenser_device::line_r));
 	pia.writepa_handler().set(FUNC(itech8_state::pia_porta_out));
 	pia.writepb_handler().set(FUNC(itech8_state::pia_portb_out));
