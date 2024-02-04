@@ -1186,11 +1186,17 @@ void apple2e_state::machine_reset()
 		m_isiicplus = false;
 	}
 
-	if (((m_sysconfig.read_safe(0) & 0x30) == 0x30) || (m_isiicplus))
+	u8 config = m_sysconfig.read_safe(0) & 0x30;
+
+	if (((config & 0x10) == 0x10) || (m_isiicplus))
 	{
-		m_accel_speed = 4000000;    // Zip speed
-		accel_full_speed();
-		m_accel_fast = true;
+		m_accel_speed = 4000000;    // Zip speed, set if present, even if not active initially
+
+		if (((config & 0x20) == 0x20) || (m_isiicplus))
+		{
+			accel_full_speed();
+			m_accel_fast = true;
+		}
 	}
 
 	if (m_accel_laser)
@@ -1357,13 +1363,13 @@ TIMER_DEVICE_CALLBACK_MEMBER(apple2e_state::apple2_interrupt)
 		{
 			const u32 uFkeys = m_franklin_fkeys->read();
 
-			if (uFkeys ^ m_franklin_last_fkeys)
+			if ((uFkeys ^ m_franklin_last_fkeys) && uFkeys)
 			{
 				m_transchar = count_leading_zeros_32(uFkeys) + 0x20;
 				m_strobe = 0x80;
 				m_franklin_strobe = 0;
-				m_franklin_last_fkeys = uFkeys;
 			}
+			m_franklin_last_fkeys = uFkeys;
 		}
 	}
 }

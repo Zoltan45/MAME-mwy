@@ -2,8 +2,13 @@
 // copyright-holders:R. Belmont, Olivier Galibert
 /*************************************************************************************
 
-    Yamaha MU-80 and MU-100 : 32-voice polyphonic/multitimbral General MIDI/GS/XG tone modules
+    Yamaha MU-100 : 32-part, 64-voice polyphonic/multitimbral General MIDI/GS/XG
+                    tone module
     Preliminary driver by R. Belmont and O. Galibert
+
+    The successor to the mu90, uses the same one-chip SWP30 with a better sample rom.
+    Exists in rackable (mu100r) and screenless (mu100b), and single board (xt446)
+    variants.
 
     MU100 CPU: Hitachi H8S/2655 (HD6432655F), strapped for mode 4 (24-bit address, 16-bit data, no internal ROM)
     Sound ASIC: Yamaha XS725A0/SWP30
@@ -665,9 +670,9 @@ void mu100_state::pg_w(u16 data)
 
 void mu100_state::swp30_map(address_map &map)
 {
-	map(0x000000*4, 0x200000*4-1).rom().region("swp30",         0).mirror(4*0x200000);
-	map(0x400000*4, 0x500000*4-1).rom().region("swp30",  0x800000).mirror(4*0x300000);
-	map(0x800000*4, 0xa00000*4-1).rom().region("swp30", 0x1000000).mirror(4*0x200000);
+	map(0x000000, 0x1fffff).rom().region("swp30",         0).mirror(0x200000);
+	map(0x400000, 0x4fffff).rom().region("swp30",  0x800000).mirror(0x300000);
+	map(0x800000, 0x9fffff).rom().region("swp30", 0x1000000).mirror(0x200000);
 }
 
 void mu100_state::mu100(machine_config &config)
@@ -700,7 +705,7 @@ void mu100_state::mu100(machine_config &config)
 	SPEAKER(config, "rspeaker").front_right();
 
 	SWP30(config, m_swp30);
-	m_swp30->set_addrmap(0, &mu100_state::swp30_map);
+	m_swp30->set_addrmap(AS_DATA, &mu100_state::swp30_map);
 	m_swp30->add_route(0, "lspeaker", 1.0);
 	m_swp30->add_route(1, "rspeaker", 1.0);
 
@@ -722,47 +727,34 @@ void mu100_state::mu100(machine_config &config)
 
 ROM_START( mu100 )
 	ROM_REGION( 0x200000, "maincpu", 0 )
-	ROM_SYSTEM_BIOS( 0, "bios0", "xu50720 (v1.11, Aug. 3, 1999)" )
+	ROM_DEFAULT_BIOS("v111")
+	ROM_SYSTEM_BIOS( 0, "v111", "xu50720 (v1.11, Aug. 3, 1999)" )
 	ROM_LOAD16_WORD_SWAP_BIOS( 0, "xu50720.ic11", 0x000000, 0x200000, CRC(1126a8a4) SHA1(e90b8bd9d14297da26ba12f4d9a4f2d22cd7d34a) )
-	ROM_SYSTEM_BIOS( 1, "bios1", "xt71420 (v1.05, Sep. 19, 1997)" )
-	ROM_LOAD16_WORD_SWAP_BIOS( 1, "xt71420.ic11", 0x000000, 0x200000, CRC(0e5b3bae) SHA1(3148c5bd59a3d00809d3ab1921216215fe2582c5) )
-	ROM_SYSTEM_BIOS( 2, "bios2", "xt714e0 (v1.03, Jul. 25, 1997)" )
-	ROM_LOAD16_WORD_SWAP_BIOS( 2, "xt714e0.ic11", 0x000000, 0x200000, CRC(2d8cf9fc) SHA1(a81f988a315efe92106f1e7d407cd3626c4f843f) )
+	ROM_SYSTEM_BIOS( 1, "v106", "xt714h0 (v1.06, Oct. 14, 1997)" )
+	ROM_LOAD16_WORD_SWAP_BIOS( 1, "xt714h0.ic11", 0x000000, 0x200000, CRC(aa96ab38) SHA1(ec39eeab55d7d55b4f6d2b4b4cac2a01f98db8a0) )
+	ROM_SYSTEM_BIOS( 2, "v105", "xt71420 (v1.05, Sep. 19, 1997)" )
+	ROM_LOAD16_WORD_SWAP_BIOS( 2, "xt71420.ic11", 0x000000, 0x200000, CRC(0e5b3bae) SHA1(3148c5bd59a3d00809d3ab1921216215fe2582c5) )
+	ROM_SYSTEM_BIOS( 3, "v103", "xt714e0 (v1.03, Jul. 25, 1997)" )
+	ROM_LOAD16_WORD_SWAP_BIOS( 3, "xt714e0.ic11", 0x000000, 0x200000, CRC(2d8cf9fc) SHA1(a81f988a315efe92106f1e7d407cd3626c4f843f) )
 
-	ROM_REGION( 0x1800000, "swp30", ROMREGION_ERASE00 )
-	ROM_LOAD32_WORD( "sx518b0.ic34", 0x0000000, 0x400000, CRC(2550d44f) SHA1(fd3cce228c7d389a2fde25c808a5b26080588cba) )
-	ROM_LOAD32_WORD( "sx743b0.ic35", 0x0000002, 0x400000, CRC(a9109a6c) SHA1(a67bb49378a38a2d809bd717d286e18bc6496db0) )
+	ROM_REGION32_LE( 0x1800000, "swp30", ROMREGION_ERASE00 )
+	ROM_LOAD32_WORD( "xs518b0.ic34", 0x0000000, 0x400000, CRC(2550d44f) SHA1(fd3cce228c7d389a2fde25c808a5b26080588cba) )
+	ROM_LOAD32_WORD( "xs743b0.ic35", 0x0000002, 0x400000, CRC(a9109a6c) SHA1(a67bb49378a38a2d809bd717d286e18bc6496db0) )
 	ROM_LOAD32_WORD( "xt445a0-828.ic36", 0x0800000, 0x200000, CRC(225c2280) SHA1(23b5e046fd2e2ac01af3e6dc6357c5c6547b286b) )
 	ROM_LOAD32_WORD( "xt461a0-829.ic37", 0x0800002, 0x200000, CRC(a1d138a3) SHA1(46a7a7225cd7e1818ba551325d2af5ac1bf5b2bf) )
 	ROM_LOAD32_WORD( "xt462a0.ic39", 0x1000000, 0x400000, CRC(2e82cbd4) SHA1(d1f0e2713bf2cca9156c562e23fcce4fa5d7cfb3) )
 	ROM_LOAD32_WORD( "xt463a0.ic38", 0x1000002, 0x400000, CRC(cce5f8d3) SHA1(bdca8c5158f452f2b5535c7d658c9b22c6d66048) )
 ROM_END
 
-// Identical to the mu100
-ROM_START( mu100r )
-	ROM_REGION( 0x200000, "maincpu", 0 )
-	ROM_SYSTEM_BIOS( 0, "bios0", "xu50720 (v1.11, Aug. 3, 1999)" )
-	ROM_LOAD16_WORD_SWAP_BIOS( 0, "xu50720.ic11", 0x000000, 0x200000, CRC(1126a8a4) SHA1(e90b8bd9d14297da26ba12f4d9a4f2d22cd7d34a) )
-	ROM_SYSTEM_BIOS( 1, "bios1", "xt71420 (v1.05, Sep. 19, 1997)" )
-	ROM_LOAD16_WORD_SWAP_BIOS( 1, "xt71420.ic11", 0x000000, 0x200000, CRC(0e5b3bae) SHA1(3148c5bd59a3d00809d3ab1921216215fe2582c5) )
-	ROM_SYSTEM_BIOS( 2, "bios2", "xt714e0 (v1.03, Jul. 25, 1997)" )
-	ROM_LOAD16_WORD_SWAP_BIOS( 2, "xt714e0.ic11", 0x000000, 0x200000, CRC(2d8cf9fc) SHA1(a81f988a315efe92106f1e7d407cd3626c4f843f) )
-
-	ROM_REGION( 0x1800000, "swp30", ROMREGION_ERASE00 )
-	ROM_LOAD32_WORD( "sx518b0.ic34", 0x000000, 0x400000, CRC(2550d44f) SHA1(fd3cce228c7d389a2fde25c808a5b26080588cba) )
-	ROM_LOAD32_WORD( "sx743b0.ic35", 0x000002, 0x400000, CRC(a9109a6c) SHA1(a67bb49378a38a2d809bd717d286e18bc6496db0) )
-	ROM_LOAD32_WORD( "xt445a0-828.ic36", 0x800000, 0x200000, CRC(225c2280) SHA1(23b5e046fd2e2ac01af3e6dc6357c5c6547b286b) )
-	ROM_LOAD32_WORD( "xt461a0-829.ic37", 0x800002, 0x200000, CRC(a1d138a3) SHA1(46a7a7225cd7e1818ba551325d2af5ac1bf5b2bf) )
-	ROM_LOAD32_WORD( "xt462a0.ic39", 0x1000000, 0x400000, CRC(2e82cbd4) SHA1(d1f0e2713bf2cca9156c562e23fcce4fa5d7cfb3) )
-	ROM_LOAD32_WORD( "xt463a0.ic38", 0x1000002, 0x400000, CRC(cce5f8d3) SHA1(bdca8c5158f452f2b5535c7d658c9b22c6d66048) )
-ROM_END
+// mu100r is identical to the mu100
+#define rom_mu100r rom_mu100
 
 ROM_START( mu100b )
 	ROM_REGION( 0x200000, "maincpu", 0 )
 	// MU-100B v1.08 (Nov. 28, 1997)
 	ROM_LOAD16_WORD_SWAP( "xu50710-m27c160.bin", 0x000000, 0x200000, CRC(4b10bd27) SHA1(12d7c6e1bce7974b34916e1bfa5057ab55867476) )
 
-	ROM_REGION( 0x1800000, "swp30", ROMREGION_ERASE00 )
+	ROM_REGION32_LE( 0x1800000, "swp30", ROMREGION_ERASE00 )
 	ROM_LOAD32_WORD( "sx518b0.ic34", 0x0000000, 0x400000, CRC(2550d44f) SHA1(fd3cce228c7d389a2fde25c808a5b26080588cba) )
 	ROM_LOAD32_WORD( "sx743b0.ic35", 0x0000002, 0x400000, CRC(a9109a6c) SHA1(a67bb49378a38a2d809bd717d286e18bc6496db0) )
 	ROM_LOAD32_WORD( "xt445a0-828.ic36", 0x0800000, 0x200000, CRC(225c2280) SHA1(23b5e046fd2e2ac01af3e6dc6357c5c6547b286b) )

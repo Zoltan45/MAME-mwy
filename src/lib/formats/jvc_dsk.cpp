@@ -170,6 +170,12 @@ bool jvc_format::parse_header(util::random_read &io, int &header_size, int &trac
 		break;
 	}
 
+	if (tracks > 82)
+	{
+		osd_printf_info("jvc_format: track count of %d unsupported\n", tracks);
+		return false;
+	}
+
 	osd_printf_verbose("jvc_format: Floppy disk image geometry: %d tracks, %d head(s), %d sectors with %d bytes.\n", tracks, heads, sectors, sector_size);
 
 	return tracks * heads * sectors * sector_size == (size - header_size);
@@ -178,7 +184,10 @@ bool jvc_format::parse_header(util::random_read &io, int &header_size, int &trac
 int jvc_format::identify(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants) const
 {
 	int header_size, tracks, heads, sectors, sector_size, sector_base_id;
-	return parse_header(io, header_size, tracks, heads, sectors, sector_size, sector_base_id) ? FIFID_STRUCT|FIFID_SIZE : 0;
+	if (parse_header(io, header_size, tracks, heads, sectors, sector_size, sector_base_id))
+		return FIFID_SIZE;
+	else
+		return 0;
 }
 
 bool jvc_format::load(util::random_read &io, uint32_t form_factor, const std::vector<uint32_t> &variants, floppy_image &image) const
