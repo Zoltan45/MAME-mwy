@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU), TehDrewsus
-Artwork - BloodyDrake -->
+Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 
 <mamelayout version="2">
 	<element name="border">
@@ -37,10 +37,10 @@ Artwork - BloodyDrake -->
 		<image state="27" file="../umk3p/chameleon.png" />
 		<image state="28" file="../umk3p/triborg.png" />
 		<image state="29" file="../umk3p/khameleon.png" />  -->
-		<image state="30" file="../umk3p/blankpt.png" />
+		<image state="30" file="../umk3p/blank.png" />
 	</element>
 	<element name="background" defstate="0">
-		<image state="0" file="../umk3p/blankbg.png" />
+		<image state="0" file="../umk3p/blank.png" />
 		<image state="1" file="../umk3p/bg.png" />
 	</element>
 	<element name="movelist" defstate="30">
@@ -73,7 +73,7 @@ Artwork - BloodyDrake -->
 		<image state="27" file="../umk3p/question.png" />
 		<image state="28" file="../umk3p/question.png" />
 		<image state="29" file="../umk3p/question.png" />  -->
-		<image state="30" file="../umk3p/blankml.png" />
+		<image state="30" file="../umk3p/blank.png" />
 	</element>
 	<view name="bezel">
 		<screen index="0">
@@ -83,11 +83,11 @@ Artwork - BloodyDrake -->
 			<bounds x="0" y="0" width="1920" height="1080"/>
 		</element>
 		<element id="bg_p1" ref="background">
-			<bounds x="0" y="466" width="417" height="614" />
+			<bounds x="0" y="0" width="417" height="1080" />
 		</element>
 		<element id="bg_p2" ref="background">
 			<orientation flipX="yes"/>
-			<bounds x="1503" y="466" width="417" height="614" />
+			<bounds x="1503" y="0" width="417" height="1080" />
 		</element>	
 		<element id="pt_p1" ref="portrait">
 			<bounds x="0" y="10" width="380" height="467" />
@@ -116,9 +116,7 @@ Artwork - BloodyDrake -->
 			local p2ml = file.views["bezel"].items["ml_p2"]
 			file.views["bezel"]:set_prepare_items_callback(
 				function()
-					
 					-- Grab non match screens and display blank.png
-					
 					if 
 						mem:read_u8(0x01060960) == 1 and (mem:read_u16(0x0105C3F0) == 0 or mem:read_u16(0x0105C3F0) == 12576 or mem:read_u16(0x0105C3F0) == 13424 or mem:read_u16(0x0105C3F0) == 15872 or mem:read_u16(0x0105C3F0) == 15504) or
 						mem:read_u8(0x01060960) == 0 or
@@ -136,11 +134,8 @@ Artwork - BloodyDrake -->
 							p2char:set_state(30)
 							p1ml:set_state(30)
 							p2ml:set_state(30)
-						
 					else
-						
 					-- If only P1 active on charselect screen, display P1 set P2 as blank	
-						
 					if mem:read_u8(0x010615C0) == 255 then
 							p1bg:set_state(1)
 							p2bg:set_state(0)
@@ -148,9 +143,7 @@ Artwork - BloodyDrake -->
 							p2char:set_state(30)
 							p1ml:set_state(mem:read_i8(0x01060A10))
 							p2ml:set_state(30)
-							
 					-- If only P2 active on charselect screen, display P2 set P1 as blank	
-						
 						elseif mem:read_u8(0x01060A10) == 255 then
 							p1bg:set_state(0)
 							p2bg:set_state(1)

@@ -93,7 +93,7 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 		<image state="9" file="kung_lao_umk3p_ml2.png" />
 		<image state="10" file="kabal_umk3p_ml2.png" />
 		<image state="11" file="sheeva_umk3p_ml2.png" />
-		<image state="12" file="shang_tsung_umk3p_ml2.png" />
+		<image state="12" file="blank.png" />
 		<image state="13" file="liu_kang_umk3p_ml2.png" />
 		<image state="14" file="c_smoke_umk3p_ml2.png" />
 		<image state="15" file="kitana_umk3p_ml2.png" />
@@ -116,7 +116,11 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 		<image state="0" file="blank.png" />
 		<image state="1" file="shang_morph_umk3p.png" />
 	</element>
-	
+	<element name="smoves" defstate="0">
+		<image state="0" file="blank.png" />
+		<image state="1" file="shang_tsung_ml.png" />
+		<image state="2" file="shang_tsung_umk3p_ml2.png" />
+	</element>
 	<view name="bezel">
 		<screen index="0">
 			<bounds x="365" y="90" width="1200" height="900"/>
@@ -156,10 +160,12 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 		<element id="sm_p2" ref="smorph">
 			<bounds x="1641" y="83" width="260" height="850" />
 		</element>
-		
-		
-		
-		
+		<element id="smoves_p1" ref="smoves">
+			<bounds x="29" y="580" width="241" height="360" />
+		</element>
+		<element id="smoves_p2" ref="smoves">
+			<bounds x="1650" y="580" width="241" height="360" />
+		</element>	
 	</view>
 	<view name="no_bezel">
 		<screen index="0">
@@ -188,6 +194,24 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 		<element id="ml_p2" ref="movelist">
 			<bounds x="1710" y="580" width="188" height="360" />
 		</element>
+		<element id="xm_p1" ref="movelist2">
+			<bounds x="25" y="580" width="188" height="360" />
+		</element>
+		<element id="xm_p2" ref="movelist2">
+			<bounds x="1710" y="580" width="188" height="360" />
+		</element>
+		<element id="sm_p1" ref="smorph">
+			<bounds x="15" y="83" width="207" height="850" />
+		</element>
+		<element id="sm_p2" ref="smorph">
+			<bounds x="1701" y="83" width="207" height="850" />
+		</element>
+		<element id="smoves_p1" ref="smoves">
+			<bounds x="25" y="580" width="188" height="360" />
+		</element>
+		<element id="smoves_p2" ref="smoves">
+			<bounds x="1710" y="580" width="188" height="360" />
+		</element>			
 	</view>
 	<script><![CDATA[
         file:set_resolve_tags_callback(
@@ -204,13 +228,21 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 			local p2sm = file.views["bezel"].items["sm_p2"]
 			local p1xm = file.views["bezel"].items["xm_p1"]
 			local p2xm = file.views["bezel"].items["xm_p2"]
+			local p1ts = file.views["bezel"].items["smoves_p1"]
+			local p2ts = file.views["bezel"].items["smoves_p2"]
 			local p1char_nb = file.views["no_bezel"].items["pt_p1"]
 			local p2char_nb = file.views["no_bezel"].items["pt_p2"]
 			local p1bg_nb = file.views["no_bezel"].items["bg_p1"]
 			local p2bg_nb = file.views["no_bezel"].items["bg_p2"]
 			local p1ml_nb = file.views["no_bezel"].items["ml_p1"]
 			local p2ml_nb = file.views["no_bezel"].items["ml_p2"]
-			file.views["bezel"]:set_prepare_items_callback(
+			local p1sm_nb = file.views["no_bezel"].items["sm_p1"]
+			local p2sm_nb = file.views["no_bezel"].items["sm_p2"]
+			local p1xm_nb = file.views["no_bezel"].items["xm_p1"]
+			local p2xm_nb = file.views["no_bezel"].items["xm_p2"]
+			local p1ts_nb = file.views["no_bezel"].items["smoves_p1"]
+			local p2ts_nb = file.views["no_bezel"].items["smoves_p2"]
+		file.views["bezel"]:set_prepare_items_callback(
 				function()
 				-- Grab non match screens and display blank.png
 					if 
@@ -234,6 +266,8 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 							p2sm:set_state(0)
 							p1xm:set_state(30)
 							p2xm:set_state(30)
+							p1ts:set_state(0)
+							p2ts:set_state(0)
 					else
 					-- If only P1 active on charselect screen or single player	
 						if mem:read_u8(0x010615E0) == 255 or (mem:read_u8(0x010609A0) == 1 and mem:read_u8(0x01061550) == 0) then
@@ -247,20 +281,30 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 							p2sm:set_state(0)
 							p1xm:set_state(30)
 							p2xm:set_state(mem:read_i8(0x01060A30))
-								if mem:read_i8(0x01060A30) == 12 then
+							p1ts:set_state(0)
+							p2ts:set_state(0)
+								--code for Shang Tsung only
+								if mem:read_i8(0x01060A30) == 12 and mem:read_u8(0x105F340) > 4 then
+									p1ml:set_state(30)
 									p2bg:set_state(3)
 									p2sm:set_state(1)
 									p2xm:set_state(30)
 									p2char:set_state(30)
+									p1ts:set_state(1)
+								elseif	mem:read_i8(0x01060A30) == 12 and mem:read_u8(0x105F340) <= 4  then
+									p1ml:set_state(30)
+									p2bg:set_state(3)
+									p2sm:set_state(1)
+									p2xm:set_state(30)
+									p2char:set_state(30)
+									p1ts:set_state(2)
+								-- code for super secret characters
 								elseif mem:read_i8(0x01060A30) == 25 or mem:read_i8(0x01060A30) == 27 or mem:read_i8(0x01060A30) == 28 or mem:read_i8(0x01060A30) == 29 then
 									p2bg:set_state(0)
 									p2sm:set_state(0)
 									p2xm:set_state(30)
 									p2char:set_state(30)
---							else							
---								p2bg:set_state(0)
---								p2sm:set_state(0)
---								p2xm:set_state(mem:read_i8(0x01060A30))
+									p1ts:set_state(0)
 							end
 					-- If only P2 active on charselect screen or single player	
 						elseif mem:read_u8(0x01060A30) == 255 or (mem:read_u8(0x010609A0) == 0 and mem:read_u8(0x01061550) == 1) then
@@ -274,20 +318,28 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 							p2sm:set_state(0)
 							p1xm:set_state(mem:read_i8(0x010615E0))
 							p2xm:set_state(30)
-								if mem:read_i8(0x010615E0) == 12 then
+							p1ts:set_state(0)
+							p2ts:set_state(0)
+								if mem:read_i8(0x010615E0) == 12 and mem:read_u8(0x105F340) > 4 then
+									p2ml:set_state(30)
 									p1bg:set_state(3)
 									p1sm:set_state(1)
 									p1xm:set_state(30)
 									p1char:set_state(30)
+									p2ts:set_state(1)
+								elseif	mem:read_i8(0x010615E0) == 12 and mem:read_u8(0x105F340) <= 4  then
+									p2ml:set_state(30)
+									p1bg:set_state(3)
+									p1sm:set_state(1)
+									p1xm:set_state(30)
+									p1char:set_state(30)
+									p2ts:set_state(2)	
 								elseif mem:read_i8(0x010615E0) == 25 or mem:read_i8(0x010615E0) == 27 or mem:read_i8(0x010615E0) == 28 or mem:read_i8(0x010615E0) == 29 then
 									p1bg:set_state(0)
 									p1sm:set_state(0)
 									p1xm:set_state(30)
-									p1char:set_state(30)										
---							else
---								p1bg:set_state(0)
---								p1sm:set_state(0)
---								p1xm:set_state(mem:read_i8(0x010615E0))
+									p1char:set_state(30)	
+									p2ts:set_state(0)
 							end
 						else
 							p1bg:set_state(1)
@@ -300,14 +352,17 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 							p2sm:set_state(0)
 							p1xm:set_state(30)
 							p2xm:set_state(30)
+							p1ts:set_state(0)
+							p2ts:set_state(0)
+							
 						end
 					end
 				end)
-				file.views["no_bezel"]:set_prepare_items_callback(
+			file.views["no_bezel"]:set_prepare_items_callback(
 				function()
-					-- Grab non match screens and display blank.png
+				-- Grab non match screens and display blank.png
 					if 
-						mem:read_u8(0x01060960) == 1 and (mem:read_u16(0x0105C3F0) == 0 or mem:read_u16(0x0105C3F0) == 44256 or mem:read_u16(0x0105C3F0) == 21152 or mem:read_u16(0x0105C3F0) == 37520 or mem:read_u16(0x0105C3F0) == 21456 or mem:read_u16(0x0105C3F0) == 31024) or
+						mem:read_u8(0x01060960) == 1 and (mem:read_u16(0x0105C3F0) == 0 or mem:read_u16(0x0105C3F0) == 21152 or mem:read_u16(0x0105C3F0) == 21456 or mem:read_u16(0x0105C3F0) == 31024 or mem:read_u16(0x0105C3F0) == 37520 or mem:read_u16(0x0105C3F0) == 44256) or
 						mem:read_u8(0x01060960) == 0 or
 						mem:read_u8(0x01060960) == 3 or
 						mem:read_u8(0x01060960) == 8 or
@@ -319,27 +374,87 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 						mem:read_u8(0x01060960) == 22 then
 							p1bg_nb:set_state(0)
 							p2bg_nb:set_state(0)
-							p1char_nb:set_state(30)
 							p2char_nb:set_state(30)
+							p1char_nb:set_state(30)
 							p1ml_nb:set_state(30)
 							p2ml_nb:set_state(30)
+							p1sm_nb:set_state(0)
+							p2sm_nb:set_state(0)
+							p1xm_nb:set_state(30)
+							p2xm_nb:set_state(30)
+							p1ts_nb:set_state(0)
+							p2ts_nb:set_state(0)	
 					else
-					-- If only P1 active on charselect screen, display P1 set P2 as blank	
-						if mem:read_u8(0x010615E0) == 255 then
+					-- If only P1 active on charselect screen or single player	
+						if mem:read_u8(0x010615E0) == 255 or (mem:read_u8(0x010609A0) == 1 and mem:read_u8(0x01061550) == 0) then
 							p1bg_nb:set_state(1)
-							p2bg_nb:set_state(0)
+							p2bg_nb:set_state(1)
 							p1char_nb:set_state(mem:read_i8(0x01060A30))
-							p2char_nb:set_state(30)
+							p2char_nb:set_state(mem:read_i8(0x01060A30))
 							p1ml_nb:set_state(mem:read_i8(0x01060A30))
 							p2ml_nb:set_state(30)
-					-- If only P2 active on charselect screen, display P2 set P1 as blank	
-						elseif mem:read_u8(0x01060A30) == 255 then
-							p1bg_nb:set_state(0)
+							p1sm_nb:set_state(0)
+							p2sm_nb:set_state(0)
+							p1xm_nb:set_state(30)
+							p2xm_nb:set_state(mem:read_i8(0x01060A30))
+							p1ts_nb:set_state(0)
+							p2ts_nb:set_state(0)
+								if mem:read_i8(0x01060A30) == 12 and mem:read_u8(0x105F340) > 4 then
+									p1ml_nb:set_state(30)
+									p2bg_nb:set_state(3)
+									p2sm_nb:set_state(1)
+									p2xm_nb:set_state(30)
+									p2char_nb:set_state(30)
+									p1ts_nb:set_state(1)
+								elseif	mem:read_i8(0x01060A30) == 12 and mem:read_u8(0x105F340) <= 4  then
+									p1ml_nb:set_state(30)
+									p2bg_nb:set_state(3)
+									p2sm_nb:set_state(1)
+									p2xm_nb:set_state(30)
+									p2char_nb:set_state(30)
+									p1ts_nb:set_state(2)
+								elseif mem:read_i8(0x01060A30) == 25 or mem:read_i8(0x01060A30) == 27 or mem:read_i8(0x01060A30) == 28 or mem:read_i8(0x01060A30) == 29 then
+									p2bg_nb:set_state(0)
+									p2sm_nb:set_state(0)
+									p2xm_nb:set_state(30)
+									p2char_nb:set_state(30)
+									p1ts_nb:set_state(0)
+								end
+					-- If only P2 active on charselect screen or single player	
+						elseif mem:read_u8(0x01060A30) == 255 or (mem:read_u8(0x010609A0) == 0 and mem:read_u8(0x01061550) == 1) then
+							p1bg_nb:set_state(1)
 							p2bg_nb:set_state(1)
-							p1char_nb:set_state(30)
+							p1char_nb:set_state(mem:read_i8(0x010615E0))
 							p2char_nb:set_state(mem:read_i8(0x010615E0))
 							p1ml_nb:set_state(30)
 							p2ml_nb:set_state(mem:read_i8(0x010615E0))
+							p1sm_nb:set_state(0)
+							p2sm_nb:set_state(0)
+							p1xm_nb:set_state(mem:read_i8(0x010615E0))
+							p2xm_nb:set_state(30)
+							p1ts_nb:set_state(0)
+							p2ts_nb:set_state(0)
+								if mem:read_i8(0x010615E0) == 12 and mem:read_u8(0x105F340) > 4 then
+									p2ml_nb:set_state(30)
+									p1bg_nb:set_state(3)
+									p1sm_nb:set_state(1)
+									p1xm_nb:set_state(30)
+									p1char_nb:set_state(30)
+									p2ts_nb:set_state(1)
+								elseif	mem:read_i8(0x010615E0) == 12 and mem:read_u8(0x105F340) <= 4  then
+									p2ml_nb:set_state(30)
+									p1bg_nb:set_state(3)
+									p1sm_nb:set_state(1)
+									p1xm_nb:set_state(30)
+									p1char_nb:set_state(30)
+									p2ts_nb:set_state(2)	
+								elseif mem:read_i8(0x010615E0) == 25 or mem:read_i8(0x010615E0) == 27 or mem:read_i8(0x010615E0) == 28 or mem:read_i8(0x010615E0) == 29 then
+									p1bg_nb:set_state(0)
+									p1sm_nb:set_state(0)
+									p1xm_nb:set_state(30)
+									p1char_nb:set_state(30)		
+									psts_nb:set_state(0)
+								end
 						else
 							p1bg_nb:set_state(1)
 							p2bg_nb:set_state(1)
@@ -347,6 +462,12 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 							p2char_nb:set_state(mem:read_i8(0x010615E0))
 							p1ml_nb:set_state(mem:read_i8(0x01060A30))
 							p2ml_nb:set_state(mem:read_i8(0x010615E0))
+							p1sm_nb:set_state(0)
+							p2sm_nb:set_state(0)
+							p1xm_nb:set_state(30)
+							p2xm_nb:set_state(30)	
+							p1ts_nb:set_state(0)
+							p2ts_nb:set_state(0)
 						end
 					end
 				end)
