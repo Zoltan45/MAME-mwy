@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx),
+Artwork - Marlon Lopez, BritneyPAIRS (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA  -->
+
+
+<mamelayout version="2">
+	<element name="border">
+		<image file="sfiii3_bezel.png"/>
+	</element>
+	<element name="portrait_left" defstate="0xFF">
+		<image state="0x00" file="gill_left.png" />
+		<image state="0x01" file="alex_left.png" />
+		<image state="0x02" file="ryu_left.png" />
+		<image state="0x03" file="yun_left.png" />
+		<image state="0x04" file="dudley_left.png" />
+		<image state="0x05" file="necro_left.png" />
+		<image state="0x06" file="hugo_left.png" />
+		<image state="0x07" file="ibuki_left.png" />
+		<image state="0x08" file="elena_left.png" />
+		<image state="0x09" file="oro_left.png" />
+		<image state="0x0A" file="yang_left.png" />
+		<image state="0x0B" file="ken_left.png" />
+		<image state="0x0C" file="sean_left.png" />
+		<image state="0x0D" file="urien_left.png" />
+		<image state="0x0E" file="akuma_left.png" />
+		<image state="0x0F" file="shin_akuma_left.png" />
+		<image state="0x10" file="chun_li_left.png" />
+		<image state="0X11" file="makoto_left.png" />
+		<image state="0X12" file="q_left.png" />
+		<image state="0x13" file="twelve_left.png" />
+		<image state="0X14" file="remy_left.png" />
+		<image state="0XFF" file="blank.png" />
+	</element>
+	<element name="portrait_right" defstate="0xFF">
+		<image state="0x00" file="gill_right.png" />
+		<image state="0x01" file="alex_right.png" />
+		<image state="0x02" file="ryu_right.png" />
+		<image state="0x03" file="yun_right.png" />
+		<image state="0x04" file="dudley_right.png" />
+		<image state="0x05" file="necro_right.png" />
+		<image state="0x06" file="hugo_right.png" />
+		<image state="0x07" file="ibuki_right.png" />
+		<image state="0x08" file="elena_right.png" />
+		<image state="0x09" file="oro_right.png" />
+		<image state="0x0A" file="yang_right.png" />
+		<image state="0x0B" file="ken_right.png" />
+		<image state="0x0C" file="sean_right.png" />
+		<image state="0x0D" file="urien_right.png" />
+		<image state="0x0E" file="akuma_right.png" />
+		<image state="0x0F" file="shin_akuma_right.png" />
+		<image state="0x10" file="chun_li_right.png" />
+		<image state="0X11" file="makoto_right.png" />
+		<image state="0X12" file="q_right.png" />
+		<image state="0x13" file="twelve_right.png" />
+		<image state="0X14" file="remy_right.png" />
+		<image state="0XFF" file="blank.png" />
+	</element>
+	
+		<view name="Bezel">
+			<screen index="0">
+				<bounds x="360" y="98" width="1204" height="884"/>
+			</screen>
+			<element ref="border">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p1" ref="portrait_left">
+				<bounds x="0" y="0" width="350" height="1080"/>
+			</element>
+			<element id="pt_p2" ref="portrait_right">
+				<bounds x="1570" y="0" width="350" height="1080"/>
+			</element>
+		</view>
+
+	<script><![CDATA[
+		file:set_resolve_tags_callback(
+			function()
+				local cpu = file.device:subdevice(":maincpu")
+				local mem = cpu.spaces["program"]
+				local p1char = file.views["Bezel"].items["pt_p1"]
+				local p2char = file.views["Bezel"].items["pt_p2"]
+				file.views["Bezel"]:set_prepare_items_callback(
+					function()
+							p1char:set_state(mem:read_u8(0x2011387))
+							p2char:set_state(mem:read_u8(0x2011388))
+				end)
+			end)
+	]]></script>
+</mamelayout>
