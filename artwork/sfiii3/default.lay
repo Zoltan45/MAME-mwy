@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 
 <!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx),
-Artwork - Marlon Lopez, BritneyPAIRS (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA  -->
+ BritneyPAIRS (CoinOps Discord:https://discord.gg/RfMxcFvg)
+Artwork - Marlon Lopez, Derek Moore, Hugo_Stiglitz_DA, OtherBarry (CoinOps Discord:https://discord.gg/RfMxcFvg) -->
 
 
 <mamelayout version="2">
@@ -24,7 +25,7 @@ Artwork - Marlon Lopez, BritneyPAIRS (CoinOps Discord:https://discord.gg/RfMxcFv
 		<image state="0x0C" file="sean_left.png" />
 		<image state="0x0D" file="urien_left.png" />
 		<image state="0x0E" file="akuma_left.png" />
-		<image state="0x0F" file="shin_akuma_left.png" />
+		<image state="0x0F" file="akuma_left.png" />
 		<image state="0x10" file="chun_li_left.png" />
 		<image state="0X11" file="makoto_left.png" />
 		<image state="0X12" file="q_left.png" />
@@ -48,7 +49,7 @@ Artwork - Marlon Lopez, BritneyPAIRS (CoinOps Discord:https://discord.gg/RfMxcFv
 		<image state="0x0C" file="sean_right.png" />
 		<image state="0x0D" file="urien_right.png" />
 		<image state="0x0E" file="akuma_right.png" />
-		<image state="0x0F" file="shin_akuma_right.png" />
+		<image state="0x0F" file="akuma_right.png" />
 		<image state="0x10" file="chun_li_right.png" />
 		<image state="0X11" file="makoto_right.png" />
 		<image state="0X12" file="q_right.png" />
@@ -81,8 +82,16 @@ Artwork - Marlon Lopez, BritneyPAIRS (CoinOps Discord:https://discord.gg/RfMxcFv
 				local p2char = file.views["Bezel"].items["pt_p2"]
 				file.views["Bezel"]:set_prepare_items_callback(
 					function()
+					if mem:read_u8(0x20154c6) > 0 or
+					mem:read_u8(0x20154c7) > 0 or
+					mem:read_u8(0x20154c8) > 0 or
+ 					mem:read_u8(0x20154c9) > 0 then
 							p1char:set_state(mem:read_u8(0x2011387))
 							p2char:set_state(mem:read_u8(0x2011388))
+						else
+							p1char:set_state(0xFF)
+							p2char:set_state(0xFF)
+						end
 				end)
 			end)
 	]]></script>
