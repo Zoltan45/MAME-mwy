@@ -48,14 +48,12 @@ Artwork - Hugo_Stiglitz_DA, -->
 			<element ref="border">
 				<bounds x="0" y="0" width="1920" height="1080"/>
 			</element>
-			
 			<element id="ml_p1" ref="movelist">
 				<bounds x="0" y="345" width="350" height="735"/>
 			</element>
 			<element id="ml_p2" ref="movelist">
 				<bounds x="1570" y="345" width="350" height="735"/>
 			</element>
-			
 			<element id="pt_p1" ref="portrait">
 				<bounds x="0" y="0" width="350" height="387"/>
 			</element>
