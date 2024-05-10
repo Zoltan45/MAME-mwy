@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx)
+Artwork - Hugo_Stiglitz_DA, -->
+
+<mamelayout version="2">
+	<element name="border">
+		<image file="samsho2_bezel.png"/>
+	</element>
+	<element name="portrait" defstate="0xFF">
+		<image state="0x00" file="haohmaru.png" />
+		<image state="0x01" file="nakoruru.png" />
+		<image state="0x02" file="hanzo.png" />
+		<image state="0x03" file="galford.png" />
+		<image state="0x04" file="wan_fu.png" />
+		<image state="0x05" file="ukyo.png" />
+		<image state="0x06" file="kyoshiro.png" />
+		<image state="0x07" file="gen_an.png" />
+		<image state="0x08" file="earthquake.png" />
+		<image state="0x09" file="jubei.png" />
+		<image state="0x0B" file="charlotte.png" />
+		<image state="0x0C" file="genjuro.png" />
+		<image state="0x0D" file="cham_cham.png" />
+		<image state="0x0E" file="sieger.png" />
+		<image state="0x0F" file="caffeine_nicotine.png" />
+		<image state="0x10" file="mizuki.png" />
+		<image state="0x11" file="kuroko.png" />
+		<image state="0XFF" file="blank.png" />
+	</element>
+	<element name="movelist" defstate="0xFF">
+		<image state="0x00" file="haohmaru_ml.png" />
+		<image state="0x01" file="nakoruru_ml.png" />
+		<image state="0x02" file="hanzo_ml.png" />
+		<image state="0x03" file="galford_ml.png" />
+		<image state="0x04" file="wan_fu_ml.png" />
+		<image state="0x05" file="ukyo_ml.png" />
+		<image state="0x06" file="kyoshiro_ml.png" />
+		<image state="0x07" file="gen_an_ml.png" />
+		<image state="0x08" file="earthquake_ml.png" />
+		<image state="0x09" file="jubei_ml.png" />
+		<image state="0x0B" file="charlotte_ml.png" />
+		<image state="0x0C" file="genjuro_ml.png" />
+		<image state="0x0D" file="cham_cham_ml.png" />
+		<image state="0x0E" file="sieger_ml.png" />
+		<image state="0x0F" file="caffeine_nicotine_ml.png" />
+		<image state="0x10" file="blank.png" />
+		<image state="0x11" file="kuroko_ml.png" />
+		<image state="0XFF" file="blank.png" />
+	</element>
+		<view name="bezel">
+			<screen index="0">
+				<bounds x="360" y="98" width="1204" height="884"/>
+			</screen>
+			<element ref="border">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p1" ref="portrait">
+				<bounds x="0" y="190" width="489" height="890"/>
+			</element>
+			<element id="pt_p2" ref="portrait">
+				<orientation flipX="yes"/>
+				<bounds x="1431" y="190" width="489" height="890"/>
+			</element>
+			<element id="ml_p1" ref="movelist">
+				<bounds x="0" y="0" width="350" height="628"/>
+			</element>
+			<element id="ml_p2" ref="movelist">
+				<bounds x="1570" y="0" width="350" height="628"/>
+			</element>
+
+		</view>
+	<script><![CDATA[
+		file:set_resolve_tags_callback(
+			function()
+				local cpu = file.device:subdevice(":maincpu")
+				local mem = cpu.spaces["program"]
+				local p1char = file.views["bezel"].items["pt_p1"]
+				local p2char = file.views["bezel"].items["pt_p2"]
+				local p1ml = file.views["bezel"].items["ml_p1"]
+				local p2ml = file.views["bezel"].items["ml_p2"]
+				file.views["bezel"]:set_prepare_items_callback(
+					function()
+						if mem:read_u8(0x100AED) > 0 or
+						(mem:read_u8(0x100AE6) == 255 and mem:read_u8(0x100C00) ~= 255) then
+							p1char:set_state(mem:read_u8(0x100D0B))
+							p2char:set_state(mem:read_u8(0x100D1B))
+							p1ml:set_state(mem:read_u8(0x100D0B))
+							p2ml:set_state(mem:read_u8(0x100D1B))
+						else
+							p1char:set_state(0xFF)
+							p2char:set_state(0xFF)
+							p1ml:set_state(0xFF)
+							p2ml:set_state(0xFF)
+					end
+				end)
+			end)
+	]]></script>
+</mamelayout>
