@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx),
+Artwork - BloodyDrake -->
+
+<mamelayout version="2">
+	<element name="border" defstate="0xFF">
+		<image state="0x00" file="episode_01.png" />
+		<image state="0x01" file="episode_02.png" />
+		<image state="0x02" file="episode_03.png" />
+		<image state="0x03" file="episode_04.png" />
+		<image state="0x04" file="episode_05.png" />
+		<image state="0x05" file="episode_06.png" />
+		<image state="0x06" file="episode_07.png" />
+		<image state="0x07" file="episode_08.png" />
+		<image state="0XFF" file="episode_03.png" />		
+	</element>
+	<element name="portrait_left" defstate="0xFF">
+		<image state="0x00" file="jack_left.png" />
+		<image state="0x01" file="mustapha_left.png" />
+		<image state="0x02" file="hannah_left.png" />
+		<image state="0x03" file="messo_left.png" />
+		<image state="0xFF" file="blank.png" />
+	</element>
+	<element name="portrait_right" defstate="0xFF">
+		<image state="0x00" file="jack_right.png" />
+		<image state="0x01" file="mustapha_right.png" />
+		<image state="0x02" file="hannah_right.png" />
+		<image state="0x03" file="messo_right.png" />
+		<image state="0xFF" file="blank.png" />
+	</element>
+		<view name="bezel">
+			<screen index="0">
+				<bounds x="360" y="98" width="1204" height="884"/>
+			</screen>
+			<element id="border" ref="border">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p1" ref="portrait_left">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p2" ref="portrait_right">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+		</view>
+	<script><![CDATA[
+		file:set_resolve_tags_callback(
+			function()
+				local cpu = file.device:subdevice(":maincpu")
+				local mem = cpu.spaces["program"]
+				local p1char = file.views["bezel"].items["pt_p1"]
+				local p2char = file.views["bezel"].items["pt_p2"]
+				local stage = file.views["bezel"].items["border"]
+				file.views["bezel"]:set_prepare_items_callback(
+					function()
+						if mem:read_u8(0xFF84CD) == 1 then
+							p1char:set_state(mem:read_u8(0xFFB277))
+							p2char:set_state(0xFF)
+							stage:set_state(mem:read_u8(0xFF84D9))
+						elseif mem:read_u8(0xFF84CD) == 2 then
+							p1char:set_state(0xFF)
+							p2char:set_state(mem:read_u8(0xFFB3F7))
+							stage:set_state(mem:read_u8(0xFF84D9))
+						elseif mem:read_u8(0xFF84CD) == 3 then
+							p1char:set_state(mem:read_u8(0xFFB277))
+							p2char:set_state(mem:read_u8(0xFFB3F7))
+							stage:set_state(mem:read_u8(0xFF84D9))
+						elseif mem:read_u8(0xFF84CD) == 4 then
+							p1char:set_state(mem:read_u8(0xFFB577))
+							p2char:set_state(0xFF)
+							stage:set_state(mem:read_u8(0xFF84D9))
+						elseif mem:read_u8(0xFF84CD) == 5 then
+							p1char:set_state(mem:read_u8(0xFFB277))
+							p2char:set_state(mem:read_u8(0xFFB577))
+							stage:set_state(mem:read_u8(0xFF84D9))
+						elseif mem:read_u8(0xFF84CD) == 6 then
+							p1char:set_state(mem:read_u8(0xFFB3F7))
+							p2char:set_state(mem:read_u8(0xFFB577))
+							stage:set_state(mem:read_u8(0xFF84D9))	
+						elseif mem:read_u8(0xFF84CD) == 7 then
+							p1char:set_state(mem:read_u8(0xFFB277))
+							p2char:set_state(mem:read_u8(0xFFB3F7))
+							stage:set_state(mem:read_u8(0xFF84D9))
+						else
+							p1char:set_state(0xFF)
+							p2char:set_state(0xFF)
+							stage:set_state(0xFF)
+						end
+				end)
+			end)
+	]]></script>
+</mamelayout>
