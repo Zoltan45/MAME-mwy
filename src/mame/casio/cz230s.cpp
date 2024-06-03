@@ -25,7 +25,7 @@
 
 #include "bus/midi/midiinport.h"
 #include "bus/midi/midioutport.h"
-#include "cpu/upd7810/upd7811.h"
+#include "cpu/upd7810/upd7810.h"
 #include "imagedev/cassette.h"
 #include "machine/clock.h"
 #include "machine/nvram.h"
@@ -690,5 +690,5 @@ ROM_END
 //**************************************************************************
 
 //    YEAR  NAME     PARENT  COMPAT  MACHINE  INPUT   CLASS         INIT        COMPANY  FULLNAME   FLAGS
-SYST( 1985, cz230s,  0,      0,      cz230s,  cz230s, cz230s_state, empty_init, "Casio", "CZ-230S", MACHINE_SUPPORTS_SAVE | MACHINE_CLICKABLE_ARTWORK )
-SYST( 1985, sz1,     0,      0,      sz1,     sz1,    cz230s_state, empty_init, "Casio", "SZ-1",    MACHINE_SUPPORTS_SAVE | MACHINE_CLICKABLE_ARTWORK )
+SYST( 1985, cz230s,  0,      0,      cz230s,  cz230s, cz230s_state, empty_init, "Casio", "CZ-230S", MACHINE_SUPPORTS_SAVE )
+SYST( 1985, sz1,     0,      0,      sz1,     sz1,    cz230s_state, empty_init, "Casio", "SZ-1",    MACHINE_SUPPORTS_SAVE )

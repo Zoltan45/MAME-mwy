@@ -29,6 +29,10 @@ Year  Game                CPU         Sound            Custom                   
 ----------------------------------------------------------------------------------------------------------------
 *SS9600   **SS9689
 
+Graphics for the H8-based games are stored in either four socketed DIP28 8-bit EPROMs, two socketed DIP40 16-bit EPROMs or one
+surface-mounted SSOP70 32-bit ROM. Later H8-based PCBs have a custom QFP device labeled "SG 003" instead of the off-the-shelf
+RAMDAC.
+
 To do:
 
 - Add sound to SS9804/SS9904 games.
@@ -43,10 +47,9 @@ Protection seems to work the same way on every game in this driver, using a bitb
 command is issued, and only the first 8 bits returned are examined to determine whether they match the expected device code (0x14).
 If this test passes, the EEPROM contents are recalled and the first 64 bits are read out. These 64 bits are then unscrambled using
 a permutation table common to all games. The second and final protection check compares byte 6 in the unscrambled data buffer
-against a game-specific ID code. This byte is composed of EEPROM bits 22 (MSB), 27, 52, 50, 42, 9, 38 and 35 (LSB).
-
-It is unknown where this protection EEPROM exists on any Subsino PCB (if it isn't an external dongle), though the IC package is
-known to be quite small. (The iButton version, DS1971, is another possibility.)
+against a game-specific ID code. This byte is composed of EEPROM bits 22 (MSB), 27, 52, 50, 42, 9, 38 and 35 (LSB). This EEPROM
+comes in a small TO-92 package which is very difficult to spot on PCB photos, though it appears to be typically positioned near
+one of the edge connectors.
 
 Timings in the Z180-based and H8-based games consistently fail to meet 1-Wire specifications. In the case of the H8-based games,
 this likely has to do with CPU clocks and emulated cycle timings being both too fast. There may also be wait states programmed
@@ -122,6 +125,7 @@ public:
 	{ }
 
 	void bishjan(machine_config &config);
+	void xiaoao(machine_config &config);
 	void saklove(machine_config &config);
 	void mtrain(machine_config &config);
 	void tbonusal(machine_config &config);
@@ -133,6 +137,7 @@ public:
 	void ptrain(machine_config &config);
 
 	void init_bishjan();
+	void init_xiaoao();
 	void init_new2001();
 	void init_queenbee();
 	void init_queenbeeb();
@@ -187,6 +192,7 @@ private:
 	uint8_t bishjan_sound_r();
 	void bishjan_sound_w(uint8_t data);
 	uint8_t bishjan_serial_r();
+	uint8_t xiaoao_serial_r();
 	uint8_t bishjan_unknown_r();
 	void bishjan_input_w(uint8_t data);
 	uint8_t bishjan_input_r();
@@ -949,6 +955,14 @@ uint8_t subsino2_state::bishjan_serial_r()
 		(m_eeprom->data_r() ? 0x80 : 0) |             // bit 7 - serial communication
 		(machine().rand() & 0x18) |
 		((m_bishjan_sound == 0x12) ? 0x40:0x00);     // bit 6 - sound communication
+}
+
+uint8_t subsino2_state::xiaoao_serial_r()
+{
+	return
+		(m_eeprom->data_r() ? 0x80 : 0) |             // bit 7 - serial communication
+		(machine().rand() & 0x18) |
+		((m_bishjan_sound == 0x11) ? 0x40:0x00);     // bit 6 - sound communication
 }
 
 uint8_t subsino2_state::bishjan_unknown_r()
@@ -2697,7 +2711,7 @@ static INPUT_PORTS_START( wtrnymph )
 	PORT_DIPNAME( 0x08, 0x08, DEF_STR( Unknown ) )      PORT_DIPLOCATION("SW4:4")
 	PORT_DIPSETTING(    0x00, "5k" )
 	PORT_DIPSETTING(    0x08, "10k" )
-	PORT_DIPNAME( 0x10, 0x10, DEF_STR( Unknown ) )      PORT_DIPLOCATION("SW4:6")
+	PORT_DIPNAME( 0x10, 0x10, DEF_STR( Unknown ) )      PORT_DIPLOCATION("SW4:5")
 	PORT_DIPSETTING(    0x10, DEF_STR( Off ) )
 	PORT_DIPSETTING(    0x00, DEF_STR( On ) )
 	PORT_DIPNAME( 0x20, 0x20, DEF_STR( Unknown ) )      PORT_DIPLOCATION("SW4:6")
@@ -2777,7 +2791,7 @@ void subsino2_state::bishjan(machine_config &config)
 
 	TICKET_DISPENSER(config, m_hopper, attotime::from_msec(200), TICKET_MOTOR_ACTIVE_HIGH, TICKET_STATUS_ACTIVE_HIGH);
 
-	DS2430A(config, m_eeprom).set_timing_scale(0.12);
+	DS2430A(config, m_eeprom).set_timing_scale(0.24);
 
 	// video hardware
 	SCREEN(config, m_screen, SCREEN_TYPE_RASTER);
@@ -2796,6 +2810,14 @@ void subsino2_state::bishjan(machine_config &config)
 
 	// sound hardware
 	// SS9904
+}
+
+void subsino2_state::xiaoao(machine_config &config)
+{
+	bishjan(config);
+
+	ss9802_device &io(*subdevice<ss9802_device>("io"));
+	io.in_port_callback<6>().set(FUNC(subsino2_state::xiaoao_serial_r));
 }
 
 void subsino2_state::new2001(machine_config &config)
@@ -2831,7 +2853,7 @@ void subsino2_state::humlan(machine_config &config)
 	io.out_port_callback<9>().set(FUNC(subsino2_state::humlan_output1_w));
 	io.in_port_callback<9>().set_constant(0);
 
-	m_eeprom->set_timing_scale(0.16);
+	m_eeprom->set_timing_scale(0.32);
 
 	// sound hardware
 	// SS9804
@@ -3102,7 +3124,7 @@ ROM_START( bishjan )
 	ROM_LOAD( "2-v201.u9", 0x000000, 0x100000, CRC(ea42764d) SHA1(13fe1cd30e474f4b092949c440068e9ddca79976) )
 
 	ROM_REGION( 0x28, "eeprom", 0 )
-	ROM_LOAD( "ds2430a.bin", 0x00, 0x28, CRC(e248ebfa) SHA1(b75e5be0a0a6b32e6cc372fc3da01009f3cca7e2) BAD_DUMP ) // handcrafted to pass protection check
+	ROM_LOAD( "bishoujan-ds2430a.q3", 0x00, 0x28, CRC(7366d9d5) SHA1(1b276015f70bdc8cc7ba8380be19a821e728b617) )
 ROM_END
 
 void subsino2_state::init_bishjan()
@@ -3112,6 +3134,30 @@ void subsino2_state::init_bishjan()
 	// rts -> rte
 	rom[0x33386/2] = 0x5670; // IRQ 0
 	rom[0x0CC5C/2] = 0x5670; // IRQ 8
+}
+
+// Uses newer PCB type, same as Humlan's Lyckohjul
+ROM_START( xiaoao )
+	ROM_REGION( 0x80000, "maincpu", 0 )
+	ROM_LOAD( "1-v100.u21", 0x00000, 0x80000, CRC(728b4597) SHA1(97f92b9a6c455d2d906d55482166fd9704253615) )
+
+	ROM_REGION( 0x400000, "tilemap", 0 )
+	ROM_LOAD( "mj-gc1.u24", 0x000000, 0x400000, CRC(ed3eaaea) SHA1(941ef99dfb2ba0e26112dcd992f7690a1dba8d9c) )
+
+	ROM_REGION( 0x100000, "samples", 0 )
+	ROM_LOAD( "mj-v1.u10", 0x000000, 0x100000, CRC(4d797394) SHA1(fa40a410f903cd81f15c3a86a60ad405b5db8168) )
+
+	ROM_REGION( 0x28, "eeprom", 0 )
+	ROM_LOAD( "xiaoaojianghu-ds2430a.q3", 0x00, 0x28, CRC(518e4ba3) SHA1(704fb6f8ff9966d1b90af849b2b7c6df06d3e4a0) )
+ROM_END
+
+void subsino2_state::init_xiaoao()
+{
+	uint16_t *rom = (uint16_t*)memregion("maincpu")->base();
+
+	// rts -> rte
+	rom[0x35238/2] = 0x5670; // IRQ 0
+	rom[0x0D550/2] = 0x5670; // IRQ 8
 }
 
 /***************************************************************************
@@ -3526,6 +3572,35 @@ ROM_START( mtrain )
 
 	ROM_REGION( 0x10000, "program", 0 )
 	// code starts at 0x8100!
+	ROM_LOAD( "v1.4_27c512.u17", 0x00000, 0x10000, CRC(38d5340d) SHA1(6c32b7cd42e2ad0ad56ac308d008d649ebb10684) )  // year 1997 inside
+
+	ROM_REGION( 0x100000, "tilemap", 0 )
+	ROM_LOAD32_BYTE( "v1.4_27c2001.u2", 0x00000, 0x40000, CRC(b7e65d04) SHA1(5eea1b8c1129963b3b83a59410cd0e1de70621e4) )
+	ROM_LOAD32_BYTE( "v1.4_27c2001.u3", 0x00002, 0x40000, CRC(cef2c079) SHA1(9ee54a08ef8db90a80a4b3568bb82ce09ee41e65) )
+	ROM_LOAD32_BYTE( "v1.4_27c2001.u4", 0x00001, 0x40000, CRC(a794f287) SHA1(7b9c0d57224a700f49e55ba5aeb7ed9d35a71e02) )
+	ROM_LOAD32_BYTE( "v1.4_27c2001.u5", 0x00003, 0x40000, CRC(96067e95) SHA1(bec7dffaf6920ff2bd85a43fb001a997583e25ee) )
+
+	ROM_REGION( 0x80000, "oki", 0 )
+	ROM_LOAD( "v1.4_27c2001.u27", 0x00000, 0x40000, CRC(51cae476) SHA1(d1da4e5c3d53d18d8b69dfb57796d0ae311d99bf) )
+	ROM_RELOAD(                   0x40000, 0x40000 )
+
+	ROM_REGION( 0x117, "plds", 0 )
+	ROM_LOAD( "gal16v8d.u6",  0x000, 0x117, NO_DUMP )
+	ROM_LOAD( "gal16v8d.u18", 0x000, 0x117, NO_DUMP )
+	ROM_LOAD( "gal16v8d.u19", 0x000, 0x117, NO_DUMP )
+	ROM_LOAD( "gal16v8d.u26", 0x000, 0x117, NO_DUMP )
+	ROM_LOAD( "gal16v8d.u31", 0x000, 0x117, NO_DUMP )
+
+	ROM_REGION( 0x28, "eeprom", 0 )
+	ROM_LOAD( "ds2430a.bin", 0x00, 0x28, CRC(a73211f7) SHA1(ebe175b9b8ea3fffcc9dd03ea51ccef36b016eb8) BAD_DUMP ) // handcrafted to pass protection check
+ROM_END
+
+ROM_START( mtraina )
+	ROM_REGION( 0x4000, "maincpu", 0 )
+	HD647180X_FAKE_INTERNAL_ROM
+
+	ROM_REGION( 0x10000, "program", 0 )
+	// code starts at 0x8100!
 	ROM_LOAD( "out_1v131.u17", 0x00000, 0x10000, CRC(6761be7f) SHA1(a492f8179d461a454516dde33ff04473d4cfbb27) )
 
 	ROM_REGION( 0x100000, "tilemap", 0 )
@@ -3678,7 +3753,7 @@ ROM_START( saklove )
 	ROM_LOAD( "2.u10", 0x00000, 0x80000, CRC(4f70125c) SHA1(edd5e6bd47b9a4fa3c4057cb4a85544241fe483d) )
 
 	ROM_REGION( 0x28, "eeprom", 0 )
-	ROM_LOAD( "ds2430a.bin", 0x00, 0x28, CRC(0ed01bd7) SHA1(62546003443845552e6adc4ca26375f93824d662) BAD_DUMP ) // handcrafted to pass protection check
+	ROM_LOAD( "ds2430a.q3", 0x00, 0x28, CRC(225136fb) SHA1(86095f7c98b579282605730de820d17ac2c8a141) )
 ROM_END
 
 /***************************************************************************
@@ -3849,6 +3924,23 @@ ROM_START( ptrain )
 	ROM_LOAD( "ds2430a.bin", 0x00, 0x28, CRC(a19d7b78) SHA1(e32a33a953d2523a558c395debbf85ee1df8965b) BAD_DUMP ) // handcrafted to pass protection check
 ROM_END
 
+ROM_START( ptraina )
+	ROM_REGION( 0x40000, "maincpu", 0 )
+	ROM_LOAD( "27c020.u14", 0x00000, 0x40000, CRC(618123a6) SHA1(6c52797c1af264bab0fb28686e15fa8ff756d4b9) )
+
+	ROM_REGION( 0x200000, "tilemap", 0 )
+	ROM_LOAD32_BYTE( "27c040.u20", 0x00000, 0x80000, CRC(d2b07a34) SHA1(a1f76545bdede0f48d26782960d1f0f666dbe5b8) )
+	ROM_LOAD32_BYTE( "27c040.u19", 0x00002, 0x80000, CRC(304c992b) SHA1(fe6f6b2ba33eb81177387a8d65555f88ab87648d) )
+	ROM_LOAD32_BYTE( "27c040.u18", 0x00001, 0x80000, CRC(7faaeba0) SHA1(ac7c82eed27f444cffd8feb37f12acbeb2a448b9) )
+	ROM_LOAD32_BYTE( "27c040.u17", 0x00003, 0x80000, CRC(71478da4) SHA1(ee5bed03249805211e0500a8df3aae7987db9f9c) )
+
+	ROM_REGION( 0x80000, "oki", 0 )
+	ROM_LOAD( "27c040.u7", 0x00000, 0x80000, CRC(d1debec8) SHA1(9086975e5bef2066a688ab3c1df3b384f59e507d) )
+
+	ROM_REGION( 0x28, "eeprom", 0 )
+	ROM_LOAD( "ds2430a.bin", 0x00, 0x28, CRC(4c2fdd04) SHA1(1a173524f37275944b5cc5bc6b85a2b4a6043629) BAD_DUMP ) // handcrafted to pass protection check
+ROM_END
+
 
 /***************************************************************************
     Treasure City
@@ -3934,9 +4026,10 @@ void subsino2_state::init_wtrnymph()
 	subsino_decrypt(memregion("program")->base() + 0x8100, victor5_bitswaps, victor5_xors, 0x7f00);
 }
 
-GAME( 1996, mtrain,   0,        mtrain,   mtrain,   subsino2_state, init_mtrain,   ROT0, "Subsino",                          "Magic Train (Ver. 1.31)",               0 )
+GAME( 1997, mtrain,   0,        mtrain,   mtrain,   subsino2_state, init_mtrain,   ROT0, "Subsino",                          "Magic Train (Ver. 1.4)",                0 )  // inside the program ROM says 1997, but on screen shows 1996
+GAME( 1996, mtraina,  mtrain,   mtrain,   mtrain,   subsino2_state, init_mtrain,   ROT0, "Subsino",                          "Magic Train (Ver. 1.31)",               0 )
 
-GAME( 1996, strain,   0,        mtrain,   strain,   subsino2_state, init_mtrain,   ROT0, "Subsino",                          "Super Train (Ver. 1.9)",               MACHINE_NOT_WORKING )
+GAME( 1996, strain,   0,        mtrain,   strain,   subsino2_state, init_mtrain,   ROT0, "Subsino",                          "Super Train (Ver. 1.9)",                MACHINE_NOT_WORKING )
 
 GAME( 1995, tbonusal, 0,        tbonusal, tbonusal, subsino2_state, init_tbonusal, ROT0, "Subsino (American Alpha license)", "Treasure Bonus (American Alpha, Ver. 1.6)", MACHINE_NOT_WORKING )
 
@@ -3949,11 +4042,13 @@ GAME( 1998, saklove,  0,        saklove,  saklove,  subsino2_state, empty_init, 
 GAME( 1999, xtrain,   0,        xtrain,   xtrain,   subsino2_state, empty_init,    ROT0, "Subsino",                          "X-Train (Ver. 1.3)",                    0 )
 
 GAME( 1999, ptrain,   0,        ptrain,   ptrain,   subsino2_state, empty_init,    ROT0, "Subsino",                          "Panda Train (Novamatic 1.7)",           MACHINE_IMPERFECT_GRAPHICS )
+GAME( 1999, ptraina,  ptrain,   ptrain,   ptrain,   subsino2_state, empty_init,    ROT0, "Subsino",                          "Panda Train (Ver. 1.3)",                MACHINE_IMPERFECT_GRAPHICS )
 
 GAME( 1997, treacity,    0,       saklove, treacity, subsino2_state, empty_init,   ROT0, "Subsino (American Alpha license)", "Treasure City (Ver. 208)",              MACHINE_NOT_WORKING )
 GAME( 1997, treacity202, treacity,saklove, treacity, subsino2_state, empty_init,   ROT0, "Subsino (American Alpha license)", "Treasure City (Ver. 202)",              MACHINE_NOT_WORKING )
 
 GAME( 1999, bishjan,  0,        bishjan,  bishjan,  subsino2_state, init_bishjan,  ROT0, "Subsino",                          "Bishou Jan (Japan, Ver. 203)",          MACHINE_NO_SOUND )
+GAME( 1999, xiaoao,   bishjan,  xiaoao,   bishjan,  subsino2_state, init_xiaoao,   ROT0, "Subsino",                          "Xiao Ao Jiang Hu (China, Ver. 1.00)",   MACHINE_NO_SOUND )
 
 GAME( 2000, new2001,  0,        new2001,  new2001,  subsino2_state, init_new2001,  ROT0, "Subsino",                          "New 2001 (Italy, Ver. 200N)",           MACHINE_NO_SOUND )
 
@@ -3968,6 +4063,6 @@ GAME( 2001, humlan,   queenbee, humlan,   humlan,   subsino2_state, init_humlan,
 
 GAME( 2002, squeenb,  0,        humlan,   humlan,   subsino2_state, init_squeenb,  ROT0, "Subsino",                          "Super Queen Bee (Ver. 101)",            MACHINE_NOT_WORKING | MACHINE_NO_SOUND | MACHINE_IMPERFECT_GRAPHICS ) // severe timing issues
 
-GAME( 2003, qbeebing, 0,        humlan,   humlan,   subsino2_state, init_qbeebing, ROT0, "Subsino",                          "Queen Bee Bingo",            MACHINE_NOT_WORKING | MACHINE_NO_SOUND | MACHINE_IMPERFECT_GRAPHICS )
+GAME( 2003, qbeebing, 0,        humlan,   humlan,   subsino2_state, init_qbeebing, ROT0, "Subsino",                          "Queen Bee Bingo",                       MACHINE_NOT_WORKING | MACHINE_NO_SOUND | MACHINE_IMPERFECT_GRAPHICS )
 
-GAME( 200?, treamary, 0,        bishjan,  bishjan,  subsino2_state, init_treamary, ROT0, "Subsino",                          "Treasure Mary",            MACHINE_NOT_WORKING | MACHINE_NO_SOUND | MACHINE_IMPERFECT_GRAPHICS )
+GAME( 200?, treamary, 0,        bishjan,  bishjan,  subsino2_state, init_treamary, ROT0, "Subsino",                          "Treasure Mary",                         MACHINE_NOT_WORKING | MACHINE_NO_SOUND | MACHINE_IMPERFECT_GRAPHICS )

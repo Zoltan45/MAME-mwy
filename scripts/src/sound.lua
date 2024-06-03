@@ -551,6 +551,20 @@ end
 
 
 ---------------------------------------------------
+-- Micronas DAC 3550A Stereo Audio DAC
+--@src/devices/sound/dac3350a.h,SOUNDS["DAC3350A"] = true
+---------------------------------------------------
+
+if (SOUNDS["DAC3350A"]~=null) then
+	files {
+		MAME_DIR .. "src/devices/sound/dac3350a.cpp",
+		MAME_DIR .. "src/devices/sound/dac3350a.h",
+	}
+end
+
+
+
+---------------------------------------------------
 -- MEA8000 Voice Synthesizer
 --@src/devices/sound/mea8000.h,SOUNDS["MEA8000"] = true
 ---------------------------------------------------
@@ -692,11 +706,12 @@ end
 --@src/devices/sound/msm5232.h,SOUNDS["MSM5232"] = true
 --@src/devices/sound/okim6376.h,SOUNDS["OKIM6376"] = true
 --@src/devices/sound/okim6295.h,SOUNDS["OKIM6295"] = true
+--@src/devices/sound/okim6588.h,SOUNDS["OKIM6588"] = true
 --@src/devices/sound/okim9810.h,SOUNDS["OKIM9810"] = true
 --@src/devices/sound/okiadpcm.h,SOUNDS["OKIADPCM"] = true
 ---------------------------------------------------
 
-if (SOUNDS["OKIM6258"]~=null or SOUNDS["OKIM6295"]~=null or SOUNDS["OKIM9810"]~=null or SOUNDS["I5000_SND"]~=null or SOUNDS["OKIADPCM"]~=null) then
+if (SOUNDS["OKIM6258"]~=null or SOUNDS["OKIM6295"]~=null or SOUNDS["OKIM6588"]~=null or SOUNDS["OKIM9810"]~=null or SOUNDS["I5000_SND"]~=null or SOUNDS["OKIADPCM"]~=null) then
 	files {
 		MAME_DIR .. "src/devices/sound/okiadpcm.cpp",
 		MAME_DIR .. "src/devices/sound/okiadpcm.h",
@@ -735,6 +750,13 @@ if (SOUNDS["OKIM6258"]~=null) then
 	files {
 		MAME_DIR .. "src/devices/sound/okim6258.cpp",
 		MAME_DIR .. "src/devices/sound/okim6258.h",
+	}
+end
+
+if (SOUNDS["OKIM6588"]~=null) then
+	files {
+		MAME_DIR .. "src/devices/sound/okim6588.cpp",
+		MAME_DIR .. "src/devices/sound/okim6588.h",
 	}
 end
 
@@ -1553,6 +1575,18 @@ end
 
 ---------------------------------------------------
 --
+--@src/devices/sound/swx00.h,SOUNDS["SWX00"] = true
+---------------------------------------------------
+
+if (SOUNDS["SWX00"]~=null) then
+	files {
+		MAME_DIR .. "src/devices/sound/swx00.cpp",
+		MAME_DIR .. "src/devices/sound/swx00.h",
+	}
+end
+
+---------------------------------------------------
+--
 --@src/devices/sound/meg.h,SOUNDS["MEG"] = true
 ---------------------------------------------------
 
@@ -1692,5 +1726,17 @@ if (SOUNDS["AP2010"]~=null) then
 	files {
 		MAME_DIR .. "src/devices/sound/ap2010pcm.cpp",
 		MAME_DIR .. "src/devices/sound/ap2010pcm.h",
+	}
+end
+
+---------------------------------------------------
+-- Texas Instruments CF61909
+--@src/devices/sound/cf61909.h,SOUNDS["CF61909"] = true
+---------------------------------------------------
+
+if (SOUNDS["CF61909"]~=null) then
+	files {
+		MAME_DIR .. "src/devices/sound/cf61909.cpp",
+		MAME_DIR .. "src/devices/sound/cf61909.h",
 	}
 end

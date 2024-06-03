@@ -118,6 +118,7 @@
         ppp2nd,a            Fully playable with graphical glitches. No network or DVD support. Crashes when returning to game mode from test menu.
         p911(all)           Goes in-game. Controllers are not emulated. Various graphical glitches.
         tsurugi,j           Goes in-game. Controllers are not emulated. Various graphical glitches.
+        p9112               Goes in-game. Controllers are not emulated. Various graphical glitches.
 
         gticlub2,ea         Attract mode works. Coins up. Hangs in various places. Will crash with "network error" after stage is selected.
         thrild2,a           Attract mode with partial graphics. Coins up. Hangs in various places.
@@ -127,14 +128,9 @@
         mfightc,c           Requires touch panel emulation. Gets stuck at "Waiting for central monitor, checking serial...".
         xtrial              Hangs at "Please set the time for the bookkeeping" message.
 
-        p9112               RTC self check bad.
-                            The game checks the checksum of 0x157d4d0-0x157d4ee against the checksum that should be at 0x157d4ee-0x157d4ef,
-                            but this part of memory is never written to after its initial clearing on boot.
-                            If 0xffff is placed at 0x157d4ee then the game will pass the RTC check.
-                            The game will later complain about "Hardware Error: Security Key Error" if you try starting the game.
         code1d,b,a          Can boot but crashes randomly and quickly so it's hard to do anything.
 
-        mocapglf            Security code error
+        mocapglf            Gets stuck at "SENSOR I/O ERROR" though test menu can still be entered.
         sscopex,sogeki      Graphics very heavily glitched. Gun controller is not emulated.
 
         wcombat             Can boot into a test menu by using a combination of dipswitches, but it says "serial check bad". Can't boot normally.
@@ -627,13 +623,13 @@ private:
 		uint32_t eicr = 0U;
 		uint32_t svr = 0U;
 
-		uint8_t pctpr = 0xfU;
+		uint8_t pctpr = 0x0U;
 
 		int active_irq = 0;
 
-		MPC8240_IRQ irq[MPC8240_NUM_INTERRUPTS]{};
+		MPC8240_IRQ irq[MPC8240_NUM_INTERRUPTS];
 
-		MPC8240_GLOBAL_TIMER global_timer[4]{};
+		MPC8240_GLOBAL_TIMER global_timer[4];
 	};
 
 	MPC8240_EPIC m_epic{};
@@ -1242,7 +1238,7 @@ void viper_state::mpc8240_interrupt(int irq)
 
 void viper_state::mpc8240_epic_init()
 {
-	memset(&m_epic, 0, sizeof(m_epic));
+	m_epic = MPC8240_EPIC();
 	m_epic.global_timer[0].timer = timer_alloc(FUNC(viper_state::epic_global_timer_callback), this);
 	m_epic.global_timer[1].timer = timer_alloc(FUNC(viper_state::epic_global_timer_callback), this);
 	m_epic.global_timer[2].timer = timer_alloc(FUNC(viper_state::epic_global_timer_callback), this);

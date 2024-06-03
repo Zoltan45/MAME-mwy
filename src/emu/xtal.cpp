@@ -118,6 +118,7 @@ const double XTAL::known_xtals[] = {
 	  4'433'619, /* 4.433619_MHz_XTAL      PAL color subcarrier (technically 4.43361875mhz)*/
 	  4'608'000, /* 4.608_MHz_XTAL         Luxor ABC-77 keyboard (Keytronic custom part #48-300-107 is equivalent) */
 	  4'915'200, /* 4.9152_MHz_XTAL        - */
+	  4'952'000, /* 4.952_MHz_XTAL         IGS M036 based mahjong games, for TT5665 sound chip */
 	  5'000'000, /* 5_MHz_XTAL             Mutant Night */
 	  5'068'800, /* 5.0688_MHz_XTAL        Usually used as MC2661 or COM8116 baud rate clock */
 	  5'185'000, /* 5.185_MHz_XTAL         Intel INTELLEC® 4 */
@@ -163,6 +164,7 @@ const double XTAL::known_xtals[] = {
 	  8'960'000, /* 8.96_MHz_XTAL          Casio CZ-101 (divided by 2 for Music LSI) */
 	  9'000'000, /* 9_MHz_XTAL             Homedata PCBs */
 	  9'216'000, /* 9.216_MHz_XTAL         Univac UTS 20 */
+	  9'263'750, /* 9.263750_MHz_XTAL      Sai Yu Gou Ma Roku bootleg */
 	  9'400'000, /* 9.4_MHz_XTAL           Yamaha MU-5 and TG-100 */
 	  9'426'500, /* 9.4265_MHz_XTAL        Yamaha DX7, and DX9 */
 	  9'600'000, /* 9.6_MHz_XTAL           WD37C65 second clock (for 300 KB/sec rate) */
@@ -209,7 +211,6 @@ const double XTAL::known_xtals[] = {
 	 12'292'000, /* 12.292_MHz_XTAL        Northwest Digitial Systems GP-19 */
 	 12'324'000, /* 12.324_MHz_XTAL        Otrona Attache */
 	 12'335'600, /* 12.3356_MHz_XTAL       RasterOps ColorBoard 264 (~784x NTSC line rate) */
-	 12'432'000, /* 12.432_MHz_XTAL        Kaneko Fly Boy/Fast Freddie Hardware */
 	 12'472'500, /* 12.4725_MHz_XTAL       Bonanza's Mini Boy 7 */
 	 12'480'000, /* 12.48_MHz_XTAL         TRS-80 Model II */
 	 12'500'000, /* 12.5_MHz_XTAL          Red Alert audio board */
@@ -228,6 +229,7 @@ const double XTAL::known_xtals[] = {
 	 13'495'200, /* 13.4952_MHz_XTAL       Used on Shadow Force pcb and maybe other Technos pcbs? */
 	 13'500'000, /* 13.5_MHz_XTAL          Microbee */
 	 13'516'800, /* 13.5168_MHz_XTAL       Kontron KDT6 */
+	 13'560'000, /* 13.560_MHz_XTAL        Tong Zi Maque */
 	 13'608'000, /* 13.608_MHz_XTAL        TeleVideo 910 & 925 */
 	 13'824'000, /* 13.824_MHz_XTAL        Robotron PC-1715 display circuit */
 	 13'977'600, /* 13.9776_MHz_XTAL       Kaypro II dot clock */
@@ -240,6 +242,7 @@ const double XTAL::known_xtals[] = {
 	 14'314'000, /* 14.314_MHz_XTAL        Taito TTL Board  */
 	 14'318'181, /* 14.318181_MHz_XTAL     Extremely common, used on 100's of PCBs (4x NTSC subcarrier) */
 	 14'349'600, /* 14.3496_MHz_XTAL       Roland S-50 VDP */
+	 14'469'000, /* 14.469_MHz_XTAL        Esprit Systems Executive 10/102 */
 	 14'580'000, /* 14.58_MHz_XTAL         Fortune 32:16 Video Controller */
 	 14'705'882, /* 14.705882_MHz_XTAL     Aleck64 */
 	 14'728'000, /* 14.728_MHz_XTAL        ADM 36 */
@@ -280,13 +283,16 @@ const double XTAL::known_xtals[] = {
 	 16'572'000, /* 16.572_MHz_XTAL        Micro-Term ACT-5A */
 	 16'588'800, /* 16.5888_MHz_XTAL       SM 7238 */
 	 16'666'600, /* 16.6666_MHz_XTAL       Firebeat GCU */
+	 16'667'000, /* 16.667_MHz_XTAL        Visual XDS-19P */
 	 16'669'800, /* 16.6698_MHz_XTAL       Qume QVT-102 */
 	 16'670'000, /* 16.67_MHz_XTAL         - */
 	 16'777'216, /* 16.777216_MHz_XTAL     Nintendo Game Boy Advance */
 	 16'934'400, /* 16.9344_MHz_XTAL       Usually used to drive 90's Yamaha OPL/FM chips (44100 * 384) */
+	 16'960'000, /* 16.960_MHz_XTAL        Esprit Systems Executive 10/102 */
 	 17'010'000, /* 17.01_MHz_XTAL         Epic 14E */
 	 17'064'000, /* 17.064_MHz_XTAL        Memorex 1377 */
 	 17'074'800, /* 17.0748_MHz_XTAL       SWTPC 8212 */
+	 17'320'000, /* 17.320_MHz_XTAL        Visual 50 */
 	 17'350'000, /* 17.35_MHz_XTAL         ITT Courier 1700 */
 	 17'360'000, /* 17.36_MHz_XTAL         OMTI Series 10 SCSI controller */
 	 17'430'000, /* 17.43_MHz_XTAL         Videx Videoterm */
@@ -375,6 +381,7 @@ const double XTAL::known_xtals[] = {
 	 26'601'712, /* 26.601712_MHz_XTAL     Astro Corp.'s Show Hand, PAL Vtech/Yeno Socrates (6x PAL subcarrier) */
 	 26'666'000, /* 26.666_MHz_XTAL        Imagetek I4220/I4300 */
 	 26'666'666, /* 26.666666_MHz_XTAL     Irem M92 but most use 27MHz */
+	 26'670'000, /* 26.670_MHz_XTAL        Namco EVA */
 	 26'686'000, /* 26.686_MHz_XTAL        Typically used on 90's Taito PCBs to drive the custom chips */
 	 26'824'000, /* 26.824_MHz_XTAL        Astro Corp.'s Zoo */
 	 26'880'000, /* 26.88_MHz_XTAL         Roland RF5C36/SA-16 clock (30000 * 896) */
@@ -424,6 +431,7 @@ const double XTAL::known_xtals[] = {
 	 34'000'000, /* 34_MHz_XTAL            Gaelco PCBs */
 	 34'291'712, /* 34.291712_MHz_XTAL     Fairlight CMI master card */
 	 34'846'000, /* 34.846_MHz_XTAL        Visual 550 */
+	 35'452'500, /* 35.4525_MHz_XTAL       Nokia MikroMikko 2 */
 	 35'469'000, /* 35.469_MHz_XTAL        ZX Spectrum +2/+3 (~8x PAL subcarrier) */
 	 35'640'000, /* 35.640_MHz_XTAL        HDS200 132-column display clock */
 	 35'834'400, /* 35.8344_MHz_XTAL       Tab Products E-22 132-column display clock */
