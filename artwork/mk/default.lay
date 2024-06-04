@@ -1,16 +1,19 @@
 <?xml version="1.0"?>
 
 <!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU), TehDrewsus
-Artwork - BloodyDrake -->
+Artwork - BloodyDrake, Hugo_Stigliz_DA -->
 
 <mamelayout version="2">
-	<element name="border">
+	<element name="nobezel">
 		<image file="../mkp/mk_bezel.png"/>
 	</element>
+	<element name="bezel">
+		<image file="mk_bezel.png"/>
+	</element>	
 	<element name="background" defstate="17">
 		<image state="1" file="../mkp/stone_tab.png" />
-		<image state="17" file="../mkp/stone_tab_blank.png" />
-	</element>
+		<image state="17" file="../mkp/blank.png" />
+	</element>	
 	<element name="portrait" defstate="0x11">
 		<image state="0x00" file="../mkp/cage.png" />
 		<image state="0x01" file="../mkp/kano.png" />
@@ -23,7 +26,7 @@ Artwork - BloodyDrake -->
 		<image state="0x08" file="../mkp/shang_tsung.png" />
 		<image state="0x09" file="../mkp/reptile.png" />
 		<image state="0x0A" file="../mkp/ermac.png" />
-		<image state="0X11" file="../mkp/blank_pt.png" />
+		<image state="0X11" file="../mkp/blank.png" />
 	</element>
 	<element name="movelist" defstate="0x11">
 		<image state="0x00" file="../mkp/cage_ml.png" />
@@ -37,13 +40,39 @@ Artwork - BloodyDrake -->
 		<image state="0x08" file="../mkp/question.png" />
 		<image state="0x09" file="../mkp/question.png" />
 		<image state="0x0A" file="../mkp/question.png" />
-		<image state="0X11" file="../mkp/blank_ml.png" />
+		<image state="0X11" file="../mkp/blank.png" />
 	</element>
-		<view name="No Bezel">
+	<element name="portrait2l" defstate="0x11">
+		<image state="0x00" file="cage_left.png" />
+		<image state="0x01" file="kano_left.png" />
+		<image state="0x02" file="raiden_left.png" />
+		<image state="0x03" file="liu_kang_left.png" />
+		<image state="0x04" file="scorpion_left.png" />
+		<image state="0x05" file="sub_zero_left.png" />
+		<image state="0x06" file="sonya_left.png" />
+		<image state="0x07" file="blank.png" />
+		<image state="0x08" file="blank.png" />
+		<image state="0x09" file="blank.png" />
+		<image state="0X11" file="blank.png" />
+	</element>
+<element name="portrait2r" defstate="0x11">
+		<image state="0x00" file="cage_right.png" />
+		<image state="0x01" file="kano_right.png" />
+		<image state="0x02" file="raiden_right.png" />
+		<image state="0x03" file="liu_kang_right.png" />
+		<image state="0x04" file="scorpion_right.png" />
+		<image state="0x05" file="sub_zero_right.png" />
+		<image state="0x06" file="sonya_right.png" />
+		<image state="0x07" file="blank.png" />
+		<image state="0x08" file="blank.png" />
+		<image state="0x09" file="blank.png" />
+		<image state="0X11" file="blank.png" />
+	</element>
+	<view name="no bezel">
 			<screen index="0">
 				<bounds x="250" y="0" width="1420" height="1080"/>
 			</screen>
-			<element ref="border">
+			<element ref="nobezel">
 				<bounds x="0" y="0" width="1920" height="1080"/>
 			</element>
 			<element id="bg_p1" ref="background">
@@ -66,18 +95,40 @@ Artwork - BloodyDrake -->
 				<bounds x="1670" y="131" width="250" height="358"/>
 			</element>
 		</view>
+		<view name="bezel">
+			<screen index="0">
+				<bounds x="365" y="90" width="1200" height="900"/>
+			</screen>
+			<element ref="bezel">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt2_p1" ref="portrait2l">
+				<bounds x="0" y="0" width="393" height="1080"/>
+			</element>
+			<element id="pt2_p2" ref="portrait2r">
+				<bounds x="1527" y="0" width="393" height="1080"/>
+			</element>
+		</view>
+		
+		
+		
 	<script><![CDATA[
 		file:set_resolve_tags_callback(
 			function()
 				local cpu = file.device:subdevice(":maincpu")
 				local mem = cpu.spaces["program"]
-				local p1bg = file.views["No Bezel"].items["bg_p1"]
-				local p2bg = file.views["No Bezel"].items["bg_p2"]
-				local p1char = file.views["No Bezel"].items["pt_p1"]
-				local p2char = file.views["No Bezel"].items["pt_p2"]
-				local p1ml = file.views["No Bezel"].items["ml_p1"]
-				local p2ml = file.views["No Bezel"].items["ml_p2"]
-				file.views["No Bezel"]:set_prepare_items_callback(
+				local p1bg = file.views["no bezel"].items["bg_p1"]
+				local p2bg = file.views["no bezel"].items["bg_p2"]
+				local p1char = file.views["no bezel"].items["pt_p1"]
+				local p2char = file.views["no bezel"].items["pt_p2"]
+				local p1ml = file.views["no bezel"].items["ml_p1"]
+				local p2ml = file.views["no bezel"].items["ml_p2"]
+				local pt2p1 = file.views["bezel"].items["pt2_p1"]
+				local pt2p2 = file.views["bezel"].items["pt2_p2"]
+				
+				
+				
+				file.views["no bezel"]:set_prepare_items_callback(
 					function()
 					
 						-- Grab non match screens and display blank.png
@@ -130,6 +181,46 @@ Artwork - BloodyDrake -->
 						end
 					end
 				end)
+			file.views["bezel"]:set_prepare_items_callback(
+					function()
+					
+						-- Grab non match screens and display blank.png
+					
+						if 
+							mem:read_u8(0x01051190) == 1 and (mem:read_u16(0x01051120) == 0) or
+							mem:read_u8(0x01051190) == 0 or
+							mem:read_u8(0x01051190) == 3 or
+							mem:read_u8(0x01051190) == 8 or
+							mem:read_u8(0x01051190) == 11 or
+							mem:read_u8(0x01051190) == 16 or 
+							mem:read_u8(0x01051190) == 18 or
+							mem:read_u8(0x01051190) == 19 or
+							mem:read_u8(0x01051190) == 20 or
+							mem:read_u8(0x01051190) == 22 then
+								pt2pl:set_state(0x11)
+								pt2p2:set_state(0x11)
+						else
+						
+					-- If only P1 active on charselect screen, display P1 set P2 as blank	
+						
+						if mem:read_u8(0x01051570) == 255 then
+							pt2p1:set_state(mem:read_i8(0x01051290))
+							pt2p2:set_state(0x11)	
+																		
+					-- If only P2 active on charselect screen, display P2 set P1 as blank	
+						
+						elseif mem:read_u8(0x01051290) == 255 then
+							pt2p1:set_state(0x11)
+							pt2p2:set_state(mem:read_i8(0x01051570))	
+						else
+							pt2p1:set_state(mem:read_i8(0x01051290))
+							pt2p2:set_state(mem:read_i8(0x01051570))
+						end
+					end
+				end)	
+				
+				
+				
 			end)
 	]]></script>
 </mamelayout>
