@@ -5,13 +5,13 @@ Artwork - Hugo_Stiglitz_DA -->
 
 <mamelayout version="2">
 	<element name="border">
-		<image file="mk_bezel.png"/>
+		<image file="mk_no_bezel.png"/>
 	</element>
-	<element name="background" defstate="17">
-		<image state="1" file="stone_tab.png" />
-		<image state="17" file="blank.png" />
+	<element name="background" defstate="0xFF">
+		<image state="0x01" file="stone_tab.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
-	<element name="portrait" defstate="0x11">
+	<element name="portrait" defstate="0xFF">
 		<image state="0x00" file="cage.png" />
 		<image state="0x01" file="kano.png" />
 		<image state="0x02" file="raiden.png" />
@@ -23,9 +23,9 @@ Artwork - Hugo_Stiglitz_DA -->
 		<image state="0x08" file="shang_tsung.png" />
 		<image state="0x09" file="reptile.png" />
 		<image state="0x0A" file="ermac.png" />
-		<image state="0X11" file="blank.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
-	<element name="movelist" defstate="0x11">
+	<element name="movelist" defstate="0xFF">
 		<image state="0x00" file="cage_ml.png" />
 		<image state="0x01" file="kano_ml.png" />
 		<image state="0x02" file="raiden_ml.png" />
@@ -37,9 +37,9 @@ Artwork - Hugo_Stiglitz_DA -->
 		<image state="0x08" file="question.png" />
 		<image state="0x09" file="question.png" />
 		<image state="0x0A" file="question.png" />
-		<image state="0X11" file="blank.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
-		<view name="No Bezel">
+		<view name="no bezel">
 			<screen index="0">
 				<bounds x="250" y="0" width="1420" height="1080"/>
 			</screen>
@@ -71,13 +71,13 @@ Artwork - Hugo_Stiglitz_DA -->
 			function()
 				local cpu = file.device:subdevice(":maincpu")
 				local mem = cpu.spaces["program"]
-				local p1bg = file.views["No Bezel"].items["bg_p1"]
-				local p2bg = file.views["No Bezel"].items["bg_p2"]
-				local p1char = file.views["No Bezel"].items["pt_p1"]
-				local p2char = file.views["No Bezel"].items["pt_p2"]
-				local p1ml = file.views["No Bezel"].items["ml_p1"]
-				local p2ml = file.views["No Bezel"].items["ml_p2"]
-				file.views["No Bezel"]:set_prepare_items_callback(
+				local p1bg = file.views["no bezel"].items["bg_p1"]
+				local p2bg = file.views["no bezel"].items["bg_p2"]
+				local p1char = file.views["no bezel"].items["pt_p1"]
+				local p2char = file.views["no bezel"].items["pt_p2"]
+				local p1ml = file.views["no bezel"].items["ml_p1"]
+				local p2ml = file.views["no bezel"].items["ml_p2"]
+				file.views["no bezel"]:set_prepare_items_callback(
 					function()
 					
 						-- Grab non match screens and display blank.png
@@ -93,37 +93,37 @@ Artwork - Hugo_Stiglitz_DA -->
 							mem:read_u8(0x01051190) == 19 or
 							mem:read_u8(0x01051190) == 20 or
 							mem:read_u8(0x01051190) == 22 then
-								p1bg:set_state(0x11)
-								p2bg:set_state(0x11)
-								p1char:set_state(0x11)
-								p2char:set_state(0x11)
-								p1ml:set_state(0x11)
-								p2ml:set_state(0x11)
+								p1bg:set_state(0xFF)
+								p2bg:set_state(0xFF)
+								p1char:set_state(0xFF)
+								p2char:set_state(0xFF)
+								p1ml:set_state(0xFF)
+								p2ml:set_state(0xFF)
 								
 						else
 						
 					-- If only P1 active on charselect screen, display P1 set P2 as blank	
 						
 						if mem:read_u8(0x01051570) == 255 then
-							p1bg:set_state(1)
-							p2bg:set_state(0x11)
+							p1bg:set_state(0x01)
+							p2bg:set_state(0xFF)
 							p1char:set_state(mem:read_i8(0x01051290))
-							p2char:set_state(17)
+							p2char:set_state(0xFF)
 							p1ml:set_state(mem:read_i8(0x01051290))
-							p2ml:set_state(0x11)	
+							p2ml:set_state(0xFF)	
 								
 					-- If only P2 active on charselect screen, display P2 set P1 as blank	
 						
 						elseif mem:read_u8(0x01051290) == 255 then
-							p1bg:set_state(0x11)
-							p2bg:set_state(1)
-							p1char:set_state(17)
+							p1bg:set_state(0xFF)
+							p2bg:set_state(0x01)
+							p1char:set_state(0xFF)
 							p2char:set_state(mem:read_i8(0x01051570))
-							p1ml:set_state(0x11)
+							p1ml:set_state(0xFF)
 							p2ml:set_state(mem:read_i8(0x01051570))	
 						else
-							p1bg:set_state(1)
-							p2bg:set_state(1)
+							p1bg:set_state(0x01)
+							p2bg:set_state(0x01)
 							p1char:set_state(mem:read_i8(0x01051290))
 							p2char:set_state(mem:read_i8(0x01051570))
 							p1ml:set_state(mem:read_i8(0x01051290))

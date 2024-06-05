@@ -7,12 +7,12 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 	<element name="border">
 		<image file="../mk2p/mk2_bezel.png"/>
 	</element>
-	<element name="background" defstate="17">
-		<image state="0" file="../mk2p/tab_left.png" />
-		<image state="1" file="../mk2p/tab_right.png" />
-		<image state="17" file="../mk2p/tab_blank.png" />
+	<element name="background" defstate="0xFF">
+		<image state="0x00" file="../mk2p/tab_left.png" />
+		<image state="0x01" file="../mk2p/tab_right.png" />
+		<image state="0xFF" file="../mk2p/blank.png" />
 	</element>
-	<element name="movelist_left" defstate="17">
+	<element name="movelist_left" defstate="0xFF">
 		<image state="0x00" file="../mk2p/kung_lao_ml_l.png" />
 		<image state="0x01" file="../mk2p/liu_kang_ml_l.png" />
 		<image state="0x02" file="../mk2p/cage_ml_l.png" />
@@ -30,9 +30,9 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 		<image state="0x0E" file="../mk2p/question_l.png" />
 		<image state="0x0F" file="../mk2p/question_l.png" />
 		<image state="0x10" file="../mk2p/question_l.png" />
-		<image state="0X11" file="../mk2p/ml_blank.png" />
+		<image state="0xFF" file="../mk2p/blank.png" />
 	</element>
-	<element name="movelist_right" defstate="17">
+	<element name="movelist_right" defstate="0xFF">
 		<image state="0x00" file="../mk2p/kung_lao_ml_r.png" />
 		<image state="0x01" file="../mk2p/liu_kang_ml_r.png" />
 		<image state="0x02" file="../mk2p/cage_ml_r.png" />
@@ -50,9 +50,9 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 		<image state="0x0E" file="../mk2p/question_r.png" />
 		<image state="0x0F" file="../mk2p/question_r.png" />
 		<image state="0x10" file="../mk2p/question_r.png" />
-		<image state="0X11" file="../mk2p/ml_blank.png" />
+		<image state="0xFF" file="../mk2p/blank.png" />
 	</element>
-	<element name="portrait" defstate="17">
+	<element name="portrait" defstate="0xFF">
 		<image state="0x00" file="../mk2p/kung_lao.png" />
 		<image state="0x01" file="../mk2p/liu_kang.png" />
 		<image state="0x02" file="../mk2p/cage.png" />
@@ -70,9 +70,9 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 		<image state="0x0E" file="../mk2p/smoke.png" />
 		<image state="0x0F" file="../mk2p/noob_saibot.png" />
 		<image state="0x10" file="../mk2p/jade.png" />
-		<image state="0X11" file="../mk2p/pt_blank.png" />
+		<image state="0xFF" file="../mk2p/blank.png" />
 	</element>	
-		<view name="Bezel">
+		<view name="bezel">
 			<screen index="0">
 				<bounds x="360" y="98" width="1204" height="884"/>
 			</screen>
@@ -104,13 +104,13 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 			function()
 				local cpu = file.device:subdevice(":maincpu")
 				local mem = cpu.spaces["program"]
-				local p1bg = file.views["Bezel"].items["bg_p1"]
-				local p2bg = file.views["Bezel"].items["bg_p2"]
-				local p1ml = file.views["Bezel"].items["ml_p1"]
-				local p2ml = file.views["Bezel"].items["ml_p2"]
-				local p1char = file.views["Bezel"].items["pt_p1"]
-				local p2char = file.views["Bezel"].items["pt_p2"]
-				file.views["Bezel"]:set_prepare_items_callback(
+				local p1bg = file.views["bezel"].items["bg_p1"]
+				local p2bg = file.views["bezel"].items["bg_p2"]
+				local p1ml = file.views["bezel"].items["ml_p1"]
+				local p2ml = file.views["bezel"].items["ml_p2"]
+				local p1char = file.views["bezel"].items["pt_p1"]
+				local p2char = file.views["bezel"].items["pt_p2"]
+				file.views["bezel"]:set_prepare_items_callback(
 					function()
 					
 					-- Grab non match screens and display blank.png
@@ -126,36 +126,36 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 							mem:read_u8(0x010601D0) == 19 or
 							mem:read_u8(0x010601D0) == 20 or
 							mem:read_u8(0x010601D0) == 22 then
-								p1bg:set_state(17)
-								p2bg:set_state(17)
-								p1ml:set_state(0x11)
-								p2ml:set_state(0x11)
-								p1char:set_state(0x11)
-								p2char:set_state(0x11)
+								p1bg:set_state(0xFF)
+								p2bg:set_state(0xFF)
+								p1ml:set_state(0xFF)
+								p2ml:set_state(0xFF)
+								p1char:set_state(0xFF)
+								p2char:set_state(0xFF)
 						else
 					
 					-- If only P1 active on charselect screen, display P1 set P2 as blank	
 						
 						if mem:read_u8(0x01060E50) == 255 then
-							p1bg:set_state(0)
-							p2bg:set_state(17)
+							p1bg:set_state(0x00)
+							p2bg:set_state(0xFF)
 							p1char:set_state(mem:read_i8(0x01060280))
-							p2char:set_state(17)
+							p2char:set_state(0xFF)
 							p1ml:set_state(mem:read_i8(0x01060280))
-							p2ml:set_state(17)
+							p2ml:set_state(0xFF)
 							
 					-- If only P2 active on charselect screen, display P2 set P1 as blank	
 						
 						elseif mem:read_u8(0x01060280) == 255 then
-							p1bg:set_state(17)
-							p2bg:set_state(1)
-							p1char:set_state(17)
+							p1bg:set_state(0xFF)
+							p2bg:set_state(0x01)
+							p1char:set_state(0xFF)
 							p2char:set_state(mem:read_i8(0x01060E50))
-							p1ml:set_state(17)
+							p1ml:set_state(0xFF)
 							p2ml:set_state(mem:read_i8(0x01060E50))
 						else		
-							p1bg:set_state(0)
-							p2bg:set_state(1)
+							p1bg:set_state(0x00)
+							p2bg:set_state(0x01)
 							p1ml:set_state(mem:read_u8(0x01060280))
 							p2ml:set_state(mem:read_u8(0x01060E50))
 							p1char:set_state(mem:read_u8(0x01060280))

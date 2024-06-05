@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 
-<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU), TehDrewsus
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx), TehDrewsus
 Artwork - BloodyDrake, Hugo_Stigliz_DA -->
 
 <mamelayout version="2">
 	<element name="nobezel">
-		<image file="../mkp/mk_bezel.png"/>
+		<image file="../mkp/mk_no_bezel.png"/>
 	</element>
 	<element name="bezel">
 		<image file="mk_bezel.png"/>
 	</element>	
-	<element name="background" defstate="17">
-		<image state="1" file="../mkp/stone_tab.png" />
-		<image state="17" file="../mkp/blank.png" />
+	<element name="background" defstate="0xFF">
+		<image state="0x01" file="../mkp/stone_tab.png" />
+		<image state="0xFF" file="../mkp/blank.png" />
 	</element>	
-	<element name="portrait" defstate="0x11">
+	<element name="portrait" defstate="0xFF">
 		<image state="0x00" file="../mkp/cage.png" />
 		<image state="0x01" file="../mkp/kano.png" />
 		<image state="0x02" file="../mkp/raiden.png" />
@@ -26,9 +26,9 @@ Artwork - BloodyDrake, Hugo_Stigliz_DA -->
 		<image state="0x08" file="../mkp/shang_tsung.png" />
 		<image state="0x09" file="../mkp/reptile.png" />
 		<image state="0x0A" file="../mkp/ermac.png" />
-		<image state="0X11" file="../mkp/blank.png" />
+		<image state="0XFF" file="../mkp/blank.png" />
 	</element>
-	<element name="movelist" defstate="0x11">
+	<element name="movelist" defstate="0xFF">
 		<image state="0x00" file="../mkp/cage_ml.png" />
 		<image state="0x01" file="../mkp/kano_ml.png" />
 		<image state="0x02" file="../mkp/raiden_ml.png" />
@@ -40,9 +40,9 @@ Artwork - BloodyDrake, Hugo_Stigliz_DA -->
 		<image state="0x08" file="../mkp/question.png" />
 		<image state="0x09" file="../mkp/question.png" />
 		<image state="0x0A" file="../mkp/question.png" />
-		<image state="0X11" file="../mkp/blank.png" />
+		<image state="0XFF" file="../mkp/blank.png" />
 	</element>
-	<element name="portrait2l" defstate="0x11">
+	<element name="portrait2l" defstate="0xFF">
 		<image state="0x00" file="cage_left.png" />
 		<image state="0x01" file="kano_left.png" />
 		<image state="0x02" file="raiden_left.png" />
@@ -53,9 +53,9 @@ Artwork - BloodyDrake, Hugo_Stigliz_DA -->
 		<image state="0x07" file="blank.png" />
 		<image state="0x08" file="blank.png" />
 		<image state="0x09" file="blank.png" />
-		<image state="0X11" file="blank.png" />
+		<image state="0XFF" file="blank.png" />
 	</element>
-<element name="portrait2r" defstate="0x11">
+<element name="portrait2r" defstate="0xFF">
 		<image state="0x00" file="cage_right.png" />
 		<image state="0x01" file="kano_right.png" />
 		<image state="0x02" file="raiden_right.png" />
@@ -66,7 +66,7 @@ Artwork - BloodyDrake, Hugo_Stigliz_DA -->
 		<image state="0x07" file="blank.png" />
 		<image state="0x08" file="blank.png" />
 		<image state="0x09" file="blank.png" />
-		<image state="0X11" file="blank.png" />
+		<image state="0XFF" file="blank.png" />
 	</element>
 	<view name="no bezel">
 			<screen index="0">
@@ -144,36 +144,36 @@ Artwork - BloodyDrake, Hugo_Stigliz_DA -->
 							mem:read_u8(0x01051190) == 19 or
 							mem:read_u8(0x01051190) == 20 or
 							mem:read_u8(0x01051190) == 22 then
-								p1bg:set_state(0x11)
-								p2bg:set_state(0x11)
-								p1char:set_state(0x11)
-								p2char:set_state(0x11)
-								p1ml:set_state(0x11)
-								p2ml:set_state(0x11)
+								p1bg:set_state(0xFF)
+								p2bg:set_state(0xFF)
+								p1char:set_state(0xFF)
+								p2char:set_state(0xFF)
+								p1ml:set_state(0xFF)
+								p2ml:set_state(0xFF)
 						else
 						
 					-- If only P1 active on charselect screen, display P1 set P2 as blank	
 						
 						if mem:read_u8(0x01051570) == 255 then
-							p1bg:set_state(1)
-							p2bg:set_state(0x11)
+							p1bg:set_state(0x01)
+							p2bg:set_state(0xFF)
 							p1char:set_state(mem:read_i8(0x01051290))
-							p2char:set_state(17)
+							p2char:set_state(0xFF)
 							p1ml:set_state(mem:read_i8(0x01051290))
-							p2ml:set_state(0x11)	
+							p2ml:set_state(0xFF)	
 																		
 					-- If only P2 active on charselect screen, display P2 set P1 as blank	
 						
 						elseif mem:read_u8(0x01051290) == 255 then
-							p1bg:set_state(0x11)
-							p2bg:set_state(1)
-							p1char:set_state(17)
+							p1bg:set_state(0xFF)
+							p2bg:set_state(0x01)
+							p1char:set_state(0xFF)
 							p2char:set_state(mem:read_i8(0x01051570))
-							p1ml:set_state(0x11)
+							p1ml:set_state(0xFF)
 							p2ml:set_state(mem:read_i8(0x01051570))	
 						else
-							p1bg:set_state(1)
-							p2bg:set_state(1)
+							p1bg:set_state(0x01)
+							p2bg:set_state(0x01)
 							p1char:set_state(mem:read_i8(0x01051290))
 							p2char:set_state(mem:read_i8(0x01051570))
 							p1ml:set_state(mem:read_i8(0x01051290))
@@ -197,20 +197,20 @@ Artwork - BloodyDrake, Hugo_Stigliz_DA -->
 							mem:read_u8(0x01051190) == 19 or
 							mem:read_u8(0x01051190) == 20 or
 							mem:read_u8(0x01051190) == 22 then
-								pt2pl:set_state(0x11)
-								pt2p2:set_state(0x11)
+								pt2pl:set_state(0xFF)
+								pt2p2:set_state(0xFF)
 						else
 						
 					-- If only P1 active on charselect screen, display P1 set P2 as blank	
 						
 						if mem:read_u8(0x01051570) == 255 then
 							pt2p1:set_state(mem:read_i8(0x01051290))
-							pt2p2:set_state(0x11)	
+							pt2p2:set_state(0xFF)	
 																		
 					-- If only P2 active on charselect screen, display P2 set P1 as blank	
 						
 						elseif mem:read_u8(0x01051290) == 255 then
-							pt2p1:set_state(0x11)
+							pt2p1:set_state(0xFF)
 							pt2p2:set_state(mem:read_i8(0x01051570))	
 						else
 							pt2p1:set_state(mem:read_i8(0x01051290))
