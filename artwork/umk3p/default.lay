@@ -5,10 +5,10 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 
 <mamelayout version="2">
 	<element name="nobezel">
-		<image file="umk3p_nobezel.png"/>
+		<image file="umk3p_no_bezel.png"/>
 	</element>
 	<element name="border">
-		<image file="umk3p_bezel.png"/>
+		<image file="umk3_bezel.png"/>
 	</element>
 	<element name="portrait" defstate="30">
 		<image state="0" file="kano.png" />
