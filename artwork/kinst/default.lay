@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 
-<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU),
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx),
 Artwork - BloodyDrake -->
 
 <mamelayout version="2">
 	<element name="border">
-		<image file="Bezel.png" />
+		<image file="kinst_bezel.png" />
 	</element>
-	<element name="portrait_left" defstate="0x0B">
+	<element name="portrait_left" defstate="0xFF">
 		<image state="0x00" file="combo_left.png" />
 		<image state="0x01" file="jago_left.png" />
 		<image state="0x02" file="thunder_left.png" />
@@ -19,9 +19,9 @@ Artwork - BloodyDrake -->
 		<image state="0x08" file="spinal_left.png" />
 		<image state="0x09" file="fulgore_left.png" />
 		<image state="0x0A" file="eyedol_left.png" />
-		<image state="0x0B" file="blank.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
-	<element name="portrait_right" defstate="0x0B">
+	<element name="portrait_right" defstate="0xFF">
 		<image state="0x00" file="combo_right.png" />
 		<image state="0x01" file="jago_right.png" />
 		<image state="0x02" file="thunder_right.png" />
@@ -33,7 +33,7 @@ Artwork - BloodyDrake -->
 		<image state="0x08" file="spinal_right.png" />
 		<image state="0x09" file="fulgore_right.png" />
 		<image state="0x0A" file="eyedol_right.png" />
-		<image state="0x0B" file="blank.png" />
+		<image state="0xFF" file="blank.png" />
 	</element>
 	<view name="Bezel">
 			<screen index="0">
@@ -67,16 +67,16 @@ Artwork - BloodyDrake -->
 							mem:readv_u32(0x8808F2D7) ~= 24577 and
 							mem:readv_u32(0x8808F2D7) ~= 45568 and
 							mem:readv_u32(0x8808F2D7) ~= 30721 then
-								p1char:set_state(0x0B)
-								p2char:set_state(0x0B)
+								p1char:set_state(0xFF)
+								p2char:set_state(0xFF)
 						elseif mem:readv_u32(0x8808f38b) == 33617152 or mem:readv_u32(0x8808f38b) == 16826112 or mem:readv_u32(0x8808f280) == 32767 or mem:readv_u32(0x8808f38b) == 16839936 then
 							p1char:set_state(mem:readv_u8(0x8808F314))
 							p2char:set_state(mem:readv_u8(0x8808F37C))
 						elseif mem:readv_u8(0x8808f418) == 224 and mem:readv_u32(0x8808f414) ~= 1 and mem:readv_u32(0x8808f38b) ~= 33617152 then
 							p1char:set_state(mem:readv_u8(0x8808F314))
-							p2char:set_state(0x0B)
+							p2char:set_state(0xFF)
 						elseif mem:readv_u8(0x8808f418) == 72 and mem:readv_u32(0x8808f414) ~= 1 and mem:readv_u32(0x8808f38b) ~= 33617152 then
-							p1char:set_state(0x0B)
+							p1char:set_state(0xFF)
 							p2char:set_state(mem:readv_u8(0x8808F37C))
 						end
 				end)
