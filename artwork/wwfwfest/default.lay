@@ -69,32 +69,32 @@ Artwork - BloodyDrake -->
 								p1char:set_state(mem:read_u8(0x1C0607))
 								p2char:set_state(0xFF)
 							end	
-						--1 player Rumble
+								--1 player Rumble
 							if (mem:read_u8(0x1C0651) ~= 0 and mem:read_u8(0x1C0161) == 0 and mem:read_u8(0x1C07d2) == 0) or
 								(mem:read_u8(0x1C0651) ~= 0 and mem:read_u8(0x1C0161) == 2 and mem:read_u8(0x1C07d2) == 0) then
 								p1char:set_state(mem:read_u8(0x1C0607))
 								p2char:set_state(mem:read_u8(0x1C0191))	
 							end
-						--1 player tag match
+								--1 player tag match
 							if (mem:read_u8(0x1C0651) == 0 and mem:read_u8(0x1C0161) == 0 and mem:read_u8(0x1C07d2) == 1) or
 								(mem:read_u8(0x1C0651) == 0 and mem:read_u8(0x1C0161) == 2 and mem:read_u8(0x1C07d2) == 1) then
 								p1char:set_state(mem:read_u8(0x1C01B1))
 								p2char:set_state(mem:read_u8(0x1C01D1))
 							end	
-						--1 player tag match with 2nd player playing after winning multiplayer
+								--1 player tag match with 2nd player playing after winning multiplayer
 							if mem:read_u8(0x1C06CA) == 1 then
 								p1char:set_state(mem:read_u8(0x1C0607))
 								p2char:set_state(mem:read_u8(0x1C0713))
 							end
-						--rumble match with 2 players, the second joining after the beginning
+								--rumble match with 2 players, the second joining after the beginning
 						elseif mem:read_u8(0x1C0160) == 64 then
 							p1char:set_state(mem:read_u8(0x1C0607))
 							p2char:set_state(mem:read_u8(0x1C081F))	
-						--2 player tag mode vs	
+								--2 player tag mode vs	
 						elseif mem:read_u8(0x1C0160) == 128 then 
 							p1char:set_state(mem:read_u8(0x1C0607))
 							p2char:set_state(mem:read_u8(0x1C0713))
-						--2 player rumble or tag on the same team	
+								--2 player rumble or tag on the same team	
 						end	
 				end)
 			end)

@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 
-<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Mortal Kombat Plus Discord:https://discord.gg/qu7EXzYU),
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx),
 Artwork - BloodyDrake -->
 
 <mamelayout version="2">
 	<element name="border">
 		<image file="mvsc_bezel.png"/>
 	</element>
-	<element name="portrait_left" defstate="00">
+	<element name="portrait_left" defstate="0x00">
 		<image state="0x00" file="blank.png" />
 		<image state="0x02" file="war_machine_left.png" />
 		<image state="0x04" file="cap_america_left.png" />
@@ -32,7 +32,7 @@ Artwork - BloodyDrake -->
 		<image state="0x2A" file="shadow_lady_left.png" />
 		<image state="0X2C" file="alt_morrigan_left.png" />
 	</element>
-	<element name="portrait_right" defstate="00">
+	<element name="portrait_right" defstate="0x00">
 		<image state="0x00" file="blank.png" />
 		<image state="0x02" file="war_machine_right.png" />
 		<image state="0x04" file="cap_america_right.png" />
