@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+
+<!-- Authors - InigoMontoya (CoinOps Discord:https://discord.gg/RfMxcFvg), Hugo_Stiglitz_DA (Discord:https://discord.gg/2QesVywnJx),
+Artwork - Adam Lindsay, Mike Pinto, Timothy Knepp, Hugo_Stiglitz_DA -->
+
+<mamelayout version="2">
+	<element name="border">
+		<image file="tekken3_bezel.png"/>
+	</element>
+	<element name="portrait" defstate="0xFF">
+		<image state="0x00" file="paul.png" />
+		<image state="0x01" file="law.png" />
+		<image state="0x02" file="lei.png" />
+		<image state="0x03" file="king.png" />
+		<image state="0x04" file="yoshimitsu.png" />
+		<image state="0x05" file="nina.png" />
+		<image state="0x06" file="hwoarang.png" />
+		<image state="0x07" file="xiaoyu.png" />
+		<image state="0x08" file="eddy.png" />
+		<image state="0x09" file="jin.png" />
+		<image state="0x0A" file="julia.png" />
+		<image state="0x0B" file="kuma.png" />
+		<image state="0x0C" file="bryan.png" />
+		<image state="0x0D" file="heihachi.png" />
+		<image state="0x0E" file="ogre.png" />
+		<image state="0x0F" file="mokujin.png" />
+		<image state="0x10" file="gun_jack.png" />
+		<image state="0x11" file="nina.png" />
+		<image state="0x12" file="anna.png" />
+		<image state="0x13" file="tiger.png" />
+		<image state="0x14" file="true_ogre.png" />
+		<image state="0x15" file="sake.png" />
+		<image state="0xFF" file="blank.png" />
+	</element>
+	<element name="movelist" defstate="0xFF">
+		<image state="0x00" file="paul_ml.png" />
+		<image state="0x01" file="law_ml.png" />
+		<image state="0x02" file="lei_ml.png" />
+		<image state="0x03" file="king_ml.png" />
+		<image state="0x04" file="yoshimitsu_ml.png" />
+		<image state="0x05" file="nina_ml.png" />
+		<image state="0x06" file="hwoarang_ml.png" />
+		<image state="0x07" file="xiaoyu_ml.png" />
+		<image state="0x08" file="eddy_ml.png" />
+		<image state="0x09" file="jin_ml.png" />
+		<image state="0x0A" file="julia_ml.png" />
+		<image state="0x0B" file="kuma_ml.png" />
+		<image state="0x0C" file="bryan_ml.png" />
+		<image state="0x0D" file="heihachi_ml.png" />
+		<image state="0x0E" file="ogre_ml.png" />
+		<image state="0x0F" file="blank.png" />
+		<image state="0x10" file="gun_jack_ml.png" />
+		<image state="0x11" file="jin_ml.png" />
+		<image state="0x12" file="anna_ml.png" />
+		<image state="0x13" file="eddy_ml.png" />
+		<image state="0x14" file="true_ogre_ml.png" />
+		<image state="0x15" file="jin_ml.png" />
+		<image state="0xFF" file="blank.png" />
+	</element>
+		<view name="bezel">
+			<screen index="0">
+				<bounds x="360" y="98" width="1204" height="884"/>
+			</screen>
+			<element ref="border">
+				<bounds x="0" y="0" width="1920" height="1080"/>
+			</element>
+			<element id="pt_p1" ref="portrait">
+				<bounds x="0" y="0" width="544" height="1080"/>
+			</element>
+			<element id="pt_p2" ref="portrait">
+				<orientation flipX="yes"/>
+				<bounds x="1376" y="0" width="544" height="1080"/>
+			</element>
+			<element id="ml_p1" ref="movelist">
+				<bounds x="0" y="735" width="250" height="345"/>
+			</element>
+			<element id="ml_p2" ref="movelist">
+				<bounds x="1670" y="735" width="250" height="345"/>
+			</element>
+		</view>
+	<script><![CDATA[
+		file:set_resolve_tags_callback(
+			function()
+				local cpu = file.device:subdevice(":maincpu")
+				local mem = cpu.spaces["program"]
+				local p1char = file.views["bezel"].items["pt_p1"]
+				local p2char = file.views["bezel"].items["pt_p2"]
+				local p1ml = file.views["bezel"].items["ml_p1"]
+				local p2ml = file.views["bezel"].items["ml_p2"]
+			file.views["bezel"]:set_prepare_items_callback(
+				function()
+					if	
+						mem:read_u8(0x0021F840) == 225 or
+						mem:read_u8(0x0021F840) == 0 or
+						mem:read_u8(0x0021F84C) == 1 or
+						mem:read_u8(0x0021F84C) == 6 then
+							p1char:set_state(0xFF)
+							p2char:set_state(0xFF)
+							p1ml:set_state(0xFF)
+							p2ml:set_state(0xFF)
+					else
+						p1char:set_state(mem:read_u8(0x0021FBF0))
+						p2char:set_state(mem:read_u8(0x0021FBF2))
+						p1ml:set_state(mem:read_u8(0x0021FBF0))
+						p2ml:set_state(mem:read_u8(0x0021FBF2))
+							if mem:read_u8(0x0021FBF0) == 15 then
+								p1ml:set_state(mem:read_u8(0x0031E16C))
+							end
+							if mem:read_u8(0x0021FBF2) == 15 then
+								p2ml:set_state(mem:read_u8(0x0031FC50))
+							end
+						end
+				end)
+			end)
+	]]></script>
+</mamelayout>
