@@ -1,0 +1,79 @@
+MAME Dynamic Bezels FAQ
+
+V 1.0
+
+By:  RustyDawg37
+
+I want to start this document with a huge thanks to InigoMontoya whom I have interacted with on the The CoinOps Project https://discord.gg/BgYCcgny4eand
+and Mortal Kombat Plus https://discord.gg/gYJEeKV9Yn discord servers.  Without his persistent prodding, none of these would exist in their current form. 
+I can not be sure that no one has ever done this, in fact I would be surprised if someone hasnt, given the community and possiblities, but the one other time
+I attempted something like this I gave up at the MAME documention (due to its readability compared to my comprehension level, not the actual content)
+and he refused to stop until it was at least explained to him.  He was gracious enough to explain to me how the layouts worked and provide some early coding
+techniques which I still use, and from there I have been off to the races.
+
+Let me say that I am not a programmer or grpahical artist by trade and that may shine through if you begin looking through the code and using the layouts.
+If you want to contribute, or teach me a thing or two, I am always willing to learn.
+
+
+1. How do MAME layouts work?
+
+https://docs.mamedev.org/techspecs/layout_files.html
+
+No need to rehash what the experts have to say.
+
+
+2.  How do these dynamic bezels work?
+
+We have used the documentation, advice from mamedev, and older similar visual tricks in MAME on the internet, to learn how to edit the layout files and use
+the MAME layout plugin's scripting capabilities to enable the layouts to trigger graphics onscreen to, in most cases, display movelists and character art
+for fighting games.
+
+
+3. What games have these been made for?
+
+At this time the list of games is as follows:
+	
+	Cadillacs and Dinosaurs
+	Garou
+	Killer Instinct
+	Mortal Kombat
+	Mortal Kombat + ( game is not in MAME just yet )
+	Mortal Kombat II
+	Mortal Kombat II +
+	Mortal Kombat 3
+	Marvel Super Heroes
+	Marvel Super Heroes vs Street Fighter
+	Marvel vs Capcom
+	NBA Maximum Hangtime
+	Primal Rage ( game is technically not working correctly in MAME at last check )
+	Samurai Shodown II
+	Street Fighter II Champion Edition
+	Street Fighter Alpha 3
+	Street Fighter III 3rd Strike
+	Super Street Fighter II Turbo
+	Tekken 3
+	Ultimate Mortal Kombat 3
+	Ultimate Mortal Kombat 3 +
+	Vampire Savior 2
+	WWF Wrestlemania
+	WWF Wrestlefest
+	Xmen Children of the Atom
+	Xmen vs Streeet Fighter
+	
+Please note: these are all in varying states and I would consider them all to be in a beta stage at this time.
+
+	
+4.  Will there be more made?
+
+I am not going to say no, but i am not knowledgeable about EVERY fighting game.  I would very much like to find some reliable fighting game players, artists and
+game testers for input on everything from usability and readability to formatting and general direction.  If you are interested, here is the link to my discord
+server https://discord.gg/2QesVywnJx
+
+I have started at least one that I have shelved because I dont think all the moves will fit comfortably and I am not familiar with the game at all so I do not
+have a best practice for paring down the movelist.
+
+
+5.  Are there any other future plans?
+
+Yes.  Most of these that are already made could still use some sort of tweaking, optimization, or artwork cleanup.  I would also like to expand the titles
+available which can be done with the already present assets.
