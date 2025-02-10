@@ -8,7 +8,7 @@ Artwork - BloodyDrake, Hugo_Stiglitz_DA -->
 		<image file="umk3p_no_bezel.png"/>
 	</element>
 	<element name="border">
-		<image file="umk3_bezel.png"/>
+		<image file="umk3p_bezel.png"/>
 	</element>
 	<element name="portrait" defstate="30">
 		<image state="0" file="kano.png" />
