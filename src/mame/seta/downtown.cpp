@@ -1,6 +1,6 @@
 // license:BSD-3-Clause
 // copyright-holders:Luca Elia
-/***************************************************************************
+/*******************************************************************************
 
                             -= Seta Hardware =-
 
@@ -15,7 +15,7 @@ Custom :    X1-001A, X1-002A (SDIP64)   Sprites
             X1-004           (SDIP52)   Inputs
             X1-005 or X1-009 (DIP48)    NVRAM/simple protection
             X1-006           (SDIP64)   Palette
-            X1-010           (QFP80)    Sound: 16 Bit PCM
+            X1-010           (QFP80)    Sound: 8 Bit PCM
             X1-011           (QFP80)    Graphics mixing
             X1-012           (QFP100)   Tilemaps
             X1-014                      Sprites?
@@ -44,11 +44,9 @@ Notes:
 TODO:
 - metafox test grid not aligned when screen flipped
 - tndrcade: lots of flickering sprites
+- Verify screen raw parameters
 
-
-***************************************************************************/
-
-/***************************************************************************
+********************************************************************************
 
 Thundercade / Twin Formation
 Taito America Corp./Romstar USA/Seta, 1987
@@ -116,13 +114,11 @@ Notes:
              All ROMs have IC locations, but the PCB also has IC locations so components
              can be referenced with IC# or location. See above diagram for info.
 
-***************************************************************************/
+*******************************************************************************
 
-/***************************************************************************
+Twin Eagle
 
-                                Twin Eagle
-
-M6100326A   Taito (Seta)
+M6100326A Taito (Seta)
 
 ua2-4              68000
 ua2-3
@@ -135,11 +131,9 @@ ua2-9
 ua2-12
 ua2-11              ua2-2
 
-***************************************************************************/
+*******************************************************************************
 
-/***************************************************************************
-
-                                U.S. Classic
+U.S. Classic
 
 M6100430A (Taito 1989)
 
@@ -160,10 +154,9 @@ u75  131                                 u61 004
 
                                          u83 132
 
-***************************************************************************/
-/***************************************************************************
+*******************************************************************************
 
-Caliber 50 (Athena / Seta, 1989)
+Caliber 50 (Seta, 1989)
 Hardware info by Guru
 
 
@@ -251,12 +244,9 @@ UH-002-004.11B /
 Note not all ROMs have IC locations but regardless, the locations that are there are under chips
 and can't be seen unless the chip is removed. Therefore all ROMs are named with x,y locations.
 
-***************************************************************************/
-/***************************************************************************
+*******************************************************************************
 
-                                    Meta Fox
-
-(Seta 1990)
+Meta Fox (Seta 1990)
 
 P0-045A
 
@@ -298,13 +288,13 @@ P1-049-A
               UP-001-005
               x
 
-***************************************************************************/
+*******************************************************************************/
 
 
 #include "emu.h"
 #include "x1_012.h"
 
-#include "cpu/m6502/m65c02.h"
+#include "cpu/m6502/w65c02.h"
 #include "cpu/m68000/m68000.h"
 #include "machine/74157.h"
 #include "machine/gen_latch.h"
@@ -356,13 +346,13 @@ public:
 	void tndrcade(machine_config &config);
 
 protected:
-	virtual void machine_start() override;
+	virtual void machine_start() override ATTR_COLD;
 
 	u16 ipl1_ack_r();
 	void ipl1_ack_w(u16 data = 0);
 
-	void seta_coin_lockout_w(u8 data);
-	X1_001_SPRITE_GFXBANK_CB_MEMBER(setac_gfxbank_callback);
+	void coin_lockout_w(u8 data);
+	X1_001_SPRITE_GFXBANK_CB_MEMBER(gfxbank_callback);
 	u32 screen_update(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect);
 
 	u8 sharedram_68000_r(offs_t offset);
@@ -376,8 +366,8 @@ protected:
 
 	TIMER_DEVICE_CALLBACK_MEMBER(tndrcade_sub_interrupt);
 
-	void tndrcade_map(address_map &map);
-	void tndrcade_sub_map(address_map &map);
+	void tndrcade_map(address_map &map) ATTR_COLD;
+	void tndrcade_sub_map(address_map &map) ATTR_COLD;
 
 	required_device<cpu_device> m_maincpu;
 	required_device<cpu_device> m_subcpu;
@@ -443,15 +433,15 @@ protected:
 	DECLARE_MACHINE_RESET(calibr50);
 	u16 twineagl_tile_offset(u16 code);
 
-	TIMER_DEVICE_CALLBACK_MEMBER(seta_sub_interrupt);
+	TIMER_DEVICE_CALLBACK_MEMBER(sub_interrupt);
 	TIMER_DEVICE_CALLBACK_MEMBER(calibr50_interrupt);
 
-	void calibr50_map(address_map &map);
-	void calibr50_sub_map(address_map &map);
-	void downtown_map(address_map &map);
-	void downtown_sub_map(address_map &map);
-	void metafox_sub_map(address_map &map);
-	void twineagl_sub_map(address_map &map);
+	void calibr50_map(address_map &map) ATTR_COLD;
+	void calibr50_sub_map(address_map &map) ATTR_COLD;
+	void downtown_map(address_map &map) ATTR_COLD;
+	void downtown_sub_map(address_map &map) ATTR_COLD;
+	void metafox_sub_map(address_map &map) ATTR_COLD;
+	void twineagl_sub_map(address_map &map) ATTR_COLD;
 
 	required_device<x1_012_device> m_tiles;
 	required_device<x1_010_device> m_x1snd;
@@ -477,11 +467,11 @@ public:
 
 	void usclssic(machine_config &config);
 
-	DECLARE_CUSTOM_INPUT_MEMBER(trackball_x_r);
-	DECLARE_CUSTOM_INPUT_MEMBER(trackball_y_r);
+	ioport_value trackball_x_r();
+	ioport_value trackball_y_r();
 
 protected:
-	virtual void machine_start() override;
+	virtual void machine_start() override ATTR_COLD;
 
 private:
 	u16 dsw_r(offs_t offset);
@@ -494,7 +484,7 @@ private:
 
 	void usclssic_set_pens();
 
-	void usclssic_map(address_map &map);
+	void usclssic_map(address_map &map) ATTR_COLD;
 
 	required_device<upd4701_device> m_upd4701;
 	required_device<hc157_device> m_buttonmux;
@@ -528,7 +518,7 @@ u16 usclssic_state::tile_offset(u16 code)
 	return m_tiles_offset + code;
 }
 
-X1_001_SPRITE_GFXBANK_CB_MEMBER(tndrcade_state::setac_gfxbank_callback)
+X1_001_SPRITE_GFXBANK_CB_MEMBER(tndrcade_state::gfxbank_callback)
 {
 	const int bank = (color & 0x06) >> 1;
 	code = (code & 0x3fff) + (bank * 0x4000);
@@ -679,7 +669,7 @@ void tndrcade_state::sub_ctrl_w(offs_t offset, u8 data)
 	switch (offset)
 	{
 		case 0/2:   // bit 0: reset sub cpu?
-			if (!(m_sub_ctrl_data & 1) && (data & 1))
+			if (BIT(~m_sub_ctrl_data, 0) && BIT(data, 0))
 				m_subcpu->pulse_input_line(INPUT_LINE_RESET, attotime::zero);
 			m_sub_ctrl_data = data;
 			break;
@@ -711,7 +701,7 @@ u8 tndrcade_state::dsw2_r()
 }
 
 
-void tndrcade_state::seta_coin_lockout_w(u8 data)
+void tndrcade_state::coin_lockout_w(u8 data)
 {
 	machine().bookkeeping().coin_counter_w(0, BIT(data, 0));
 	machine().bookkeeping().coin_counter_w(1, BIT(data, 1));
@@ -869,12 +859,12 @@ u16 usclssic_state::dsw_r(offs_t offset)
 	return 0;
 }
 
-CUSTOM_INPUT_MEMBER(usclssic_state::trackball_x_r)
+ioport_value usclssic_state::trackball_x_r()
 {
 	return m_track_x[m_port_select ? 1 : 0]->read();
 }
 
-CUSTOM_INPUT_MEMBER(usclssic_state::trackball_y_r)
+ioport_value usclssic_state::trackball_y_r()
 {
 	return m_track_y[m_port_select ? 1 : 0]->read();
 }
@@ -899,7 +889,7 @@ void usclssic_state::lockout_w(u8 data)
 		m_tiles->mark_all_dirty();
 	m_tiles_offset = tiles_offset;
 
-	seta_coin_lockout_w(data);
+	coin_lockout_w(data);
 }
 
 
@@ -941,10 +931,10 @@ void tndrcade_state::sub_bankswitch_w(u8 data)
 void tndrcade_state::sub_bankswitch_lockout_w(u8 data)
 {
 	sub_bankswitch_w(data);
-	seta_coin_lockout_w(data);
+	coin_lockout_w(data);
 
 	// 65C02 code doesn't seem to do anything to explicitly acknowledge IRQ; implicitly acknowledging it here seems most likely
-	m_subcpu->set_input_line(m65c02_device::IRQ_LINE, CLEAR_LINE);
+	m_subcpu->set_input_line(W65C02_IRQ_LINE, CLEAR_LINE);
 }
 
 
@@ -1054,7 +1044,7 @@ void downtown_state::calibr50_sub_bankswitch_w(u8 data)
 
 	// Bit 2: IRQCLR
 	if (!BIT(data, 2))
-		m_subcpu->set_input_line(m65c02_device::IRQ_LINE, CLEAR_LINE);
+		m_subcpu->set_input_line(W65C02_IRQ_LINE, CLEAR_LINE);
 
 	// Bit 1: /PCMMUTE
 	m_x1snd->set_output_gain(ALL_OUTPUTS, BIT(data, 1) ? 1.0f : 0.0f);
@@ -1604,10 +1594,10 @@ INPUT_PORTS_END
 
 static INPUT_PORTS_START( usclssic )
 	PORT_START("TRACKX")
-	PORT_BIT( 0xfff, 0x000, IPT_CUSTOM ) PORT_CUSTOM_MEMBER(usclssic_state, trackball_x_r)
+	PORT_BIT( 0xfff, 0x000, IPT_CUSTOM ) PORT_CUSTOM_MEMBER(FUNC(usclssic_state::trackball_x_r))
 
 	PORT_START("TRACKY")
-	PORT_BIT( 0xfff, 0x000, IPT_CUSTOM ) PORT_CUSTOM_MEMBER(usclssic_state, trackball_y_r)
+	PORT_BIT( 0xfff, 0x000, IPT_CUSTOM ) PORT_CUSTOM_MEMBER(FUNC(usclssic_state::trackball_y_r))
 
 	PORT_START("TRACK1_X")     // muxed port 0
 	PORT_BIT( 0xfff, 0x000, IPT_TRACKBALL_X ) PORT_SENSITIVITY(70) PORT_KEYDELTA(30)
@@ -1622,12 +1612,12 @@ static INPUT_PORTS_START( usclssic )
 	PORT_BIT( 0xfff, 0x000, IPT_TRACKBALL_Y ) PORT_SENSITIVITY(70) PORT_KEYDELTA(30) PORT_COCKTAIL
 
 	PORT_START("BUTTONS")
-	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_UNKNOWN ) PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", hc157_device, a0_w)
-	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", hc157_device, a1_w)
-	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_START1 ) PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", hc157_device, a2_w)
-	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_UNKNOWN ) PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", hc157_device, b0_w)
-	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_COCKTAIL PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", hc157_device, b1_w)
-	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_START2 ) PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", hc157_device, b2_w)
+	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_UNKNOWN ) PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", FUNC(hc157_device::a0_w))
+	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", FUNC(hc157_device::a1_w))
+	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_START1 ) PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", FUNC(hc157_device::a2_w))
+	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_UNKNOWN ) PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", FUNC(hc157_device::b0_w))
+	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_COCKTAIL PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", FUNC(hc157_device::b1_w))
+	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_START2 ) PORT_WRITE_LINE_DEVICE_MEMBER("buttonmux", FUNC(hc157_device::b2_w))
 
 	PORT_START("COINS")
 	PORT_BIT( 0x0001, IP_ACTIVE_LOW,  IPT_UNKNOWN  )    // tested (sound related?)
@@ -1775,15 +1765,15 @@ GFXDECODE_END
 
 ***************************************************************************/
 
-TIMER_DEVICE_CALLBACK_MEMBER(downtown_state::seta_sub_interrupt)
+TIMER_DEVICE_CALLBACK_MEMBER(downtown_state::sub_interrupt)
 {
 	int scanline = param;
 
 	if (scanline == 240)
-		m_subcpu->pulse_input_line(m65c02_device::NMI_LINE, attotime::zero);
+		m_subcpu->pulse_input_line(W65C02_NMI_LINE, attotime::zero);
 
 	if (scanline == 112)
-		m_subcpu->set_input_line(m65c02_device::IRQ_LINE, ASSERT_LINE);
+		m_subcpu->set_input_line(W65C02_IRQ_LINE, ASSERT_LINE);
 }
 
 
@@ -1796,10 +1786,10 @@ TIMER_DEVICE_CALLBACK_MEMBER(tndrcade_state::tndrcade_sub_interrupt)
 	int scanline = param;
 
 	if (scanline == 240)
-		m_subcpu->pulse_input_line(m65c02_device::NMI_LINE, attotime::zero);
+		m_subcpu->pulse_input_line(W65C02_NMI_LINE, attotime::zero);
 
 	if ((scanline % 16) == 0)
-		m_subcpu->set_input_line(m65c02_device::IRQ_LINE, ASSERT_LINE);
+		m_subcpu->set_input_line(W65C02_IRQ_LINE, ASSERT_LINE);
 }
 
 void tndrcade_state::tndrcade(machine_config &config)
@@ -1808,12 +1798,12 @@ void tndrcade_state::tndrcade(machine_config &config)
 	M68000(config, m_maincpu, 16_MHz_XTAL / 2); // 8 MHz
 	m_maincpu->set_addrmap(AS_PROGRAM, &tndrcade_state::tndrcade_map);
 
-	M65C02(config, m_subcpu, 16_MHz_XTAL / 8); // 2 MHz
+	W65C02(config, m_subcpu, 16_MHz_XTAL / 8); // 2 MHz
 	m_subcpu->set_addrmap(AS_PROGRAM, &tndrcade_state::tndrcade_sub_map);
 	TIMER(config, "scantimer").configure_scanline(FUNC(tndrcade_state::tndrcade_sub_interrupt), "screen", 0, 1);
 
 	X1_001(config, m_spritegen, 16_MHz_XTAL, m_palette, gfx_sprites);
-	m_spritegen->set_gfxbank_callback(FUNC(tndrcade_state::setac_gfxbank_callback));
+	m_spritegen->set_gfxbank_callback(FUNC(tndrcade_state::gfxbank_callback));
 	// position kludges
 	m_spritegen->set_fg_xoffsets(0, 0); // correct (start grid, wall at beginning of game)
 	m_spritegen->set_fg_yoffsets(-0x12, 0x0e);
@@ -1860,12 +1850,12 @@ void downtown_state::twineagl(machine_config &config)
 	M68000(config, m_maincpu, 16_MHz_XTAL / 2); // 8 MHz
 	m_maincpu->set_addrmap(AS_PROGRAM, &downtown_state::downtown_map);
 
-	M65C02(config, m_subcpu, 16_MHz_XTAL / 8); // 2 MHz
+	W65C02(config, m_subcpu, 16_MHz_XTAL / 8); // 2 MHz
 	m_subcpu->set_addrmap(AS_PROGRAM, &downtown_state::twineagl_sub_map);
-	TIMER(config, "s_scantimer").configure_scanline(FUNC(downtown_state::seta_sub_interrupt), "screen", 0, 1);
+	TIMER(config, "s_scantimer").configure_scanline(FUNC(downtown_state::sub_interrupt), "screen", 0, 1);
 
 	X1_001(config, m_spritegen, 16_MHz_XTAL, m_palette, gfx_sprites);
-	m_spritegen->set_gfxbank_callback(FUNC(downtown_state::setac_gfxbank_callback));
+	m_spritegen->set_gfxbank_callback(FUNC(downtown_state::gfxbank_callback));
 	// position kludges
 	m_spritegen->set_fg_xoffsets(0, 0); // unknown
 	m_spritegen->set_fg_yoffsets(-0x12, 0x0e);
@@ -1911,12 +1901,12 @@ void downtown_state::downtown(machine_config &config)
 	M68000(config, m_maincpu, 16_MHz_XTAL / 2); // verified on pcb
 	m_maincpu->set_addrmap(AS_PROGRAM, &downtown_state::downtown_map);
 
-	M65C02(config, m_subcpu, 16_MHz_XTAL / 8); // verified on pcb
+	W65C02(config, m_subcpu, 16_MHz_XTAL / 8); // verified on pcb
 	m_subcpu->set_addrmap(AS_PROGRAM, &downtown_state::downtown_sub_map);
-	TIMER(config, "s_scantimer").configure_scanline(FUNC(downtown_state::seta_sub_interrupt), "screen", 0, 1);
+	TIMER(config, "s_scantimer").configure_scanline(FUNC(downtown_state::sub_interrupt), "screen", 0, 1);
 
 	X1_001(config, m_spritegen, 16_MHz_XTAL, m_palette, gfx_sprites);
-	m_spritegen->set_gfxbank_callback(FUNC(downtown_state::setac_gfxbank_callback));
+	m_spritegen->set_gfxbank_callback(FUNC(downtown_state::gfxbank_callback));
 	// position kludges
 	m_spritegen->set_fg_xoffsets(0, 1); // sprites correct (test grid), tilemap unknown but at least -1 non-flipped to fix glitches later in the game
 	m_spritegen->set_fg_yoffsets(-0x12, 0x0e);
@@ -1992,7 +1982,7 @@ void usclssic_state::usclssic(machine_config &config)
 
 	WATCHDOG_TIMER(config, "watchdog");
 
-	M65C02(config, m_subcpu, 16_MHz_XTAL / 8); // 2 MHz
+	W65C02(config, m_subcpu, 16_MHz_XTAL / 8); // 2 MHz
 	m_subcpu->set_addrmap(AS_PROGRAM, &usclssic_state::calibr50_sub_map);
 
 	UPD4701A(config, m_upd4701);
@@ -2007,7 +1997,7 @@ void usclssic_state::usclssic(machine_config &config)
 	MCFG_MACHINE_RESET_OVERRIDE(usclssic_state,calibr50)
 
 	X1_001(config, m_spritegen, 16_MHz_XTAL, m_palette, gfx_sprites);
-	m_spritegen->set_gfxbank_callback(FUNC(usclssic_state::setac_gfxbank_callback));
+	m_spritegen->set_gfxbank_callback(FUNC(usclssic_state::gfxbank_callback));
 	// position kludges
 	m_spritegen->set_fg_xoffsets(2, 1); // correct (test grid and bg)
 	m_spritegen->set_fg_yoffsets(-0x12, 0x0e);
@@ -2021,7 +2011,7 @@ void usclssic_state::usclssic(machine_config &config)
 	screen.set_visarea(0*8, 48*8-1, 1*8, 31*8-1);
 	screen.set_screen_update(FUNC(usclssic_state::screen_update_usclssic));
 	screen.set_palette(m_palette);
-	screen.screen_vblank().set_inputline(m_subcpu, m65c02_device::IRQ_LINE, ASSERT_LINE);
+	screen.screen_vblank().set_inputline(m_subcpu, W65C02_IRQ_LINE, ASSERT_LINE);
 
 	X1_012(config, m_tiles, m_palette, gfx_usclssic);
 	m_tiles->set_screen(m_screen);
@@ -2034,7 +2024,7 @@ void usclssic_state::usclssic(machine_config &config)
 	SPEAKER(config, "mono").front_center();
 
 	GENERIC_LATCH_8(config, m_soundlatch[0]);
-	m_soundlatch[0]->data_pending_callback().set_inputline(m_subcpu, m65c02_device::NMI_LINE);
+	m_soundlatch[0]->data_pending_callback().set_inputline(m_subcpu, W65C02_NMI_LINE);
 	m_soundlatch[0]->set_separate_acknowledge(true);
 
 	X1_010(config, m_x1snd, 16_MHz_XTAL);   // 16 MHz
@@ -2062,7 +2052,7 @@ void downtown_state::calibr50(machine_config &config)
 
 	NVRAM(config, "nvram", nvram_device::DEFAULT_ALL_0);
 
-	M65C02(config, m_subcpu, 16_MHz_XTAL / 8); // verified on pcb
+	W65C02(config, m_subcpu, 16_MHz_XTAL / 8); // verified on pcb
 	m_subcpu->set_addrmap(AS_PROGRAM, &downtown_state::calibr50_sub_map);
 	m_subcpu->set_periodic_int(FUNC(downtown_state::irq0_line_assert), attotime::from_hz(4*60));  // IRQ: 4/frame
 
@@ -2073,7 +2063,7 @@ void downtown_state::calibr50(machine_config &config)
 	MCFG_MACHINE_RESET_OVERRIDE(downtown_state,calibr50)
 
 	X1_001(config, m_spritegen, 16_MHz_XTAL, m_palette, gfx_sprites);
-	m_spritegen->set_gfxbank_callback(FUNC(downtown_state::setac_gfxbank_callback));
+	m_spritegen->set_gfxbank_callback(FUNC(downtown_state::gfxbank_callback));
 	// position kludges
 	m_spritegen->set_fg_xoffsets(2, -1); // correct (test grid and roof in animation at beginning of game)
 	m_spritegen->set_fg_yoffsets(-0x12, 0x0e);
@@ -2099,7 +2089,7 @@ void downtown_state::calibr50(machine_config &config)
 	SPEAKER(config, "mono").front_center();
 
 	GENERIC_LATCH_8(config, m_soundlatch[0]);
-	m_soundlatch[0]->data_pending_callback().set_inputline(m_subcpu, m65c02_device::NMI_LINE);
+	m_soundlatch[0]->data_pending_callback().set_inputline(m_subcpu, W65C02_NMI_LINE);
 	m_soundlatch[0]->set_separate_acknowledge(true);
 
 	GENERIC_LATCH_8(config, m_soundlatch[1]);
@@ -2121,12 +2111,12 @@ void downtown_state::metafox(machine_config &config)
 	M68000(config, m_maincpu, 16000000/2); // 8 MHz
 	m_maincpu->set_addrmap(AS_PROGRAM, &downtown_state::downtown_map);
 
-	M65C02(config, m_subcpu, 16000000/8); // 2 MHz
+	W65C02(config, m_subcpu, 16000000/8); // 2 MHz
 	m_subcpu->set_addrmap(AS_PROGRAM, &downtown_state::metafox_sub_map);
-	TIMER(config, "s_scantimer").configure_scanline(FUNC(downtown_state::seta_sub_interrupt), "screen", 0, 1);
+	TIMER(config, "s_scantimer").configure_scanline(FUNC(downtown_state::sub_interrupt), "screen", 0, 1);
 
 	X1_001(config, m_spritegen, 16000000, m_palette, gfx_sprites);
-	m_spritegen->set_gfxbank_callback(FUNC(downtown_state::setac_gfxbank_callback));
+	m_spritegen->set_gfxbank_callback(FUNC(downtown_state::gfxbank_callback));
 	// position kludges
 	m_spritegen->set_fg_xoffsets(0, 0); // sprites unknown, tilemap correct (test grid)
 	m_spritegen->set_fg_yoffsets(-0x12, 0x0e);
@@ -2134,7 +2124,7 @@ void downtown_state::metafox(machine_config &config)
 
 	// video hardware
 	screen_device &screen(SCREEN(config, "screen", SCREEN_TYPE_RASTER));
-	screen.set_refresh_hz(60);
+	screen.set_refresh_hz(59.1845); // for close to real hardware music tempo
 	screen.set_vblank_time(ATTOSECONDS_IN_USEC(0));
 	screen.set_size(64*8, 32*8);
 	screen.set_visarea(0*8, 48*8-1, 2*8, 30*8-1);
@@ -2648,20 +2638,20 @@ void downtown_state::init_metafox()
 
 ***************************************************************************/
 
-GAME( 1987, tndrcade,  0,        tndrcade,  tndrcade,  tndrcade_state, empty_init,     ROT270, "Seta (Taito license)",      "Thundercade / Twin Formation" , 0) // Title/License: DSW
-GAME( 1987, tndrcadej, tndrcade, tndrcade,  tndrcadj,  tndrcade_state, empty_init,     ROT270, "Seta (Taito license)",      "Tokusyu Butai U.A.G. (Japan)" , 0) // License: DSW
+GAME( 1987, tndrcade,  0,        tndrcade,  tndrcade,  tndrcade_state, empty_init,     ROT270, "Seta (Taito license)", "Thundercade / Twin Formation", 0) // Title/License: DSW
+GAME( 1987, tndrcadej, tndrcade, tndrcade,  tndrcadj,  tndrcade_state, empty_init,     ROT270, "Seta (Taito license)", "Tokusyu Butai U.A.G. (Japan)", 0) // License: DSW
 
-GAME( 1988, twineagl,  0,        twineagl,  twineagl,  downtown_state, init_twineagl,  ROT270, "Seta (Taito license)",      "Twin Eagle - Revenge Joe's Brother" , 0) // Country/License: DSW
+GAME( 1988, twineagl,  0,        twineagl,  twineagl,  downtown_state, init_twineagl,  ROT270, "Seta (Taito license)", "Twin Eagle - Revenge Joe's Brother", 0) // Country/License: DSW
 
-GAME( 1989, downtown,  0,        downtown,  downtown,  downtown_state, init_downtown,  ROT270, "Seta",                      "DownTown / Mokugeki (set 1)" , 0) // Country/License: DSW
-GAME( 1989, downtown2, downtown, downtown,  downtown,  downtown_state, init_downtown,  ROT270, "Seta",                      "DownTown / Mokugeki (set 2)" , 0) // Country/License: DSW
-GAME( 1989, downtownj, downtown, downtown,  downtown,  downtown_state, init_downtown,  ROT270, "Seta",                      "DownTown / Mokugeki (joystick hack)" , 0) // Country/License: DSW
-GAME( 1989, downtownp, downtown, downtown,  downtown,  downtown_state, init_downtown,  ROT270, "Seta",                      "DownTown / Mokugeki (prototype)" , 0) // Country/License: DSW
+GAME( 1989, downtown,  0,        downtown,  downtown,  downtown_state, init_downtown,  ROT270, "Seta",                 "DownTown / Mokugeki (set 1)", 0) // Country/License: DSW
+GAME( 1989, downtown2, downtown, downtown,  downtown,  downtown_state, init_downtown,  ROT270, "Seta",                 "DownTown / Mokugeki (set 2)", 0) // Country/License: DSW
+GAME( 1989, downtownj, downtown, downtown,  downtown,  downtown_state, init_downtown,  ROT270, "Seta",                 "DownTown / Mokugeki (joystick hack)", 0) // Country/License: DSW
+GAME( 1989, downtownp, downtown, downtown,  downtown,  downtown_state, init_downtown,  ROT270, "Seta",                 "DownTown / Mokugeki (prototype)", 0) // Country/License: DSW
 
-GAME( 1989, usclssic,  0,        usclssic,  usclssic,  usclssic_state, empty_init,     ROT270, "Seta",                      "U.S. Classic" , 0) // Country/License: DSW
+GAME( 1989, usclssic,  0,        usclssic,  usclssic,  usclssic_state, empty_init,     ROT270, "Seta",                 "U.S. Classic", 0) // Country/License: DSW
 
-GAME( 1989, calibr50,  0,        calibr50,  calibr50,  downtown_state, empty_init,     ROT270, "Athena / Seta",             "Caliber 50 (Ver. 1.01)" , 0) // Country/License: DSW
+GAME( 1989, calibr50,  0,        calibr50,  calibr50,  downtown_state, empty_init,     ROT270, "Seta",                 "Caliber 50 (Ver. 1.01)", 0) // Country/License: DSW
 
-GAME( 1989, arbalest,  0,        arbalest,  arbalest,  downtown_state, init_arbalest,  ROT270, "Jordan I.S. / Seta",        "Arbalester" , 0) // Developed by Jordan for Seta, Country/License: DSW
+GAME( 1989, arbalest,  0,        arbalest,  arbalest,  downtown_state, init_arbalest,  ROT270, "Jordan I.S. / Seta",   "Arbalester", 0) // Developed by Jordan for Seta, Country/License: DSW
 
-GAME( 1989, metafox,   0,        metafox,   metafox,   downtown_state, init_metafox,   ROT270, "Jordan I.S. / Seta",        "Meta Fox" , 0) // Developed by Jordan for Seta, Country/License: DSW
+GAME( 1989, metafox,   0,        metafox,   metafox,   downtown_state, init_metafox,   ROT270, "Jordan I.S. / Seta",   "Meta Fox", 0) // Developed by Jordan for Seta, Country/License: DSW

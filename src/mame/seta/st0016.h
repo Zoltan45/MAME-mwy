@@ -29,13 +29,13 @@ public:
 	void set_game_flag(u32 flag) { m_game_flag = flag; }
 
 	void draw_screen(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect);
-	u32 update(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect);
+	u32 screen_update(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect);
 
 protected:
 	// device-level overrides
-	virtual void device_add_mconfig(machine_config &config) override;
-	virtual void device_start() override;
-	virtual void device_reset() override;
+	virtual void device_add_mconfig(machine_config &config) override ATTR_COLD;
+	virtual void device_start() override ATTR_COLD;
+	virtual void device_reset() override ATTR_COLD;
 
 	const address_space_config m_io_space_config;
 	const address_space_config m_space_config;
@@ -102,9 +102,9 @@ private:
 	u8 m_vregs[0xc0];
 	u8 m_ramgfx;
 
-	void cpu_internal_io_map(address_map &map);
-	void cpu_internal_map(address_map &map);
-	void charam_map(address_map &map);
+	void cpu_internal_io_map(address_map &map) ATTR_COLD;
+	void cpu_internal_map(address_map &map) ATTR_COLD;
+	void charam_map(address_map &map) ATTR_COLD;
 };
 
 

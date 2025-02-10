@@ -30,8 +30,6 @@ FAQ-RUS: https://forum.tslabs.info/viewtopic.php?f=35&t=157
 TODO:
 - Ram cache
 - VDos
-- INTs not perfect. Currently all signals are invalidated after 32t(3.5MHz). Must only do so for frame, not scanline/DMA
-- Palette change in the middle of the frame e.g. zapili-c0
 
  ****************************************************************************/
 
@@ -42,6 +40,10 @@ TODO:
 #include "cpu/z80/z80.h"
 #include "sound/ay8910.h"
 #include "speaker.h"
+
+
+ALLOW_SAVE_TYPE(tsconf_state::gluk_ext);
+
 
 TILE_GET_INFO_MEMBER(tsconf_state::get_tile_info_txt)
 {
@@ -54,14 +56,13 @@ TILE_GET_INFO_MEMBER(tsconf_state::get_tile_info_txt)
 template <u8 Layer>
 TILE_GET_INFO_MEMBER(tsconf_state::get_tile_info_16c)
 {
-	u8 col_offset = (tile_index % tilemap.cols() + Layer * 64) << 1;
-	u16 row_offset = (tile_index / tilemap.cols() * 64 * 2) << 1;
+	const u8 col_offset = (tile_index & 0x03f) << 1;
+	const u16 row_offset = (tile_index & 0xfc0) << 2;
 
-	u8 *tile_info_addr = &m_ram->pointer()[(m_regs[T_MAP_PAGE] << 14) + row_offset + col_offset];
+	u8 *tile_info_addr = &m_ram->pointer()[(m_regs[T_MAP_PAGE] << 14) | row_offset | (Layer ? 0x80 : 0x00) | col_offset];
 	u8 hi = tile_info_addr[1];
 
-	u32 /*u16*/ tile = ((u16(hi) & 0x0f) << 8) | tile_info_addr[0];
-	tile = tile / tilemap.cols() * 64 * 8 + (tile % tilemap.cols()); // same as: tmp_tile_oversized_to_code()
+	u16 tile = ((u16(hi) & 0x0f) << 8) | tile_info_addr[0];
 	u8 pal = (BIT(m_regs[PAL_SEL], 4 + Layer * 2, 2) << 2) | BIT(hi, 4, 2);
 	tileinfo.set(TM_TILES0 + Layer, tile, pal, TILE_FLIPYX(BIT(hi, 6, 2)));
 	tileinfo.category = tile == 0 ? 2 : 1;
@@ -96,9 +97,9 @@ void tsconf_state::tsconf_io(address_map &map)
 	map(0xffdf, 0xffdf).lr8(NAME([this]() -> u8 { return ~m_io_mouse[1]->read(); }));
 	map(0x8ff7, 0x8ff7).select(0x7000).w(FUNC(tsconf_state::tsconf_port_f7_w)); // 3:bff7 5:dff7 6:eff7
 	map(0xbff7, 0xbff7).r(FUNC(tsconf_state::tsconf_port_f7_r));
-	map(0x00fb, 0x00fb).mirror(0xff00).w("cent_data_out", FUNC(output_latch_device::write));
-	map(0x8000, 0x8000).mirror(0x3ffd).lw8(NAME([this](u8 data) { return m_ay[m_ay_selected]->data_w(data); }));
-	map(0xc000, 0xc000).mirror(0x3ffd).lr8(NAME([this]() { return m_ay[m_ay_selected]->data_r(); }))
+	map(0x00fb, 0x00fb).mirror(0xff00).w(m_dac, FUNC(dac_byte_interface::data_w));
+	map(0x80fd, 0x80fd).mirror(0x3f00).lw8(NAME([this](u8 data) { return m_ay[m_ay_selected]->data_w(data); }));
+	map(0xc0fd, 0xc0fd).mirror(0x3f00).lr8(NAME([this]() { return m_ay[m_ay_selected]->data_r(); }))
 		.w(FUNC(tsconf_state::tsconf_ay_address_w));
 }
 
@@ -117,9 +118,9 @@ void tsconf_state::tsconf_bank_w(offs_t offset, u8 data)
 
 static const gfx_layout spectrum_charlayout =
 {
-	8, 8,          // 8 x 8 characters */
-	96,            // 96 characters */
-	1,             // 1 bits per pixel */
+	8, 8,          // 8 x 8 characters
+	96,            // 96 characters
+	1,             // 1 bits per pixel
 	{0},           // no bitplanes
 	{STEP8(0, 1)}, // x offsets
 	{STEP8(0, 8)}, // y offsets
@@ -137,24 +138,11 @@ static const gfx_layout tsconf_charlayout =
 	8 * 8
 };
 
-static const gfx_layout tsconf_tile_16cpp_layout =
-{
-	8,
-	8,
-	64 * 64 * 8,
-	4,
-	{STEP4(0, 1)},
-	{STEP8(0, 4)},
-	{STEP8(0, 256 * 8)},
-	// Much more tiles when needed. Because tiles are in RAW format but we don't know region properties.
-	8 * 4
-};
-
 static GFXDECODE_START(gfx_tsconf)
 	GFXDECODE_ENTRY("maincpu", 0, tsconf_charlayout, 0xf7, 1)         // TM_TS_CHAR : TXT
-	GFXDECODE_ENTRY("maincpu", 0, tsconf_tile_16cpp_layout, 0, 16)    // TM_TILES0  : T0 16cpp
-	GFXDECODE_ENTRY("maincpu", 0, tsconf_tile_16cpp_layout, 0, 16)    // TM_TILES1  : T1 16cpp
-	GFXDECODE_ENTRY("maincpu", 0, tsconf_tile_16cpp_layout, 0, 16)    // TM_SPRITES : Sprites 16cpp
+	GFXDECODE_RAM("tiles0_raw", 0, gfx_8x8x8_raw, 0, 16)              // TM_TILES0  : T0 16cpp
+	GFXDECODE_RAM("tiles1_raw", 0, gfx_8x8x8_raw, 0, 16)              // TM_TILES1  : T1 16cpp
+	GFXDECODE_RAM("sprites_raw", 0, gfx_8x8x8_raw, 0, 16)             // TM_SPRITES : Sprites 16cpp
 	GFXDECODE_ENTRY("maincpu", 0x1fd00, spectrum_charlayout, 0xf7, 1) // TM_ZX_CHAR
 GFXDECODE_END
 
@@ -167,9 +155,13 @@ void tsconf_state::video_start()
 
 	m_ts_tilemap[TM_TILES0] = &machine().tilemap().create(*m_gfxdecode, tilemap_get_info_delegate(*this, FUNC(tsconf_state::get_tile_info_16c<0>)), TILEMAP_SCAN_ROWS, 8, 8, 64, 64);
 	m_ts_tilemap[TM_TILES0]->set_transparent_pen(0);
+	m_gfxdecode->gfx(TM_TILES0)->set_granularity(16);
 
 	m_ts_tilemap[TM_TILES1] = &machine().tilemap().create(*m_gfxdecode, tilemap_get_info_delegate(*this, FUNC(tsconf_state::get_tile_info_16c<1>)), TILEMAP_SCAN_ROWS, 8, 8, 64, 64);
 	m_ts_tilemap[TM_TILES1]->set_transparent_pen(0);
+	m_gfxdecode->gfx(TM_TILES1)->set_granularity(16);
+
+	m_gfxdecode->gfx(TM_SPRITES)->set_granularity(16);
 
 	m_frame_irq_timer = timer_alloc(FUNC(tsconf_state::irq_frame), this);
 	m_scanline_irq_timer = timer_alloc(FUNC(tsconf_state::irq_scanline), this);
@@ -180,13 +172,18 @@ void tsconf_state::machine_start()
 	spectrum_128_state::machine_start();
 	m_maincpu->space(AS_PROGRAM).specific(m_program);
 
-	save_item(NAME(m_regs));
-	// TODO save'm'all!
-
 	// reconfigure ROMs
 	memory_region *rom = memregion("maincpu");
 	m_bank_rom[0]->configure_entries(0, rom->bytes() / 0x4000, rom->base(), 0x4000);
 	m_bank_ram[0]->configure_entries(0, m_ram->size() / 0x4000, m_ram->pointer(), 0x4000);
+
+	save_item(NAME(m_int_mask));
+	save_pointer(NAME(m_regs), 0x100);
+	save_item(NAME(m_zctl_di));
+	save_item(NAME(m_zctl_cs));
+	save_item(NAME(m_port_f7_ext));
+	save_item(NAME(m_gfx_y_frame_offset));
+	save_item(NAME(m_ay_selected));
 }
 
 void tsconf_state::machine_reset()
@@ -229,11 +226,21 @@ void tsconf_state::machine_reset()
 	m_zctl_di = 0xff;
 	m_ay_selected = 0;
 
+	m_sprites_cache.clear();
 	tsconf_update_bank0();
 	tsconf_update_video_mode();
 
 	m_keyboard->write(0xff);
 	while (m_keyboard->read() != 0) { /* invalidate buffer */ }
+}
+
+void tsconf_state::device_post_load()
+{
+	spectrum_128_state::device_post_load();
+	m_sprites_cache.clear();
+	copy_tiles_to_raw(m_ram->pointer() + ((m_regs[SG_PAGE] & 0xf8) << 14), m_sprites_raw.target());
+	copy_tiles_to_raw(m_ram->pointer() + ((m_regs[T0_G_PAGE] & 0xf8) << 14), m_sprites_raw.target());
+	copy_tiles_to_raw(m_ram->pointer() + ((m_regs[T1_G_PAGE] & 0xf8) << 14), m_sprites_raw.target());
 }
 
 INPUT_PORTS_START( tsconf )
@@ -280,7 +287,7 @@ void tsconf_state::tsconf(machine_config &config)
 
 	GLUKRS(config, m_glukrs);
 
-	TSCONF_DMA(config, m_dma, 14_MHz_XTAL / 2);
+	TSCONF_DMA(config, m_dma, 28_MHz_XTAL);
 	m_dma->in_mreq_callback().set(FUNC(tsconf_state::ram_read16));
 	m_dma->out_mreq_callback().set(FUNC(tsconf_state::ram_write16));
 	m_dma->in_spireq_callback().set(FUNC(tsconf_state::spi_read16));
@@ -290,6 +297,7 @@ void tsconf_state::tsconf(machine_config &config)
 
 	BETA_DISK(config, m_beta, 0);
 	SPI_SDCARD(config, m_sdcard, 0);
+	m_sdcard->set_prefer_sdhc();
 	m_sdcard->spi_miso_callback().set(FUNC(tsconf_state::tsconf_spi_miso_w));
 
 	SPEAKER(config, "lspeaker").front_left();
@@ -307,11 +315,9 @@ void tsconf_state::tsconf(machine_config &config)
 		.add_route(1, "rspeaker", 0.25)
 		.add_route(2, "rspeaker", 0.50);
 
-	CENTRONICS(config, m_centronics, centronics_devices, "covox");
-	output_latch_device &cent_data_out(OUTPUT_LATCH(config, "cent_data_out"));
-	m_centronics->set_output_latch(cent_data_out);
+	DAC_8BIT_R2R(config, m_dac, 0).add_route(ALL_OUTPUTS, "mono", 0.75);;
 
-	PALETTE(config, "palette", FUNC(tsconf_state::tsconf_palette), 256);
+	PALETTE(config, "palette", palette_device::BLACK, 256);
 	m_screen->set_raw(14_MHz_XTAL / 2, 448, with_hblank(0), 448, 320, with_vblank(0), 320);
 	m_screen->set_screen_update(FUNC(tsconf_state::screen_update));
 	m_screen->set_no_palette();
@@ -328,8 +334,14 @@ void tsconf_state::tsconf(machine_config &config)
 
 ROM_START(tsconf)
 	ROM_REGION(0x080000, "maincpu", ROMREGION_ERASEFF) // ROM: 32 * 16KB
-	ROM_LOAD("ts-bios.rom", 0, 0x10000, CRC(b060b0d9) SHA1(820d3539de115141daff220a3cb733fc880d1bab))
+	ROM_DEFAULT_BIOS("v2407")
+
+	ROM_SYSTEM_BIOS(0, "v1", "v1")
+	ROMX_LOAD("ts-bios.rom", 0, 0x10000, CRC(b060b0d9) SHA1(820d3539de115141daff220a3cb733fc880d1bab), ROM_BIOS(0))
+
+	ROM_SYSTEM_BIOS(1, "v2407", "Update 24.07.28")
+	ROMX_LOAD("ts-bios.240728.rom", 0, 0x10000, CRC(19f8ad7b) SHA1(9cee82d4a6212686358a50b0fd5a2981b3323ab6), ROM_BIOS(1))
 ROM_END
 
 //    YEAR  NAME    PARENT      COMPAT  MACHINE     INPUT       CLASS           INIT        COMPANY             FULLNAME                            FLAGS
-COMP( 2011, tsconf, spec128,    0,      tsconf,     tsconf,     tsconf_state,   empty_init, "NedoPC, TS-Labs",  "ZX Evolution: TS-Configuration",   0)
+COMP( 2011, tsconf, spec128,    0,      tsconf,     tsconf,     tsconf_state,   empty_init, "NedoPC, TS-Labs",  "ZX Evolution: TS-Configuration",   MACHINE_SUPPORTS_SAVE)

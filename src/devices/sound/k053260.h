@@ -36,9 +36,9 @@ public:
 
 protected:
 	// device-level overrides
-	virtual void device_start() override;
+	virtual void device_start() override ATTR_COLD;
 	virtual void device_clock_changed() override;
-	virtual void device_reset() override;
+	virtual void device_reset() override ATTR_COLD;
 
 	// sound stream update overrides
 	virtual void sound_stream_update(sound_stream &stream, std::vector<read_stream_view> const &inputs, std::vector<write_stream_view> &outputs) override;
@@ -57,8 +57,8 @@ private:
 	devcb_write_line m_sh2_cb;
 
 	// configuration
-	sound_stream *  m_stream;
-	emu_timer   *m_timer;
+	sound_stream *m_stream;
+	emu_timer    *m_timer;
 
 	// live state
 	u8           m_portdata[4];

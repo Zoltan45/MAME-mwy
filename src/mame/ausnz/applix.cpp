@@ -89,8 +89,8 @@ public:
 	void init_applix();
 
 private:
-	virtual void machine_reset() override;
-	virtual void machine_start() override;
+	virtual void machine_reset() override ATTR_COLD;
+	virtual void machine_start() override ATTR_COLD;
 	u16 applix_inputs_r();
 	void palette_w(offs_t offset, u16 data, u16 mem_mask = ~0);
 	void analog_latch_w(u16 data);
@@ -135,11 +135,11 @@ private:
 	u8 m_palette_latch[4]{};
 	required_shared_ptr<u16> m_base;
 
-	void main_mem(address_map &map);
-	void keytronic_pc3270_io(address_map &map);
-	void keytronic_pc3270_program(address_map &map);
-	void sub_io(address_map &map);
-	void sub_mem(address_map &map);
+	void main_mem(address_map &map) ATTR_COLD;
+	void keytronic_pc3270_io(address_map &map) ATTR_COLD;
+	void keytronic_pc3270_program(address_map &map) ATTR_COLD;
+	void sub_io(address_map &map) ATTR_COLD;
+	void sub_mem(address_map &map) ATTR_COLD;
 
 	u8 m_pb = 0U;
 	u8 m_analog_latch = 0U;
@@ -909,7 +909,7 @@ void applix_state::applix(machine_config &config)
 	FLOPPY_CONNECTOR(config, m_floppy[1], applix_floppies, "35dd", applix_state::floppy_formats).enable_sound(true);
 	TIMER(config, "applix_c").configure_periodic(FUNC(applix_state::cass_timer), attotime::from_hz(100000));
 
-	scc8530_device &scc(SCC8530N(config, "scc", 30_MHz_XTAL / 8));
+	scc8530_device &scc(SCC8530(config, "scc", 30_MHz_XTAL / 8));
 	scc.out_txda_callback().set("serial_a", FUNC(rs232_port_device::write_txd));
 	scc.out_rtsa_callback().set("serial_a", FUNC(rs232_port_device::write_rts));
 	scc.out_dtra_callback().set("serial_a", FUNC(rs232_port_device::write_dtr));

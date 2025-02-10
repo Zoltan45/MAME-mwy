@@ -9,8 +9,7 @@
 #include "cpu/mips/mips1.h"
 #include "machine/eepromser.h"
 #include "sound/bsmt2000.h"
-#include "video/ramdac.h"
-#include "emupal.h"
+#include "video/bt48x.h"
 #include "screen.h"
 #include "speaker.h"
 
@@ -37,7 +36,6 @@ protected:
 		m_rspeaker(*this, "rspeaker"),
 		m_eeprom(*this, "eeprom"),
 		m_screen(*this, "screen"),
-		m_palette(*this, "palette"),
 		m_ramdac(*this, "ramdac"),
 		m_leds(*this, "leds%u", 0U),
 		m_gun_x_io(*this, "GUNX%u", 1U),
@@ -46,12 +44,10 @@ protected:
 		m_speedup_addr(speedup_addr) { }
 
 	virtual void driver_start() override;
-	virtual void machine_start() override;
-	virtual void video_start() override;
+	virtual void machine_start() override ATTR_COLD;
+	virtual void video_start() override ATTR_COLD;
 
-	void mem(address_map &map);
-
-	void ramdac_map(address_map& map);
+	void mem(address_map &map) ATTR_COLD;
 
 	void control_w(offs_t offset, uint32_t data, uint32_t mem_mask = ~0);
 	void speedup_w(offs_t offset, uint32_t data, uint32_t mem_mask = ~0);
@@ -75,8 +71,7 @@ protected:
 	required_device<speaker_device> m_rspeaker;
 	required_device<eeprom_serial_93cxx_device> m_eeprom;
 	required_device<screen_device> m_screen;
-	required_device<palette_device> m_palette;
-	required_device<ramdac_device> m_ramdac;
+	required_device<bt481_device> m_ramdac;
 
 	enum
 	{
@@ -128,7 +123,7 @@ protected:
 		: policetr_state(mconfig, type, tag, speedup_pc, speedup_addr)
 	{ }
 
-	void mem(address_map &map);
+	void mem(address_map &map) ATTR_COLD;
 };
 
 class sshoot17_state : public sshooter_state

@@ -36,12 +36,10 @@ address lines), and then reading it from the 051962.
 - misc interface stuff
 - ROM bank selector (CAB1-CAB2)
 - character "code" (VC0-VC10)
-- character "color" (COL0-COL7); used foc color but also bank switching and tile
-  flipping. Exact meaning depends on externl connections. All evidence indicates
-  that COL2 and COL3 select the tile bank, and are replaced with the low 2 bits
-  from the bank register. The top 2 bits of the register go to CAB1-CAB2.
-  However, this DOES NOT WORK with Gradius III. "color" seems to pass through
-  unaltered.
+- character "color" (COL0-COL7); used for color but also bank switching and tile
+  flipping. Exact meaning depends on external connections. COL2 and COL3 select
+  the tile bank, and may be replaced with the low 2 bits from the bank register.
+  The top 2 bits of the register go to CAB1-CAB2.
 - layer A horizontal scroll (ZA1H-ZA4H)
 - layer B horizontal scroll (ZB1H-ZB4H)
 - ????? (BEN)
@@ -74,7 +72,17 @@ address lines), and then reading it from the 051962.
 1000-17ff: layer B tilemap (attributes)
 180c-1833: A y scroll
 1a00-1bff: A x scroll
-1c00     : ?
+1c00     : Maps the three 8kB RAM chips to memory addresses.
+            ------xx select the configuration from this table
+               RAM0 RAM1 RAM2
+            00 A~B  6~7  8~9  Reset state
+            01 8~9  4~5  6~7
+            10 6~7  2~3  4~5
+            11 4~5  0~1  2~3  TMNT setting
+            ---xxx-- affects how RAMs are accessed
+            -x------
+                     0 = replace bits 5:4 of color attribute by bits 1:0
+                     1 = do not alter color attribute (gradius3,xmen)
 1c80     : row/column scroll control
            ------xx layer A row scroll
                     00 = disabled
@@ -164,8 +172,8 @@ GFXDECODE_MEMBER( k052109_device::gfxinfo_ram )
 GFXDECODE_END
 
 
-k052109_device::k052109_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock)
-	: device_t(mconfig, K052109, tag, owner, clock),
+k052109_device::k052109_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock) :
+	device_t(mconfig, K052109, tag, owner, clock),
 	device_gfx_interface(mconfig, *this, gfxinfo),
 	device_video_interface(mconfig, *this, false),
 	m_ram(nullptr),
@@ -257,13 +265,15 @@ void k052109_device::device_start()
 	m_tilemap[2]->set_scrolldy(m_dy, m_dy);
 
 	save_pointer(NAME(m_ram), 0x6000);
-	save_item(NAME(m_rmrd_line));
-	save_item(NAME(m_romsubbank));
-	save_item(NAME(m_scrollctrl));
-	save_item(NAME(m_irq_enabled));
+	save_item(NAME(m_tileflip_enable));
 	save_item(NAME(m_charrombank));
 	save_item(NAME(m_charrombank_2));
 	save_item(NAME(m_has_extra_video_ram));
+	save_item(NAME(m_rmrd_line));
+	save_item(NAME(m_irq_enabled));
+	save_item(NAME(m_romsubbank));
+	save_item(NAME(m_scrollctrl));
+	save_item(NAME(m_addrmap));
 }
 
 //-------------------------------------------------
@@ -276,7 +286,7 @@ void k052109_device::device_reset()
 	m_irq_enabled = 0;
 	m_romsubbank = 0;
 	m_scrollctrl = 0;
-
+	m_addrmap    = 0;
 	m_has_extra_video_ram = 0;
 
 	for (int i = 0; i < 4; i++)
@@ -377,6 +387,10 @@ void k052109_device::write(offs_t offset, u8 data)
 		{   /* A y scroll */    }
 		else if (offset >= 0x1a00 && offset < 0x1c00)
 		{   /* A x scroll */    }
+		else if (offset == 0x1c00)
+		{
+			m_addrmap = data;
+		}
 		else if (offset == 0x1c80)
 		{
 			if (m_scrollctrl != data)
@@ -503,10 +517,11 @@ void k052109_device::tilemap_update( )
 
 #if 0
 	popmessage("%x %x %x %x",
-		m_charrombank[0],
-		m_charrombank[1],
-		m_charrombank[2],
-		m_charrombank[3]);
+			m_charrombank[0],
+			m_charrombank[1],
+			m_charrombank[2],
+			m_charrombank[3]);
+	//popmessage("%x",m_addrmap);
 #endif
 
 	// note: this chip can do both per-column and per-row scroll in the same time, currently not emulated.
@@ -653,6 +668,12 @@ void k052109_device::tilemap_draw( screen_device &screen, bitmap_ind16 &bitmap, 
 	m_tilemap[tmap_num]->draw(screen, bitmap, cliprect, flags, priority);
 }
 
+void k052109_device::mark_tilemap_dirty( uint8_t tmap_num )
+{
+	assert(tmap_num <= 2);
+	m_tilemap[tmap_num]->mark_all_dirty();
+}
+
 
 /***************************************************************************
 
@@ -679,10 +700,11 @@ void k052109_device::get_tile_info( tile_data &tileinfo, int tile_index, int lay
 	int flags = 0;
 	int priority = 0;
 	int bank = m_charrombank[(color & 0x0c) >> 2];
-	if (m_has_extra_video_ram)
-		bank = (color & 0x0c) >> 2; /* kludge for X-Men */
+	if (!BIT(m_addrmap,6))
+	{
+		color = (color & 0xf3) | ((bank & 0x03) << 2);
+	}
 
-	color = (color & 0xf3) | ((bank & 0x03) << 2);
 	bank >>= 2;
 
 	flipy = color & 0x02;

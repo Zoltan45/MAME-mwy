@@ -174,8 +174,8 @@ private:
 	optional_device<i82586_device> m_edlc;
 	required_shared_ptr<uint16_t> m_bw2_vram;
 
-	virtual void machine_start() override;
-	virtual void machine_reset() override;
+	virtual void machine_start() override ATTR_COLD;
+	virtual void machine_reset() override ATTR_COLD;
 
 	uint16_t mmu_r(offs_t offset, uint16_t mem_mask = ~0);
 	void mmu_w(offs_t offset, uint16_t data, uint16_t mem_mask = ~0);
@@ -193,16 +193,16 @@ private:
 
 	uint32_t bw2_update(screen_device &screen, bitmap_rgb32 &bitmap, const rectangle &cliprect);
 
-	void mbustype0space_map(address_map &map);
-	void mbustype1space_map(address_map &map);
-	void mbustype2space_map(address_map &map);
-	void mbustype3space_map(address_map &map);
-	void sun2_mem(address_map &map);
-	void edlc_mem(address_map &map);
-	void vmetype0space_map(address_map &map);
-	void vmetype1space_map(address_map &map);
-	void vmetype2space_map(address_map &map);
-	void vmetype3space_map(address_map &map);
+	void mbustype0space_map(address_map &map) ATTR_COLD;
+	void mbustype1space_map(address_map &map) ATTR_COLD;
+	void mbustype2space_map(address_map &map) ATTR_COLD;
+	void mbustype3space_map(address_map &map) ATTR_COLD;
+	void sun2_mem(address_map &map) ATTR_COLD;
+	void edlc_mem(address_map &map) ATTR_COLD;
+	void vmetype0space_map(address_map &map) ATTR_COLD;
+	void vmetype1space_map(address_map &map) ATTR_COLD;
+	void vmetype2space_map(address_map &map) ATTR_COLD;
+	void vmetype3space_map(address_map &map) ATTR_COLD;
 
 	uint16_t *m_rom_ptr, *m_ram_ptr;
 	uint8_t *m_idprom_ptr;
@@ -720,8 +720,8 @@ void sun2_state::sun2vme(machine_config &config)
 
 	INPUT_MERGER_ANY_HIGH(config, "irq5").output_handler().set_inputline(m_maincpu, M68K_IRQ_5); // 74LS05 open collectors
 
-	SCC8530N(config, SCC1_TAG, 19.6608_MHz_XTAL / 4);
-	scc8530_device& scc2(SCC8530N(config, SCC2_TAG, 19.6608_MHz_XTAL / 4));
+	SCC8530(config, SCC1_TAG, 19.6608_MHz_XTAL / 4);
+	scc8530_device& scc2(SCC8530(config, SCC2_TAG, 19.6608_MHz_XTAL / 4));
 	scc2.out_txda_callback().set(RS232A_TAG, FUNC(rs232_port_device::write_txd));
 	scc2.out_txdb_callback().set(RS232B_TAG, FUNC(rs232_port_device::write_txd));
 	scc2.out_int_callback().set_inputline(m_maincpu, M68K_IRQ_6);
@@ -772,8 +772,8 @@ void sun2_state::sun2mbus(machine_config &config)
 
 	INPUT_MERGER_ANY_HIGH(config, "irq5").output_handler().set_inputline(m_maincpu, M68K_IRQ_5); // 74LS05 open collectors
 
-	SCC8530N(config, SCC1_TAG, 39.3216_MHz_XTAL / 8);
-	scc8530_device& scc2(SCC8530N(config, SCC2_TAG, 39.3216_MHz_XTAL / 8));
+	SCC8530(config, SCC1_TAG, 39.3216_MHz_XTAL / 8);
+	scc8530_device& scc2(SCC8530(config, SCC2_TAG, 39.3216_MHz_XTAL / 8));
 	scc2.out_txda_callback().set(RS232A_TAG, FUNC(rs232_port_device::write_txd));
 	scc2.out_txdb_callback().set(RS232B_TAG, FUNC(rs232_port_device::write_txd));
 	scc2.out_int_callback().set_inputline(m_maincpu, M68K_IRQ_6);

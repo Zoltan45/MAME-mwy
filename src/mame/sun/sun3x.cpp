@@ -130,6 +130,7 @@
 
 #include "bus/nscsi/cd.h"
 #include "bus/nscsi/hd.h"
+#include "bus/nscsi/tape.h"
 #include "cpu/m68000/m68030.h"
 #include "imagedev/floppy.h"
 #include "machine/icm7170.h"
@@ -185,7 +186,7 @@ private:
 	optional_device<ncr53c90_device> m_esp;
 	optional_device<n82077aa_device> m_fdc;
 	optional_device<floppy_connector> m_floppy_connector;
-	virtual void machine_reset() override;
+	virtual void machine_reset() override ATTR_COLD;
 
 	required_shared_ptr<uint32_t> m_p_ram;
 	optional_shared_ptr<uint32_t> m_bw2_vram;
@@ -218,8 +219,8 @@ private:
 
 	uint32_t bw2_update(screen_device &screen, bitmap_rgb32 &bitmap, const rectangle &cliprect);
 
-	void sun3_460_mem(address_map &map);
-	void sun3_80_mem(address_map &map);
+	void sun3_460_mem(address_map &map) ATTR_COLD;
+	void sun3_80_mem(address_map &map) ATTR_COLD;
 
 	uint32_t m_enable = 0, m_buserr = 0, m_diag = 0, m_printer = 0, m_irqctrl = 0, m_memreg = 0, m_memerraddr = 0;
 	uint32_t m_iommu[0x800]{};
@@ -592,6 +593,7 @@ static void scsi_devices(device_slot_interface &device)
 {
 	device.option_add("cdrom", NSCSI_CDROM);
 	device.option_add("harddisk", NSCSI_HARDDISK);
+	device.option_add("tape", NSCSI_TAPE);
 	device.set_option_machine_config("cdrom", sun_cdrom);
 }
 
@@ -603,14 +605,14 @@ void sun3x_state::sun3_80(machine_config &config)
 
 	M48T02(config, TIMEKEEPER_TAG, 0);
 
-	SCC8530N(config, m_scc1, 4.9152_MHz_XTAL);
+	SCC8530(config, m_scc1, 4.9152_MHz_XTAL);
 	m_scc1->out_txda_callback().set(KEYBOARD_TAG, FUNC(sun_keyboard_port_device::write_txd));
 	m_scc1->out_txdb_callback().set(MOUSE_TAG, FUNC(sun_mouse_port_device::write_txd));
 
 	SUNKBD_PORT(config, KEYBOARD_TAG, default_sun_keyboard_devices, "type3hle").rxd_handler().set(m_scc1, FUNC(z80scc_device::rxa_w));
 	SUNMOUSE_PORT(config, MOUSE_TAG, default_sun_mouse_devices, "hle1200").rxd_handler().set(m_scc1, FUNC(z80scc_device::rxb_w));
 
-	SCC8530N(config, m_scc2, 4.9152_MHz_XTAL);
+	SCC8530(config, m_scc2, 4.9152_MHz_XTAL);
 	m_scc2->out_txda_callback().set(RS232A_TAG, FUNC(rs232_port_device::write_txd));
 	m_scc2->out_txdb_callback().set(RS232B_TAG, FUNC(rs232_port_device::write_txd));
 
@@ -629,7 +631,7 @@ void sun3x_state::sun3_80(machine_config &config)
 	NSCSI_CONNECTOR(config, "scsibus:1", scsi_devices, "harddisk");
 	NSCSI_CONNECTOR(config, "scsibus:2", scsi_devices, nullptr);
 	NSCSI_CONNECTOR(config, "scsibus:3", scsi_devices, nullptr);
-	NSCSI_CONNECTOR(config, "scsibus:4", scsi_devices, nullptr);
+	NSCSI_CONNECTOR(config, "scsibus:4", scsi_devices, "tape");
 	NSCSI_CONNECTOR(config, "scsibus:5", scsi_devices, nullptr);
 	NSCSI_CONNECTOR(config, "scsibus:6", scsi_devices, "cdrom");
 	NSCSI_CONNECTOR(config, "scsibus:7").option_set("esp", NCR53C90).clock(20000000/2); // Emulex 2400138 (68-pin PLCC)
@@ -655,8 +657,8 @@ void sun3x_state::sun3_460(machine_config &config)
 
 	ICM7170(config, "rtc", 32768).irq().set_inputline(m_maincpu, M68K_IRQ_7);
 
-	SCC8530N(config, m_scc1, 4.9152_MHz_XTAL);
-	SCC8530N(config, m_scc2, 4.9152_MHz_XTAL);
+	SCC8530(config, m_scc1, 4.9152_MHz_XTAL);
+	SCC8530(config, m_scc2, 4.9152_MHz_XTAL);
 	m_scc2->out_txda_callback().set(RS232A_TAG, FUNC(rs232_port_device::write_txd));
 	m_scc2->out_txdb_callback().set(RS232B_TAG, FUNC(rs232_port_device::write_txd));
 

@@ -69,8 +69,8 @@ protected:
 	cvsd_device_base(const machine_config &mconfig, device_type type, const char *tag, device_t *owner, uint32_t clock, bool active_clock_edge, uint8_t shiftreg_mask);
 
 	// device-level overrides
-	virtual void device_start() override;
-	virtual void device_reset() override;
+	virtual void device_start() override ATTR_COLD;
+	virtual void device_reset() override ATTR_COLD;
 	//virtual void device_clock_changed() override;
 
 	// sound stream update overrides
@@ -90,8 +90,6 @@ protected:
 	bool m_last_clock_state;
 	bool m_buffered_bit;
 	uint8_t m_shiftreg;
-	stream_buffer::sample_t m_curr_sample;
-	stream_buffer::sample_t m_next_sample;
 	uint32_t m_samples_generated;
 
 	// specific internal handler overrides, overridden by each chip
@@ -127,8 +125,8 @@ protected:
 	hc55516_device(const machine_config &mconfig, device_type type, const char *tag, device_t *owner, uint32_t clock, uint32_t sylmask, int32_t sylshift, int32_t syladd, int32_t intshift);
 
 	// device-level overrides
-	virtual void device_start() override;
-	virtual void device_reset() override;
+	virtual void device_start() override ATTR_COLD;
+	virtual void device_reset() override ATTR_COLD;
 
 	// sound stream update overrides
 	virtual void sound_stream_update(sound_stream &stream, std::vector<read_stream_view> const &inputs, std::vector<write_stream_view> &outputs) override;
@@ -146,6 +144,7 @@ protected:
 	// internal state
 	int32_t m_sylfilter;
 	int32_t m_intfilter;
+	int16_t m_next_sample;
 	bool m_agc;
 	bool m_buffered_fzq;
 
@@ -160,7 +159,7 @@ public:
 	hc55532_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock);
 protected:
 	// device-level overrides
-	virtual void device_reset() override;
+	virtual void device_reset() override ATTR_COLD;
 };
 
 
@@ -177,7 +176,7 @@ protected:
 	mc3417_device(const machine_config &mconfig, device_type type, const char *tag, device_t *owner, uint32_t clock, uint8_t shiftreg_mask);
 
 	// device-level overrides
-	virtual void device_start() override;
+	virtual void device_start() override ATTR_COLD;
 
 	// sound stream update overrides
 	virtual void sound_stream_update(sound_stream &stream, std::vector<read_stream_view> const &inputs, std::vector<write_stream_view> &outputs) override;
@@ -189,8 +188,10 @@ protected:
 	const double m_leak;
 
 	// internal state
-	double m_sylfilter_d;
-	double m_intfilter_d;
+	double m_sylfilter;
+	double m_intfilter;
+	stream_buffer::sample_t m_curr_sample;
+	stream_buffer::sample_t m_next_sample;
 
 	// internal handlers
 	virtual void process_bit(bool bit, bool clock_state) override;

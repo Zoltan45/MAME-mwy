@@ -28,7 +28,7 @@ protected:
 	bbd_device_base(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock, device_type type);
 
 	// device-level overrides
-	virtual void device_start() override;
+	virtual void device_start() override ATTR_COLD;
 	virtual void device_clock_changed() override;
 
 	// sound stream update overrides
@@ -89,5 +89,16 @@ public:
 };
 
 DECLARE_DEVICE_TYPE(MN3204P, mn3204p_device)
+
+
+// ======================> mn3207_device
+
+class mn3207_device : public bbd_device_base<1024, 2>
+{
+public:
+	mn3207_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock = 0);
+};
+
+DECLARE_DEVICE_TYPE(MN3207, mn3207_device)
 
 #endif // MAME_SOUND_BBD_H

@@ -30,9 +30,9 @@ public:
 	void chinmoku(machine_config &config);
 	void msjiken(machine_config &config);
 	void hnageman(machine_config &config);
-	void mjcamerb(machine_config &config);
+	void mjcamera(machine_config &config);
 	void mjnanpas(machine_config &config);
-	void mmcamera(machine_config &config);
+	void mjcameram(machine_config &config);
 	void pairsnb(machine_config &config);
 	void taiwanmb(machine_config &config);
 	void hanaoji(machine_config &config);
@@ -113,7 +113,7 @@ private:
 	void taiwanmb_gfxflag_w(uint8_t data);
 	void taiwanmb_mcu_w(uint8_t data);
 
-	virtual void video_start() override;
+	virtual void video_start() override ATTR_COLD;
 	DECLARE_VIDEO_START(_1layer);
 
 	uint32_t screen_update(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect);
@@ -125,30 +125,30 @@ private:
 	void common_save_state();
 	void postload();
 
-	void bananadr_io_map(address_map &map);
-	void club90s_map(address_map &map);
-	void gionbana_io_map(address_map &map);
-	void gionbana_map(address_map &map);
-	void hanamomo_io_map(address_map &map);
-	void hanamomo_map(address_map &map);
-	void hanaoji_map(address_map &map);
-	void hnageman_map(address_map &map);
-	void hnxmasev_map(address_map &map);
-	void lovehous_io_map(address_map &map);
-	void lovehous_map(address_map &map);
-	void maiko_io_map(address_map &map);
-	void maiko_map(address_map &map);
-	void mgion_io_map(address_map &map);
-	void mgion_map(address_map &map);
-	void mmaiko_map(address_map &map);
-	void msjiken_io_map(address_map &map);
-	void omotesnd_io_map(address_map &map);
-	void omotesnd_map(address_map &map);
-	void scandal_io_map(address_map &map);
-	void scandalm_io_map(address_map &map);
-	void scandalm_map(address_map &map);
-	void taiwanmb_io_map(address_map &map);
-	void taiwanmb_map(address_map &map);
+	void bananadr_io_map(address_map &map) ATTR_COLD;
+	void club90s_map(address_map &map) ATTR_COLD;
+	void gionbana_io_map(address_map &map) ATTR_COLD;
+	void gionbana_map(address_map &map) ATTR_COLD;
+	void hanamomo_io_map(address_map &map) ATTR_COLD;
+	void hanamomo_map(address_map &map) ATTR_COLD;
+	void hanaoji_map(address_map &map) ATTR_COLD;
+	void hnageman_map(address_map &map) ATTR_COLD;
+	void hnxmasev_map(address_map &map) ATTR_COLD;
+	void lovehous_io_map(address_map &map) ATTR_COLD;
+	void lovehous_map(address_map &map) ATTR_COLD;
+	void maiko_io_map(address_map &map) ATTR_COLD;
+	void maiko_map(address_map &map) ATTR_COLD;
+	void mgion_io_map(address_map &map) ATTR_COLD;
+	void mgion_map(address_map &map) ATTR_COLD;
+	void mmaiko_map(address_map &map) ATTR_COLD;
+	void msjiken_io_map(address_map &map) ATTR_COLD;
+	void omotesnd_io_map(address_map &map) ATTR_COLD;
+	void omotesnd_map(address_map &map) ATTR_COLD;
+	void scandal_io_map(address_map &map) ATTR_COLD;
+	void scandalm_io_map(address_map &map) ATTR_COLD;
+	void scandalm_map(address_map &map) ATTR_COLD;
+	void taiwanmb_io_map(address_map &map) ATTR_COLD;
+	void taiwanmb_map(address_map &map) ATTR_COLD;
 
 	TIMER_CALLBACK_MEMBER(clear_busy_flag);
 };

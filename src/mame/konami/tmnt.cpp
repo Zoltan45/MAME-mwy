@@ -143,8 +143,8 @@ public:
 	void init_cuebrick();
 
 protected:
-	virtual void machine_start() override;
-	virtual void machine_reset() override;
+	virtual void machine_start() override ATTR_COLD;
+	virtual void machine_reset() override ATTR_COLD;
 
 private:
 	// memory pointers
@@ -198,12 +198,12 @@ private:
 	K052109_CB_MEMBER(tmnt_tile_callback);
 	SAMPLES_START_CB_MEMBER(tmnt_decode_sample);
 
-	void cuebrick_main_map(address_map &map);
-	void mia_audio_map(address_map &map);
-	void mia_main_map(address_map &map);
-	void tmnt_audio_map(address_map &map);
-	void tmntucbl_audio_map(address_map &map);
-	void tmnt_main_map(address_map &map);
+	void cuebrick_main_map(address_map &map) ATTR_COLD;
+	void mia_audio_map(address_map &map) ATTR_COLD;
+	void mia_main_map(address_map &map) ATTR_COLD;
+	void tmnt_audio_map(address_map &map) ATTR_COLD;
+	void tmntucbl_audio_map(address_map &map) ATTR_COLD;
+	void tmnt_main_map(address_map &map) ATTR_COLD;
 };
 
 uint16_t tmnt_state::k052109_word_noA12_r(offs_t offset, uint16_t mem_mask)
@@ -312,7 +312,7 @@ K052109_CB_MEMBER(tmnt_state::cuebrick_tile_callback)
 	if ((m_k052109->get_rmrd_line() == CLEAR_LINE) && (layer == 0))
 	{
 		*code |= ((*color & 0x01) << 8);
-		*color = m_layer_colorbase[layer]  + ((*color & 0x0e) >> 1);
+		*color = m_layer_colorbase[layer] + ((*color & 0x0e) >> 1);
 	}
 	else
 	{

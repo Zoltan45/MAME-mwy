@@ -70,7 +70,7 @@
   - U1 : 40-pin IC  YES   CPU         MOTOROLA M6809EP               8-bit microprocessor.
   - U2 : 28-pin IC  YES   ROM         M27128A (or M27512FI)          NMOS 128K 16K x 8 UV EPROM (or 64K x 8).
   - U3 : 28-pin IC  YES   ROM         M27128A (or M27512FI)          NMOS 128K 16K x 8 UV EPROM (or 64K x 8).
-  - U4 : 40-pin IC  YES   I/O         EF6821P                        PIA: Peripheral Interface Adapter.
+  - U4 : 40-pin IC  YES   I/O         MC6821P                        PIA: Peripheral Interface Adapter.
   - U5 : 16-pin IC  YES   TTL         74HC157                        Quad 2 Channel Multiplexer.
   - U6 : 16-pin IC  YES   TTL         74HC157                        Quad 2 Channel Multiplexer.
   - U7 : 16-pin IC  YES   TTL         74HC157                        Quad 2 Channel Multiplexer.
@@ -236,8 +236,8 @@ public:
 	void truco(machine_config &config);
 
 protected:
-	virtual void machine_start() override;
-	virtual void machine_reset() override;
+	virtual void machine_start() override ATTR_COLD;
+	virtual void machine_reset() override ATTR_COLD;
 
 private:
 	required_device<cpu_device> m_maincpu;
@@ -263,7 +263,7 @@ private:
 	uint32_t screen_update(screen_device &screen, bitmap_rgb32 &bitmap, const rectangle &cliprect);
 
 	INTERRUPT_GEN_MEMBER(interrupt);
-	void main_map(address_map &map);
+	void main_map(address_map &map) ATTR_COLD;
 };
 
 

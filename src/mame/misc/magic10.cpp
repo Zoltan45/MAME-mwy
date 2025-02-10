@@ -153,7 +153,6 @@ Both setups show different variants for components layout, memory size, NVRAM, e
     blue scrolling diagonally. The blocks are out of alignment which is caused by
     update_screen doing m_tilemap[1]->set_scrollx(0, (m_vregs[2 / 2] - m_vregs[6 / 2]) + 4)
     Removing the +4 fixes the problem but does it cause other issues ?
-  - soccer10 needs correct GFX decode
 
 
 ****************************************************************************/
@@ -193,7 +192,7 @@ public:
 
 
 protected:
-	virtual void video_start() override;
+	virtual void video_start() override ATTR_COLD;
 
 	void base(machine_config &config);
 	template <uint8_t Which> void videoram_w(offs_t offset, uint16_t data, uint16_t mem_mask = ~0);
@@ -241,9 +240,9 @@ private:
 	output_finder<8> m_lamps;
 
 	void out_w(uint16_t data);
-	void magic10_map(address_map &map);
-	void magic10a_map(address_map &map);
-	void sgsafari_map(address_map &map);
+	void magic10_map(address_map &map) ATTR_COLD;
+	void magic10a_map(address_map &map) ATTR_COLD;
+	void sgsafari_map(address_map &map) ATTR_COLD;
 };
 
 class magic102_state : public magic10_base_state
@@ -266,7 +265,7 @@ private:
 	uint16_t r();
 	uint16_t m_ret = 0;
 
-	void map(address_map &map);
+	void map(address_map &map) ATTR_COLD;
 };
 
 class hotslot_state : public magic10_state
@@ -284,7 +283,7 @@ private:
 	uint16_t copro_r();
 	void copro_w(uint16_t data);
 
-	void map(address_map &map);
+	void map(address_map &map) ATTR_COLD;
 };
 
 
@@ -305,7 +304,7 @@ protected:
 
 private:
 	void out_w(uint16_t data);
-	void spetrix_map(address_map &map);
+	void spetrix_map(address_map &map) ATTR_COLD;
 };
 
 /***************************
@@ -605,7 +604,7 @@ static INPUT_PORTS_START( magic10 )
 	PORT_BIT( 0x0400, IP_ACTIVE_LOW, IPT_COIN3 ) PORT_NAME("Note B")
 	PORT_BIT( 0x0800, IP_ACTIVE_LOW, IPT_COIN4 ) PORT_NAME("Note C")
 	PORT_SERVICE_NO_TOGGLE( 0x1000, IP_ACTIVE_LOW )
-	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("ticket", ticket_dispenser_device, line_r)
+	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("ticket", FUNC(ticket_dispenser_device::line_r))
 	PORT_BIT( 0x4000, IP_ACTIVE_LOW, IPT_COIN5 ) PORT_NAME("Note D") PORT_CODE(KEYCODE_9)
 	PORT_BIT( 0x8000, IP_ACTIVE_LOW, IPT_GAMBLE_PAYOUT ) PORT_NAME("Collect")
 
@@ -613,7 +612,7 @@ static INPUT_PORTS_START( magic10 )
 	PORT_DIPNAME( 0x0001, 0x0001, "Display Logo" )
 	PORT_DIPSETTING(      0x0000, DEF_STR( No ) )
 	PORT_DIPSETTING(      0x0001, DEF_STR( Yes ) )
-	PORT_BIT( 0x0002, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("hopper", ticket_dispenser_device, line_r)
+	PORT_BIT( 0x0002, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("hopper", FUNC(ticket_dispenser_device::line_r))
 	PORT_DIPNAME( 0x0008, 0x0008, "Clear NVRAM" ) // Needs to enabled by other DSW
 	PORT_DIPSETTING(      0x0000, DEF_STR( On ))
 	PORT_DIPSETTING(      0x0008, DEF_STR( Off ))
@@ -698,7 +697,7 @@ static INPUT_PORTS_START( musicsrt )
 	PORT_BIT( 0x0400, IP_ACTIVE_LOW, IPT_COIN3 ) PORT_NAME("Aux A")
 	PORT_BIT( 0x0800, IP_ACTIVE_LOW, IPT_COIN4 ) PORT_NAME("Aux B")
 	PORT_SERVICE_NO_TOGGLE( 0x1000, IP_ACTIVE_LOW )
-	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("ticket", ticket_dispenser_device, line_r)
+	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("ticket", FUNC(ticket_dispenser_device::line_r))
 	PORT_BIT( 0x4000, IP_ACTIVE_LOW, IPT_COIN5 ) PORT_NAME("Aux C") PORT_CODE(KEYCODE_9)
 	PORT_BIT( 0x8000, IP_ACTIVE_LOW, IPT_GAMBLE_PAYOUT ) PORT_NAME("OK")
 
@@ -736,7 +735,7 @@ static INPUT_PORTS_START( hotslot )
 	PORT_BIT( 0x0010, IP_ACTIVE_LOW, IPT_GAMBLE_HALF ) PORT_NAME("1/2 Win")
 	PORT_BIT( 0x0020, IP_ACTIVE_LOW, IPT_START1 )
 	PORT_BIT( 0x0040, IP_ACTIVE_LOW, IPT_GAMBLE_BET )
-	PORT_BIT( 0x0080, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("hopper", ticket_dispenser_device, line_r)
+	PORT_BIT( 0x0080, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("hopper", FUNC(ticket_dispenser_device::line_r))
 	PORT_BIT( 0xff00, IP_ACTIVE_LOW, IPT_UNUSED )
 
 	PORT_START("IN1")
@@ -745,7 +744,7 @@ static INPUT_PORTS_START( hotslot )
 	PORT_BIT( 0x0004, IP_ACTIVE_LOW, IPT_COIN3 ) PORT_NAME("Note B")
 	PORT_BIT( 0x0008, IP_ACTIVE_LOW, IPT_COIN4 ) PORT_NAME("Note C")
 	PORT_SERVICE_NO_TOGGLE( 0x0010, IP_ACTIVE_LOW )
-	PORT_BIT( 0x0020, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("ticket", ticket_dispenser_device, line_r)
+	PORT_BIT( 0x0020, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("ticket", FUNC(ticket_dispenser_device::line_r))
 	PORT_BIT( 0x0040, IP_ACTIVE_LOW, IPT_COIN5 ) PORT_NAME("Note D") PORT_CODE(KEYCODE_9)
 	PORT_BIT( 0x0080, IP_ACTIVE_LOW, IPT_GAMBLE_DOOR )
 	PORT_BIT( 0xff00, IP_ACTIVE_LOW, IPT_UNUSED )
@@ -794,14 +793,14 @@ static INPUT_PORTS_START( sgsafari )
 	PORT_BIT( 0x0400, IP_ACTIVE_LOW, IPT_COIN3 ) PORT_NAME("Note B")
 	PORT_BIT( 0x0800, IP_ACTIVE_LOW, IPT_COIN4 ) PORT_NAME("Note C")
 	PORT_SERVICE_NO_TOGGLE( 0x1000, IP_ACTIVE_LOW )
-	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("ticket", ticket_dispenser_device, line_r)
+	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("ticket", FUNC(ticket_dispenser_device::line_r))
 	PORT_BIT( 0x4000, IP_ACTIVE_LOW, IPT_COIN5 ) PORT_NAME("Note D") PORT_CODE(KEYCODE_9)
 	PORT_BIT( 0x8000, IP_ACTIVE_LOW, IPT_GAMBLE_PAYOUT ) PORT_NAME("Payout / Super Game")
 
 	PORT_START("DSW1")
 	// TODO: defaults are hardwired with aforementioned startup code, is it intentional?
 	PORT_BIT( 0x0001, IP_ACTIVE_HIGH, IPT_UNUSED )
-	PORT_BIT( 0x0002, IP_ACTIVE_LOW,  IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("hopper", ticket_dispenser_device, line_r)
+	PORT_BIT( 0x0002, IP_ACTIVE_LOW,  IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("hopper", FUNC(ticket_dispenser_device::line_r))
 	PORT_BIT( 0x0004, IP_ACTIVE_HIGH, IPT_UNUSED )
 	PORT_BIT( 0x0008, IP_ACTIVE_HIGH, IPT_UNUSED )
 	PORT_BIT( 0x0010, IP_ACTIVE_HIGH, IPT_UNUSED )
@@ -846,7 +845,7 @@ static INPUT_PORTS_START( spetrix )
 	PORT_BIT( 0x0400, IP_ACTIVE_LOW, IPT_UNUSED )
 	PORT_BIT( 0x0800, IP_ACTIVE_LOW, IPT_START2 )        PORT_NAME("Petrix Start")
 	PORT_SERVICE_NO_TOGGLE( 0x1000, IP_ACTIVE_LOW )
-	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_CUSTOM )        PORT_READ_LINE_DEVICE_MEMBER("ticket", ticket_dispenser_device, line_r)
+	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_CUSTOM )        PORT_READ_LINE_DEVICE_MEMBER("ticket", FUNC(ticket_dispenser_device::line_r))
 	PORT_BIT( 0x4000, IP_ACTIVE_LOW, IPT_UNUSED )
 	PORT_BIT( 0x8000, IP_ACTIVE_LOW, IPT_GAMBLE_PAYOUT ) PORT_NAME("Collect Points")
 
@@ -904,6 +903,33 @@ static const gfx_layout tiles16x16_layout =
 	32*8
 };
 
+static const gfx_layout tiles8x8_layout_soccer10 =
+{
+	8,8,
+	RGN_FRAC(1,1),
+	4,
+	{ STEP4(0,1) },
+	{
+		6*4, 7*4, 4*4, 5*4, 2*4, 3*4, 0*4, 1*4
+	},
+	{ STEP8(0,32) },
+	8*8*4
+};
+
+static const gfx_layout tiles16x16_layout_soccer10 =
+{
+	16,16,
+	RGN_FRAC(1,1),
+	4,
+	{ STEP4(0,1) },
+	{
+		6*4, 7*4, 4*4, 5*4, 2*4, 3*4, 0*4, 1*4,
+		4*8*16+6*4, 4*8*16+7*4, 4*8*16+4*4, 4*8*16+5*4, 4*8*16+2*4, 4*8*16+3*4, 4*8*16+0*4, 4*8*16+1*4
+	},
+	{ STEP16(0,4*8) },
+	16*16*4
+};
+
 
 /****************************
 *      Graphics Decode      *
@@ -912,6 +938,11 @@ static const gfx_layout tiles16x16_layout =
 static GFXDECODE_START( gfx_magic10 )
 	GFXDECODE_ENTRY( "tiles", 0, gfx_8x8x4_planar,  0, 16 )
 	GFXDECODE_ENTRY( "tiles", 0, tiles16x16_layout, 0, 16 )
+GFXDECODE_END
+
+static GFXDECODE_START( gfx_soccer10 )
+	GFXDECODE_ENTRY( "tiles", 0, tiles8x8_layout_soccer10,   0, 16 )
+	GFXDECODE_ENTRY( "tiles", 0, tiles16x16_layout_soccer10, 0, 16 )
 GFXDECODE_END
 
 
@@ -953,8 +984,8 @@ void magic10_state::magic10(machine_config &config)
 	// basic machine hardware
 	m_maincpu->set_addrmap(AS_PROGRAM, &magic10_state::magic10_map);
 
-	TICKET_DISPENSER(config, m_ticket, attotime::from_msec(6), TICKET_MOTOR_ACTIVE_HIGH, TICKET_STATUS_ACTIVE_HIGH );
-	HOPPER(config, m_hopper, attotime::from_msec(20), TICKET_MOTOR_ACTIVE_HIGH, TICKET_STATUS_ACTIVE_HIGH );
+	TICKET_DISPENSER(config, m_ticket, attotime::from_msec(6));
+	HOPPER(config, m_hopper, attotime::from_msec(20));
 }
 
 
@@ -971,6 +1002,8 @@ void magic10_state::soccer10(machine_config &config)
 	magic10a(config);
 
 	m_maincpu->set_vblank_int("screen", FUNC(magic10_base_state::irq4_line_hold));
+
+	m_gfxdecode->set_info(gfx_soccer10);
 }
 
 void magic102_state::magic102(machine_config &config)
@@ -1011,7 +1044,7 @@ void spetrix_state::spetrix(machine_config &config)
 {
 	base(config);
 
-	TICKET_DISPENSER(config, m_ticket, attotime::from_msec(6), TICKET_MOTOR_ACTIVE_HIGH, TICKET_STATUS_ACTIVE_HIGH );
+	TICKET_DISPENSER(config, m_ticket, attotime::from_msec(6));
 
 	m_maincpu->set_addrmap(AS_PROGRAM, &spetrix_state::spetrix_map);
 	m_maincpu->set_vblank_int("screen", FUNC(spetrix_state::irq2_line_hold));    // L1 interrupts
@@ -1273,8 +1306,8 @@ ROM_START( soccer10 ) // PCB marked I.G.T. International Games Trade s.r.l. (Ita
 	ROM_LOAD16_BYTE( "13.u15", 0x000001, 0x20000, CRC(92ed3808) SHA1(eb1a062190cbcc389561504a0d0685c91952dbd9) ) // 1xxxxxxxxxxxxxxxx = 0xFF
 
 	ROM_REGION( 0x80000, "tiles", 0 )
-	ROM_LOAD( "4.u24", 0x00000, 0x40000, CRC(06db9866) SHA1(97c18c50c5eb0bd3bc927d3ac22c3176498017fd) )
-	ROM_LOAD( "5.u28", 0x40000, 0x40000, CRC(f41c196d) SHA1(046b7d4bb30740a43ea9ccfb7e5a4d1405456ef8) )
+	ROM_LOAD16_BYTE( "4.u24", 0x00000, 0x40000, CRC(06db9866) SHA1(97c18c50c5eb0bd3bc927d3ac22c3176498017fd) )
+	ROM_LOAD16_BYTE( "5.u28", 0x00001, 0x40000, CRC(f41c196d) SHA1(046b7d4bb30740a43ea9ccfb7e5a4d1405456ef8) )
 
 	ROM_REGION( 0x40000, "oki", 0 ) // ADPCM samples
 	ROM_LOAD( "1.u44", 0x00000, 0x40000, CRC(98885246) SHA1(752d549e6248074f2a7f6c5cc4d0bbc44c7fa4c3) ) // same as magic10 and clones
@@ -1918,8 +1951,8 @@ void magic10_state::init_sgsafari()
 
 void magic10_state::init_soccer10()
 {
-	//m_layer2_offset[0] = 16;
-	//m_layer2_offset[1] = 20;
+	m_layer2_offset[0] = 24;
+	m_layer2_offset[1] = 0;
 
 	uint16_t *rom = (uint16_t *)memregion("maincpu")->base();
 
@@ -1952,20 +1985,20 @@ void magic102_state::init_altaten()
 *        Game Drivers         *
 ******************************/
 
-//     YEAR  NAME       PARENT    MACHINE   INPUT     STATE           INIT           ROT   COMPANY                 FULLNAME                          FLAGS                                         LAYOUT
-GAMEL( 1995, magic10,   0,        magic10,  magic10,  magic10_state,  init_magic10,  ROT0, "A.W.P. Games",         "Magic's 10 (ver. 16.55)",        MACHINE_SUPPORTS_SAVE,                        layout_sgsafari )
-GAMEL( 1995, magic10a,  magic10,  magic10,  magic10,  magic10_state,  init_magic10,  ROT0, "A.W.P. Games",         "Magic's 10 (ver. 16.54)",        MACHINE_SUPPORTS_SAVE,                        layout_sgsafari )
-GAMEL( 1995, magic10b,  magic10,  magic10a, magic10,  magic10_state,  init_magic10,  ROT0, "A.W.P. Games",         "Magic's 10 (ver. 16.45)",        MACHINE_SUPPORTS_SAVE,                        layout_sgsafari )
-GAMEL( 1995, magic10c,  magic10,  magic10a, magic10,  magic10_state,  init_magic10,  ROT0, "A.W.P. Games",         "Magic's 10 (ver. 16.15)",        MACHINE_SUPPORTS_SAVE,                        layout_sgsafari )
-GAMEL( 1996, soccer10,  0,        soccer10, magic10,  magic10_state,  init_soccer10, ROT0, "<unknown>",            "Soccer 10 (ver. 16.44)",         MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE,  layout_sgsafari ) // needs correct GFX decode. Manufacturer to be verified once done
-GAME(  1997, magic102,  0,        magic102, magic102, magic102_state, init_magic102, ROT0, "ABM Games",            "Magic's 10 2 (ver. 1.1)",        MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
-GAME(  1997, magic102a, magic102, magic102, magic102, magic102_state, init_magic102, ROT0, "ABM Games",            "Magic's 10 2 (ver. BETA3)",      MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
-GAME(  1998, suprpool,  0,        magic102, magic102, magic102_state, init_suprpool, ROT0, "ABM Games",            "Super Pool (ver. 1.2)",          MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
-GAME(  1996, hotslot,   0,        hotslot,  hotslot,  hotslot_state,  init_hotslot,  ROT0, "ABM Games",            "Hot Slot (ver. 05.01)",          MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
-GAME(  1999, mcolors,   0,        magic102, magic102, magic102_state, init_magic102, ROT0, "ABM Games",            "Magic Colors (ver. 1.7a)",       MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
-GAME(  1999, mcolorsa,  mcolors,  magic102, magic102, magic102_state, init_magic102, ROT0, "ABM Games",            "Magic Colors (ver. 1.6)",        MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
-GAMEL( 1996, sgsafari,  0,        sgsafari, sgsafari, magic10_state,  init_sgsafari, ROT0, "New Impeuropex Corp.", "Super Gran Safari (ver. 3.11)",  MACHINE_SUPPORTS_SAVE,                        layout_sgsafari )
-GAMEL( 1995, musicsrt,  0,        magic10a, musicsrt, magic10_state,  init_magic10,  ROT0, "ABM Games",            "Music Sort (ver. 2.02)",         MACHINE_SUPPORTS_SAVE,                        layout_musicsrt )
-GAME(  1998, lunaprk,   0,        magic102, magic102, magic102_state, init_suprpool, ROT0, "ABM Games",            "Luna Park (ver. 1.2)",           MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
-GAME(  1999, altaten,   0,        magic102, magic102, magic102_state, init_altaten,  ROT0, "<unknown>",            "Alta Tensione (ver. 2.01a)",     MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
-GAME(  199?, spetrix,   0,        spetrix,  spetrix,  spetrix_state,  init_spetrix,  ROT0, "<unknown>",            "Super Petrix (ver. 1P)",         MACHINE_IMPERFECT_GRAPHICS | MACHINE_SUPPORTS_SAVE )
+//     YEAR  NAME       PARENT    MACHINE   INPUT     STATE           INIT           ROT   COMPANY                             FULLNAME                         FLAGS                                         LAYOUT
+GAMEL( 1995, magic10,   0,        magic10,  magic10,  magic10_state,  init_magic10,  ROT0, "A.W.P. Games",                     "Magic's 10 (ver. 16.55)",       MACHINE_SUPPORTS_SAVE,                        layout_sgsafari )
+GAMEL( 1995, magic10a,  magic10,  magic10,  magic10,  magic10_state,  init_magic10,  ROT0, "A.W.P. Games",                     "Magic's 10 (ver. 16.54)",       MACHINE_SUPPORTS_SAVE,                        layout_sgsafari )
+GAMEL( 1995, magic10b,  magic10,  magic10a, magic10,  magic10_state,  init_magic10,  ROT0, "A.W.P. Games",                     "Magic's 10 (ver. 16.45)",       MACHINE_SUPPORTS_SAVE,                        layout_sgsafari )
+GAMEL( 1995, magic10c,  magic10,  magic10a, magic10,  magic10_state,  init_magic10,  ROT0, "A.W.P. Games",                     "Magic's 10 (ver. 16.15)",       MACHINE_SUPPORTS_SAVE,                        layout_sgsafari )
+GAMEL( 1996, soccer10,  0,        soccer10, magic10,  magic10_state,  init_soccer10, ROT0, "I.G.T. International Games Trade", "Soccer 10 (ver. 16.44)",        MACHINE_SUPPORTS_SAVE,                        layout_sgsafari )
+GAME(  1997, magic102,  0,        magic102, magic102, magic102_state, init_magic102, ROT0, "ABM Games",                        "Magic's 10 2 (ver. 1.1)",       MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
+GAME(  1997, magic102a, magic102, magic102, magic102, magic102_state, init_magic102, ROT0, "ABM Games",                        "Magic's 10 2 (ver. BETA3)",     MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
+GAME(  1998, suprpool,  0,        magic102, magic102, magic102_state, init_suprpool, ROT0, "ABM Games",                        "Super Pool (ver. 1.2)",         MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
+GAME(  1996, hotslot,   0,        hotslot,  hotslot,  hotslot_state,  init_hotslot,  ROT0, "ABM Games",                        "Hot Slot (ver. 05.01)",         MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
+GAME(  1999, mcolors,   0,        magic102, magic102, magic102_state, init_magic102, ROT0, "ABM Games",                        "Magic Colors (ver. 1.7a)",      MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
+GAME(  1999, mcolorsa,  mcolors,  magic102, magic102, magic102_state, init_magic102, ROT0, "ABM Games",                        "Magic Colors (ver. 1.6)",       MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
+GAMEL( 1996, sgsafari,  0,        sgsafari, sgsafari, magic10_state,  init_sgsafari, ROT0, "New Impeuropex Corp.",             "Super Gran Safari (ver. 3.11)", MACHINE_SUPPORTS_SAVE,                        layout_sgsafari )
+GAMEL( 1995, musicsrt,  0,        magic10a, musicsrt, magic10_state,  init_magic10,  ROT0, "ABM Games",                        "Music Sort (ver. 2.02)",        MACHINE_SUPPORTS_SAVE,                        layout_musicsrt )
+GAME(  1998, lunaprk,   0,        magic102, magic102, magic102_state, init_suprpool, ROT0, "ABM Games",                        "Luna Park (ver. 1.2)",          MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
+GAME(  1999, altaten,   0,        magic102, magic102, magic102_state, init_altaten,  ROT0, "<unknown>",                        "Alta Tensione (ver. 2.01a)",    MACHINE_NOT_WORKING | MACHINE_SUPPORTS_SAVE )
+GAME(  199?, spetrix,   0,        spetrix,  spetrix,  spetrix_state,  init_spetrix,  ROT0, "<unknown>",                        "Super Petrix (ver. 1P)",        MACHINE_IMPERFECT_GRAPHICS | MACHINE_SUPPORTS_SAVE )

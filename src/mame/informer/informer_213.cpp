@@ -57,8 +57,8 @@ public:
 	void informer_213(machine_config &config);
 
 protected:
-	void machine_start() override;
-	void machine_reset() override;
+	void machine_start() override ATTR_COLD;
+	void machine_reset() override ATTR_COLD;
 
 private:
 	required_device<cpu_device> m_maincpu;
@@ -72,7 +72,7 @@ private:
 	required_shared_ptr<uint8_t> m_aram;
 	required_region_ptr<uint8_t> m_chargen;
 
-	void mem_map(address_map &map);
+	void mem_map(address_map &map) ATTR_COLD;
 
 	uint32_t screen_update(screen_device &screen, bitmap_rgb32 &bitmap, const rectangle &cliprect);
 	void vblank_w(int state);
@@ -408,7 +408,7 @@ void informer_213_state::informer_213(machine_config &config)
 	NVRAM(config, m_nvram[0], nvram_device::DEFAULT_ALL_0);
 	NVRAM(config, m_nvram[1], nvram_device::DEFAULT_ALL_0);
 
-	SCC8530N(config, m_scc, 18.432_MHz_XTAL / 5);
+	SCC8530(config, m_scc, 18.432_MHz_XTAL / 5);
 	m_scc->out_txda_callback().set("host", FUNC(rs232_port_device::write_txd));
 	m_scc->out_dtra_callback().set("host", FUNC(rs232_port_device::write_dtr));
 	m_scc->out_rtsa_callback().set("host", FUNC(rs232_port_device::write_rts));

@@ -107,7 +107,7 @@ public:
 	void aquarium(machine_config &config);
 
 protected:
-	virtual void video_start() override;
+	virtual void video_start() override ATTR_COLD;
 
 private:
 	// memory pointers
@@ -150,9 +150,9 @@ private:
 	u8 snd_bitswap(u8 scrambled_data);
 	void aquarium_colpri_cb(u32 &colour, u32 &pri_mask);
 
-	void main_map(address_map &map);
-	void snd_map(address_map &map);
-	void snd_portmap(address_map &map);
+	void main_map(address_map &map) ATTR_COLD;
+	void snd_map(address_map &map) ATTR_COLD;
+	void snd_portmap(address_map &map) ATTR_COLD;
 };
 
 
@@ -243,7 +243,7 @@ uint32_t aquarium_state::screen_update(screen_device &screen, bitmap_ind16 &bitm
 	m_txt_tilemap->draw(screen, bitmap, cliprect, 1, 4);
 
 	m_bak_tilemap->draw(screen, bitmap, cliprect, 1, 8);
-	m_sprgen->aquarium_draw_sprites(screen, bitmap, cliprect, 16);
+	m_sprgen->aquarium_draw_sprites(screen, bitmap, cliprect);
 	m_mid_tilemap->draw(screen, bitmap, cliprect, 1, 0);
 	m_txt_tilemap->draw(screen, bitmap, cliprect, 0, 0);
 
@@ -389,7 +389,7 @@ static INPUT_PORTS_START( aquarium )
 	PORT_SERVICE( 0x1000, IP_ACTIVE_LOW )
 	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_UNUSED )
 	PORT_BIT( 0x4000, IP_ACTIVE_LOW, IPT_UNUSED )
-	PORT_BIT( 0x8000, IP_ACTIVE_HIGH, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("soundlatch", generic_latch_8_device, pending_r)
+	PORT_BIT( 0x8000, IP_ACTIVE_HIGH, IPT_CUSTOM ) PORT_READ_LINE_DEVICE_MEMBER("soundlatch", FUNC(generic_latch_8_device::pending_r))
 INPUT_PORTS_END
 
 static const gfx_layout layout_5bpp_hi =
@@ -432,6 +432,7 @@ void aquarium_state::aquarium(machine_config &config)
 	m_screen->set_size(64*8, 64*8);
 	m_screen->set_visarea(2*8, 42*8-1, 2*8, 34*8-1);
 	m_screen->set_screen_update(FUNC(aquarium_state::screen_update));
+	m_screen->screen_vblank().set(m_sprgen, FUNC(excellent_spr_device::vblank));
 	m_screen->set_palette(m_palette);
 
 	GFXDECODE(config, m_gfxdecode, m_palette, gfx_aquarium);
