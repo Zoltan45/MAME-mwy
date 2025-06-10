@@ -10,6 +10,7 @@
 
     Games supported:
         * Mortal Kombat (T-unit version)
+		* Mortal Kombat +
         * Mortal Kombat II
         * Mortal Kombat II +
         * NBA Jam
@@ -701,6 +702,38 @@ ROM_START( mk )
 	ROM_LOAD32_BYTE( "l1_mortal_kombat_t-unit_uj17_game_rom.uj17", 0x400001, 0x80000, CRC(a56e12f5) SHA1(5db637c4710990cd06bb0069714b19621532e431) )
 	ROM_LOAD32_BYTE( "l1_mortal_kombat_t-unit_ug22_game_rom.ug22", 0x400002, 0x80000, CRC(b537bb4e) SHA1(05a447deee2e89b49bdb3ca2161a021d7ec5f11e) )
 	ROM_LOAD32_BYTE( "l1_mortal_kombat_t-unit_uj22_game_rom.uj22", 0x400003, 0x80000, CRC(5e12523b) SHA1(468f93ef9bb6addb45c1c939d24b6511f255426a) )
+ROM_END
+
+
+ROM_START( mkp )
+	ROM_REGION( 0x50000, "adpcm:cpu", 0 )   // sound CPU
+	ROM_LOAD( "sl1_mortal_kombat_u3_sound_rom.u3", 0x10000, 0x40000, CRC(c615844c) SHA1(5732f9053a5f73b0cc3b0166d7dc4430829d5bc7) )
+
+	ROM_REGION( 0x100000, "adpcm:oki", 0 )  // ADPCM
+	ROM_LOAD( "sl1_mortal_kombat_u12_sound_rom.u12", 0x00000, 0x40000, CRC(258bd7f9) SHA1(463890b23f17350fb9b8a85897b0777c45bc2d54) )
+	ROM_RELOAD(                                      0x40000, 0x40000 )
+	ROM_LOAD( "sl1_mortal_kombat_u13_sound_rom.u13", 0x80000, 0x40000, CRC(7b7ec3b6) SHA1(6eec1b90d4a4855f34a7ebfbf93f3358d5627db4) )
+	ROM_RELOAD(                                      0xc0000, 0x40000 )
+
+	ROM_REGION16_LE( 0x100000, "maincpu", 0 )   // 34010 code
+	ROM_LOAD16_BYTE( "mkp_uj12_game_rom.uj12", 0x00000, 0x80000, NO_DUMP )
+	ROM_LOAD16_BYTE( "mkp_ug12_game_rom.ug12", 0x00001, 0x80000, NO_DUMP )
+
+	ROM_REGION( 0xc00000, "video", 0 )
+	ROM_LOAD32_BYTE( "l1_mortal_kombat_t-unit_ug14_game_rom.ug14", 0x000000, 0x80000, CRC(9e00834e) SHA1(2b97b63f52ba1dba6af6ae56c223519a52b2ab9d) )
+	ROM_LOAD32_BYTE( "l1_mortal_kombat_t-unit_uj14_game_rom.uj14", 0x000001, 0x80000, CRC(f4b0aaa7) SHA1(4cc6ee34c89e3cde325ad24b29511f70ae6a5a72) )
+	ROM_LOAD32_BYTE( "l1_mortal_kombat_t-unit_ug19_game_rom.ug19", 0x000002, 0x80000, CRC(2d8c7ba1) SHA1(f891d6eb618dbf3e77f02e0f93da216e20571905) )
+	ROM_LOAD32_BYTE( "l1_mortal_kombat_t-unit_uj19_game_rom.uj19", 0x000003, 0x80000, CRC(33b9b7a4) SHA1(e8ceca4c049e1f55d480a03ff793b595bd04d344) )
+
+	ROM_LOAD32_BYTE( "l1_mortal_kombat_t-unit_ug16_game_rom.ug16", 0x200000, 0x80000, CRC(52c9d1e5) SHA1(7b1880fca0a11544782b70365c7dd96381ac48e7) )
+	ROM_LOAD32_BYTE( "l1_mortal_kombat_t-unit_uj16_game_rom.uj16", 0x200001, 0x80000, CRC(c94c58cf) SHA1(974d75667eee779497325d5be8df937f15417edf) )
+	ROM_LOAD32_BYTE( "l1_mortal_kombat_t-unit_ug20_game_rom.ug20", 0x200002, 0x80000, CRC(2f7e55d3) SHA1(bda6892ee6fcb46959e4d0892bbe7d9fc6072dd3) )
+	ROM_LOAD32_BYTE( "l1_mortal_kombat_t-unit_uj20_game_rom.uj20", 0x200003, 0x80000, CRC(eae96df0) SHA1(b40532312ba61e4065abfd733dd0c93eecad48e9) )
+
+	ROM_LOAD32_BYTE( "mkp_ug17_game_rom.ug17", 0x400000, 0x80000, NO_DUMP )
+	ROM_LOAD32_BYTE( "mkp_uj17_game_rom.uj17", 0x400001, 0x80000, NO_DUMP )
+	ROM_LOAD32_BYTE( "mkp_ug22_game_rom.ug22", 0x400002, 0x80000, NO_DUMP )
+	ROM_LOAD32_BYTE( "mkp_uj22_game_rom.uj22", 0x400003, 0x80000, NO_DUMP )
 ROM_END
 
 
@@ -1925,6 +1958,7 @@ ROM_END
 GAME( 1992, mk,         0,        tunit_adpcm, mk,       midtunit_adpcm_state, init_mktunit,  ROT0, "Midway",   "Mortal Kombat (rev 5.0 T-Unit 03/19/93)", MACHINE_SUPPORTS_SAVE )
 GAME( 1992, mkr4,       mk,       tunit_adpcm, mk,       midtunit_adpcm_state, init_mktunit,  ROT0, "Midway",   "Mortal Kombat (rev 4.0 T-Unit 02/11/93)", MACHINE_SUPPORTS_SAVE )
 GAME( 1992, mktturbo,   mk,       tunit_adpcm, mk,       midtunit_adpcm_state, init_mkturbo,  ROT0, "hack",     "Mortal Kombat (Turbo Ninja T-Unit 03/19/93, hack)", MACHINE_SUPPORTS_SAVE )
+GAME( 2020, mkp,        mk,       tunit_adpcm, mk,       midtunit_adpcm_state, init_mktunit,  ROT0, "Team Plus","Mortal Kombat + (alpha)", MACHINE_SUPPORTS_SAVE )
 
 GAME( 1993, mk2,        0,        mk2,         mk2,      mk2_state,            init_mk2,      ROT0, "Midway",   "Mortal Kombat II (rev L3.1)", MACHINE_SUPPORTS_SAVE )
 GAME( 1993, mk2r32e,    mk2,      mk2,         mk2,      mk2_state,            init_mk2,      ROT0, "Midway",   "Mortal Kombat II (rev L3.2, European)", MACHINE_SUPPORTS_SAVE )
