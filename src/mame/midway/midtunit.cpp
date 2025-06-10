@@ -10,7 +10,7 @@
 
     Games supported:
         * Mortal Kombat (T-unit version)
-		* Mortal Kombat +
+        * Mortal Kombat +
         * Mortal Kombat II
         * Mortal Kombat II +
         * NBA Jam
