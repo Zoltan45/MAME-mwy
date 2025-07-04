@@ -11,7 +11,7 @@ I attempted something like this I gave up at the MAME documention (due to its re
 and he refused to stop until it was at least explained to him.  He was gracious enough to explain to me how the layouts worked and provide some early coding
 techniques which I still use, and from there I have been off to the races.
 
-Let me say that I am not a programmer or grpahical artist by trade and that may shine through if you begin looking through the code and using the layouts.
+Let me say that I am not a programmer or graphical artist by trade and that may shine through if you begin looking through the code and using the layouts.
 If you want to contribute, or teach me a thing or two, I am always willing to learn.
 
 

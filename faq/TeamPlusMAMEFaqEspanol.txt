@@ -269,7 +269,26 @@ Tus opciones son las siguientes:
    - umk-u111.bin
    - umk-u110.bin
    
-   Si estás usando MAME-mwy, el archivo ZIP de ROM para Mortal Kombat II + debe llamarse mk2p.zip y los archivos de ROM dentro
+	Si estás usando MAME-mwy, el archivo ZIP de ROM para Mortal Kombat + debe llamarse mkp.zip y los archivos de ROM dentro
+	deben tener los siguientes nombres:
+
+	mkp_uj12_game_rom.uj12
+	mkp_ug12_game_rom.ug12
+	sl1_mortal_kombat_u3_sound_rom.u3
+	l1_mortal_kombat_t-unit_ug14_game_rom.ug14
+	l1_mortal_kombat_t-unit_uj14_game_rom.uj14
+	l1_mortal_kombat_t-unit_ug19_game_rom.ug19
+	l1_mortal_kombat_t-unit_uj19_game_rom.uj19
+	l1_mortal_kombat_t-unit_ug16_game_rom.ug16
+	l1_mortal_kombat_t-unit_uj16_game_rom.uj16
+	l1_mortal_kombat_t-unit_ug20_game_rom.ug20
+	l1_mortal_kombat_t-unit_uj20_game_rom.uj20
+	mkp_ug17_game_rom.ug17
+	mkp_uj17_game_rom.uj17
+	mkp_ug22_game_rom.ug22
+	mkp_uj22_game_rom.uj22
+   
+   El archivo ZIP de ROM para Mortal Kombat II + debe llamarse mk2p.zip y los archivos de ROM dentro
    deben tener los siguientes nombres:
    
    - mk2p.uj12

@@ -2,13 +2,13 @@ Team Plus Games MAME FAQ
 
 by RustyDawg37, ZPaul2Fresh8, TehDrewsus
 
-https://discord.gg/hPtzkUX
+https://discord.gg/hPtzkUX - MK+ Discord Server
 
 
-The main reason I wrote this guide/FAQ is to help others use these games with their current or
-planned MAME setup.  This FAQ includes accurate information relating to Mortal Kombat II + Beta 2 and Ultimate
-Mortal Kombat 3 + Beta 2 at time of writing, as well as information about past releases and testing builds
-when available.
+The main reason I wrote this guide/FAQ is to help others use these games with their current or planned emulation
+setup.  This FAQ includes information relating to Mortal Kombat + Alpha, Mortal Kombat II + Beta 2 and
+Ultimate Mortal Kombat 3 + Beta 2, as well as information about past releases and testing builds
+when available.  Please feel free to get in touch with me on the MK+ discord server regarding the content.
 
 First a little introduction of the overarching ideas here.  The Team Plus games are arcade rom hacks of Mortal
 Kombat 2 and Ultimate Mortal Kombat 3.  Sometimes MAME can be fooled into playing a romhack by renaming the
@@ -16,7 +16,7 @@ romzip, using command line, or a batch file. This is the case with Mortal Kombat
 play Ultimate Mortal Kombat 3 is to add it to the MAME program itself to create native support because it uses
 more rom chips than the original hardware and MAME does not account for them. In general this can be done by
 adding the game to its respective machine driver files and to the list of games included in MAME, and then
-compiling the program.  The methods for implementation may vary by MAME version.
+compiling the program.  The methods for implementation may vary by MAME version.  
 
 Along the way you may find terms regarding MAME that you might not be familiar with.  You may need to
 familiarize yourself with many aspects of MAME from building it all the way through modifying, but
@@ -89,7 +89,7 @@ Your options are to:
 	A. Download the special MAME versions compiled to be able to play the games, available in 32 or 64
 	bit versions, at https://drive.google.com/drive/folders/1Wdghx9Goyjc3hdM3fNMut_79wRnqL4CD.
 
-	Although a 32 bit version is available it is recommended to use the mame2003plus retroarch core in any 32 bit setup.
+	*Although a 32 bit version is available it is recommended to use the mame2003plus retroarch core in any 32 bit setup.
 
 	B. There is a repository on github with the current version	of MAME with the Team Plus games included
 	at https://github.com/Zoltan45/mame-mwy which you can compile using instructions from
@@ -99,15 +99,18 @@ Your options are to:
 	C. Another modified version of MAME called HBMAME which includes support for the Team Plus games as well as a LOT of
 	other rom hacks can be found at:
 	https://hbmame.1emulation.com/
-
+	
+	*This MAME fork is no longer updated past MAME 0.245 as its base, besides to add games.
 
 	D. Use retroarch and download one of the emulation cores that are available that can play the game.
 	Currently there are 5 cores available - mame2003, mame2003plus, mame2010 (UMK3+ only), hbmame, and FBNeo.
 	If the game does not get added to your system playlist automatically, look for information on adding games manually to
 	playlists at https://docs.libretro.com/guides/roms-playlists-thumbnails/.
-
-
-	E.  Last, but certainly not least, the games will also work on FBNeo and Fightcade FBNeo.
+	
+	*At this time, I would not recommend using any MAME(year) cores besides 2003 and 2003plus, or FBNeo cores
+	if you must use retroarch.
+	
+	E.  Lastly, the games will also work on FBNeo and Fightcade FBNeo.
 	https://neo-source.com/
 	https://www.fightcade.com/
 
@@ -142,6 +145,10 @@ Your options are to:
 	https://hakchi.net/ for hacking NES Classic/Mini, SNES Classic/Mini, Sega Classic Mini
 	https://retropie.org.uk/
 	https://www.retroarch.com/
+	
+	B. These litle machines have come a long way since the FAQ was first written.  I am keeping the above for
+	now, but newer boards like a raspberry pi 4 or 5 can play standard MAME without issue on these games.
+	Compiling and using current MAME is now a viable option for some single board computers.
 
 
 
@@ -282,9 +289,27 @@ Your options are to:
 		umk-u112.bin
 		umk-u111.bin
 		umk-u110.bin
-
-	If you are using MAME-mwy, the romzip for Mortal Kombat II + should be named mk2p.zip and the romfiles inside
+		
+	If you are using MAME-mwy, the romzip for Mortal Kombat + should be named mkp.zip and the romfiles inside
 	should be named as below:
+
+		mkp_uj12_game_rom.uj12
+		mkp_ug12_game_rom.ug12
+		sl1_mortal_kombat_u3_sound_rom.u3
+		l1_mortal_kombat_t-unit_ug14_game_rom.ug14
+		l1_mortal_kombat_t-unit_uj14_game_rom.uj14
+		l1_mortal_kombat_t-unit_ug19_game_rom.ug19
+		l1_mortal_kombat_t-unit_uj19_game_rom.uj19
+		l1_mortal_kombat_t-unit_ug16_game_rom.ug16
+		l1_mortal_kombat_t-unit_uj16_game_rom.uj16
+		l1_mortal_kombat_t-unit_ug20_game_rom.ug20
+		l1_mortal_kombat_t-unit_uj20_game_rom.uj20
+		mkp_ug17_game_rom.ug17
+		mkp_uj17_game_rom.uj17
+		mkp_ug22_game_rom.ug22
+		mkp_uj22_game_rom.uj22
+		
+	The romzip for Mortal Kombat II + should be named mk2p.zip and the romfiles inside should be named as below:
 
 		mk2p.uj12
 		mk2p.ug12
@@ -559,9 +584,9 @@ Your options are to:
 
 
 
-    These are the most common possible methods to achieve a setup with a working Ultimate Mortal Kombat 3 + or
-Mortal Kombat II + game rom.  If you have something not addressed here, please try joining the discord server and seek
-assistance in the mame-related channel.
+    These are the most common possible methods to achieve a setup with a working Ultimate Mortal Kombat 3 +,
+Mortal Kombat II +, and Mortal Kombat + game rom.  If you have something not addressed here, please try joining
+the MK+ discord server and seek assistance in the mame-related channel.
 
   https://discord.gg/hPtzkUX
 
@@ -572,7 +597,7 @@ assistance in the mame-related channel.
 	These directions assume that your current setup already works with a MK1 romzip, MK2 romzip, and a UMK3+ romzip.
 	
 	If you are using MAME, rename the new kontributor or work in progress romfiles to match the similarly named romfiles
-	inside your working romzip, then replace the old files with the new files. IE if the kontributor files includes a
+	inside your working romzip, then replace the old files with the new files. IE, if the kontributor files includes a
 	file with a name and/or extension including u2, rename it to match the u2 romfile filename inside your already working
 	Team Plus romzip.  Make sure you zip everything back up!  You may have to use the command line or batch
 	file to	execute the game after doing this depending on which MAME emulator above you are using.
