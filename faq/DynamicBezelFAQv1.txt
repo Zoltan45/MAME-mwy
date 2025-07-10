@@ -37,7 +37,7 @@ At this time the list of games is as follows:
 	Garou
 	Killer Instinct
 	Mortal Kombat
-	Mortal Kombat + ( game is not in MAME just yet )
+	Mortal Kombat +
 	Mortal Kombat II
 	Mortal Kombat II +
 	Mortal Kombat 3
