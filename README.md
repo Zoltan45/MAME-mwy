@@ -105,7 +105,7 @@ Please see COPYING for more details.
 What is MAME-mwy?
 =============
 
-MAME-mwy is a slightly modified version of MAME that includes support for the games Mortal Kombat II +, Ultimate Mortal Kombat 3 +, Ultimate Mortal Kombat 3 Wavenet, Ultiamte Mortal Kombat 3 Wavenet +, and NBA JAM TE Rewind.
+MAME-mwy is a slightly modified version of MAME that includes support for the games Mortal Kombat II +, Ultimate Mortal Kombat 3 +, Ultimate Mortal Kombat 3 Wavenet, Ultimate Mortal Kombat 3 Wavenet +, and NBA JAM TE Rewind.
 
 
 How to compile a Mortal Kombat only build?
