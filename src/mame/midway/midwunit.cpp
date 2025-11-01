@@ -12,6 +12,8 @@
         * Mortal Kombat 3
         * Ultimate Mortal Kombat 3
         * Ultimate Mortal Kombat 3 +
+		* Ultimate Mortal Kombat 3 Wavenet Edition
+		* Ultimate Mortal Kombat 3 Wavenet Edtiton +
         * NBA Hangtime
         * NBA Maximum Hangtime
         * 2 On 2 Open Ice Challenge
