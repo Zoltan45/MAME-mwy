@@ -1098,8 +1098,8 @@ ROM_START( umk3w )
 	ROM_LOAD16_BYTE( "l1_mortal_kombat_3_u5_music_spch.u5", 0x600000, 0x100000, CRC(3b98a09f) SHA1(edf1d02a56dcf3349e6b4bb4097acfe7592305f4) )
 
 	ROM_REGION16_LE( 0x100000, "maincpu", 0 )   // 34010 code
-	ROM_LOAD16_BYTE( "l1.2_mortal_kombat_3_u54_wave.u54",  0x00000, 0x80000, CRC(74F1E45D) SHA1(e22ec95d600f64c75cc436c5184c6de6cfd70ecd) )
-	ROM_LOAD16_BYTE( "l1.2_mortal_kombat_3_u63_wave.u63",  0x00001, 0x80000, CRC(289D62DC) SHA1(c116ea3baac45cabfcef7a354ee193035985c9de) )
+	ROM_LOAD16_BYTE( "2.03_mortal_kombat_3_u54_wave.u54",  0x00000, 0x80000, CRC(74F1E45D) SHA1(e22ec95d600f64c75cc436c5184c6de6cfd70ecd) )
+	ROM_LOAD16_BYTE( "2.03_mortal_kombat_3_u63_wave.u63",  0x00001, 0x80000, CRC(289D62DC) SHA1(c116ea3baac45cabfcef7a354ee193035985c9de) )
 
 	ROM_REGION( 0x1009, "serial_security:pic", 0 )   // security PIC (provides game ID code and serial number)
 	ROM_LOAD( "463_mk3_ultimate.u64",  0x0000, 0x1009, CRC(4f425218) SHA1(7f26045ed2c9ca94fadcb673ce10f28208aa720e) )
@@ -1142,8 +1142,8 @@ ROM_START( umk3wp )
 	ROM_LOAD16_BYTE( "l1_mortal_kombat_3_u5_music_spch.u5", 0x600000, 0x100000, CRC(3b98a09f) SHA1(edf1d02a56dcf3349e6b4bb4097acfe7592305f4) )
 
 	ROM_REGION16_LE( 0x100000, "maincpu", 0 )   // 34010 code
-	ROM_LOAD16_BYTE( "l1.2_mortal_kombat_3_u54_wave.u54",  0x00000, 0x80000, CRC(965fb405) SHA1(3086ca481f8ca31c017943b9a1461ddde96ce30b) )
-	ROM_LOAD16_BYTE( "l1.2_mortal_kombat_3_u63_wave.u63",  0x00001, 0x80000, CRC(653bcac4) SHA1(9a558ba2f201eb4d0087e2fc21cbf6f0dad834f0) )
+	ROM_LOAD16_BYTE( "2.03_mortal_kombat_3_u54_waveplus.u54",  0x00000, 0x80000, CRC(965fb405) SHA1(3086ca481f8ca31c017943b9a1461ddde96ce30b) )
+	ROM_LOAD16_BYTE( "2.03_mortal_kombat_3_u63_waveplus.u63",  0x00001, 0x80000, CRC(653bcac4) SHA1(9a558ba2f201eb4d0087e2fc21cbf6f0dad834f0) )
 
 	ROM_REGION( 0x1009, "serial_security:pic", 0 )   // security PIC (provides game ID code and serial number)
 	ROM_LOAD( "463_mk3_ultimate.u64",  0x0000, 0x1009, CRC(4f425218) SHA1(7f26045ed2c9ca94fadcb673ce10f28208aa720e) )
