@@ -1928,7 +1928,7 @@ GAME( 2019, umk3pb1,     umk3p,    wunit_picsim, mk3,      midwunit_state, init_
 
 GAME( 1996, umk3w,       0,		   wunit_picsim, mk3,      midwunit_state, init_umk3,     ROT0, "Midway", "Ultimate Mortal Kombat 3 Wavenet Edition", MACHINE_SUPPORTS_SAVE )
 
-GAME( 2025, umk3wp,      0,		   wunit_picsim, mk3,      midwunit_state, init_umk3,     ROT0, "Team Plus", "Ultimate Mortal Kombat 3 Wavenet Edition + (Kano Transformations)", MACHINE_SUPPORTS_SAVE )
+GAME( 2025, umk3wp,      0,		   wunit_picsim, mk3,      midwunit_state, init_umk3,     ROT0, "hack", "Ultimate Mortal Kombat 3 Wavenet Edition (Kano Transformations)", MACHINE_SUPPORTS_SAVE )
 
 GAME( 1995, wwfmania,    0,        wunit_picsim, wwfmania, midwunit_state, init_wwfmania, ROT0, "Midway", "WWF: Wrestlemania (rev 1.30 08/10/95)", MACHINE_SUPPORTS_SAVE )
 GAME( 1995, wwfmaniab,   wwfmania, wunit_picsim, wwfmania, midwunit_state, init_wwfmania, ROT0, "Midway", "WWF: Wrestlemania (rev 1.20 08/02/95)", MACHINE_SUPPORTS_SAVE )
