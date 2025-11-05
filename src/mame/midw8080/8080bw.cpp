@@ -681,24 +681,57 @@ void _8080bw_state::astropal(machine_config &config)
 /*                                                     */
 /*******************************************************/
 
-void _8080bw_state::cosmo_map(address_map &map)
+void cosmo_state::machine_start()
+{
+	//_8080bw_state::machine_start();
+
+	MACHINE_START_CALL_MEMBER(extra_8080bw);
+
+	stars_init();
+
+	save_item(NAME(m_stars_sidescroll));
+	save_item(NAME(m_star_speed));
+	save_item(NAME(m_rng_offs));
+	save_item(NAME(m_bright_star));
+	save_item(NAME(m_stars));
+	save_item(NAME(m_star_rng_origin));
+	save_item(NAME(m_star_rng_origin_frame));
+}
+
+void cosmo_state::stars_w(uint8_t data)
+{
+	m_stars_sidescroll = data & 0x08;  // Sideways
+	m_star_speed = data & 0x07;  // Speed
+}
+
+uint8_t cosmo_state::stars_r()
+{
+	// Returns 6 bits from the RNG
+	uint8_t rng = ~m_stars[m_rng_offs];
+	m_rng_offs += m_screen->frame_number();
+	m_rng_offs %= STAR_RNG_PERIOD;
+	return rng & 0x3f;
+}
+
+void cosmo_state::program_map(address_map &map)
 {
 	map(0x0000, 0x1fff).rom();
 	map(0x2000, 0x3fff).ram().share("main_ram");
 	map(0x4000, 0x57ff).rom();
+	map(0x5800, 0x5800).r(FUNC(cosmo_state::stars_r)).w(FUNC(cosmo_state::stars_w));
 	map(0x5c00, 0x5fff).ram().share("colorram");
 }
 
-// at least one of these MWA8_NOPs must be sound related
-void _8080bw_state::cosmo_io_map(address_map &map)
+// at least one of ports 0-2 must be sound related
+void cosmo_state::io_map(address_map &map)
 {
-	map(0x00, 0x00).portr("IN0").nopw();
-	map(0x01, 0x01).portr("IN1").nopw();
-	map(0x02, 0x02).portr("IN2").nopw();
-	map(0x03, 0x03).w(FUNC(_8080bw_state::invadpt2_sh_port_1_w));
-	map(0x05, 0x05).w(FUNC(_8080bw_state::cosmo_sh_port_2_w));
+	map(0x00, 0x00).portr("IN0").lw8(NAME([this] (uint8_t data) { logerror("port 0 write @ %x = %x\n", m_maincpu->pc(), data); }));
+	map(0x01, 0x01).portr("IN1").lw8(NAME([this] (uint8_t data) { logerror("port 1 write @ %x = %x\n", m_maincpu->pc(), data); }));
+	map(0x02, 0x02).portr("IN2").lw8(NAME([this] (uint8_t data) { logerror("port 2 write @ %x = %x\n", m_maincpu->pc(), data); }));
+	map(0x03, 0x03).w(FUNC(cosmo_state::invadpt2_sh_port_1_w));
+	map(0x05, 0x05).w(FUNC(cosmo_state::sh_port_2_w));
 	map(0x06, 0x06).w(m_watchdog, FUNC(watchdog_timer_device::reset_w));
-	map(0x07, 0x07).nopw();
+	map(0x07, 0x07).lw8(NAME([this] (uint8_t data) { logerror("port 7 write @ %x = %x\n", m_maincpu->pc(), data); }));
 }
 
 
@@ -715,21 +748,21 @@ static INPUT_PORTS_START( cosmo )
 	PORT_DIPUNKNOWN_DIPLOC( 0x80, 0x80, "SW1:8" ) // must be HIGH normally or the joystick won't work
 INPUT_PORTS_END
 
-void _8080bw_state::cosmo(machine_config &config)
+void cosmo_state::cosmo(machine_config &config)
 {
 	mw8080bw_root(config);
 
 	// basic machine hardware
-	m_maincpu->set_addrmap(AS_PROGRAM, &_8080bw_state::cosmo_map);
-	m_maincpu->set_addrmap(AS_IO, &_8080bw_state::cosmo_io_map);
+	m_maincpu->set_addrmap(AS_PROGRAM, &cosmo_state::program_map);
+	m_maincpu->set_addrmap(AS_IO, &cosmo_state::io_map);
 
 	WATCHDOG_TIMER(config, m_watchdog);
-	MCFG_MACHINE_START_OVERRIDE(_8080bw_state,extra_8080bw)
 
 	// video hardware
-	m_screen->set_screen_update(FUNC(_8080bw_state::screen_update_cosmo));
+	m_screen->set_raw(MW8080BW_PIXEL_CLOCK*4, MW8080BW_HTOTAL*4, MW8080BW_HBEND*4, MW8080BW_HPIXCOUNT*4, MW8080BW_VTOTAL, MW8080BW_VBEND, MW8080BW_VBSTART);
+	m_screen->set_screen_update(FUNC(cosmo_state::screen_update));
 
-	PALETTE(config, m_palette, palette_device::RBG_3BIT);
+	PALETTE(config, m_palette, FUNC(cosmo_state::palette_init), 72);
 
 	// sound hardware
 	invaders_samples_audio(config);
@@ -4759,6 +4792,7 @@ ROM_START( moonbase )
 	ROM_LOAD( "cv01.g7",      0x0000, 0x0400, CRC(aac24f34) SHA1(ad110e776547fb48baac568bb50d61854537ca34) ) // NEC B406 or compatible BPROM, like the 82S137
 ROM_END
 
+// set also seen on original Nichibutsu board set with 2 8516s instead of 4+5 and 9+10. Same data.
 ROM_START( moonbasea )
 	ROM_REGION( 0x10000, "maincpu", 0 )
 	ROM_LOAD( "ze3-1.a4",     0x0000, 0x0400, CRC(82dbf2c7) SHA1(c767d8b866db4a5059bd79f962a90ce3a962e1e6) )
@@ -5196,9 +5230,9 @@ ROM_START( lrescueabl )
 	ROM_LOAD( "2708_11.11",  0x4800, 0x0400, CRC(1b7a5644) SHA1(d26530ea11ada86f7c99b11d6faf4416a8f5a9eb) )
 	ROM_LOAD( "2708_12.12",  0x4c00, 0x0400, CRC(c342b907) SHA1(327da029420c4eedabc2a0534199a008a3f341b8) )
 
-	ROM_REGION( 0x0800, "proms", 0 )  // not dumped for this set, but present
-	ROM_LOAD( "cv01-7643.2c",   0x0000, 0x0400, BAD_DUMP CRC(aac24f34) SHA1(ad110e776547fb48baac568bb50d61854537ca34) )
-	ROM_LOAD( "cv02-7643.1c",   0x0400, 0x0400, BAD_DUMP CRC(2bdf83a0) SHA1(01ffbd43964c41987e7d44816271308f9a70802b) )
+	ROM_REGION( 0x0800, "proms", 0 )
+	ROM_LOAD( "cv01-7643.2c",   0x0000, 0x0400, CRC(aac24f34) SHA1(ad110e776547fb48baac568bb50d61854537ca34) )
+	ROM_LOAD( "cv02-7643.1c",   0x0400, 0x0400, CRC(2bdf83a0) SHA1(01ffbd43964c41987e7d44816271308f9a70802b) )
 ROM_END
 
 
@@ -5679,9 +5713,8 @@ ROM_START( ozmawars )
 	ROM_LOAD( "mw06",         0x4800, 0x0800, CRC(99ca2eae) SHA1(8d0f220f68043eff0c85d2de7bee7fd4365fb51c) )
 
 	ROM_REGION( 0x0800, "proms", 0 )        // color maps player 1/player 2
-	// !! not dumped yet, these were taken from sisv/intruder
-	ROM_LOAD( "01.1",         0x0000, 0x0400, BAD_DUMP CRC(aac24f34) SHA1(ad110e776547fb48baac568bb50d61854537ca34) )
-	ROM_LOAD( "02.2",         0x0400, 0x0400, BAD_DUMP CRC(2bdf83a0) SHA1(01ffbd43964c41987e7d44816271308f9a70802b) )
+	ROM_LOAD( "01.1",         0x0000, 0x0400, CRC(aac24f34) SHA1(ad110e776547fb48baac568bb50d61854537ca34) )
+	ROM_LOAD( "02.2",         0x0400, 0x0400, CRC(2bdf83a0) SHA1(01ffbd43964c41987e7d44816271308f9a70802b) )
 ROM_END
 
 /*
@@ -5731,9 +5764,28 @@ ROM_START( ozmawars2 )
 	ROM_LOAD( "oz12",         0x4c00, 0x0400, CRC(8b969f61) SHA1(6d12cacc73c31a897812ccd8de24725ee56dd975) )
 
 	ROM_REGION( 0x0800, "proms", 0 )        // color maps player 1/player 2
-	// !! not dumped yet, these were taken from sisv/intruder
-	ROM_LOAD( "01.1",         0x0000, 0x0400, BAD_DUMP CRC(aac24f34) SHA1(ad110e776547fb48baac568bb50d61854537ca34) )
-	ROM_LOAD( "02.2",         0x0400, 0x0400, BAD_DUMP CRC(2bdf83a0) SHA1(01ffbd43964c41987e7d44816271308f9a70802b) )
+	ROM_LOAD( "01.1",         0x0000, 0x0400, CRC(aac24f34) SHA1(ad110e776547fb48baac568bb50d61854537ca34) )
+	ROM_LOAD( "02.2",         0x0400, 0x0400, CRC(2bdf83a0) SHA1(01ffbd43964c41987e7d44816271308f9a70802b) )
+ROM_END
+
+ROM_START( ozmawars3 )
+	ROM_REGION( 0x10000, "maincpu", 0 )
+	ROM_LOAD( "u36",          0x0000, 0x0400, CRC(f71ae28d) SHA1(fcd142445e9bd42aa88c3f6d176b42d8a485d770) )
+	ROM_LOAD( "u35",          0x0400, 0x0400, CRC(ab922611) SHA1(13c8ba4c1d3a767eece5a913561549e5d3d795bf) )
+	ROM_LOAD( "u34",          0x0800, 0x0400, CRC(689c5c2b) SHA1(d8795f4e8c2013716f1e3efeb29326fa93b6171b) )
+	ROM_LOAD( "u33",          0x0c00, 0x0400, CRC(da0c394a) SHA1(4d715f64af2837d7f1cfda46379736996f8d72ae) )
+	ROM_LOAD( "u32",          0x1000, 0x0400, CRC(1980bad9) SHA1(7924d3639d1a64fd10b2ce4c0a485e5131675a10) )
+	ROM_LOAD( "u31",          0x1400, 0x0400, CRC(19b43578) SHA1(3609b7c77f5ee6f10f302892f56fcc8375577f20) )
+	ROM_LOAD( "u42",          0x1800, 0x0400, CRC(a285bfde) SHA1(ed7a9fce4d887d3b5d596645893ea87c0bafda02) )
+	ROM_LOAD( "u41",          0x1c00, 0x0400, CRC(ae59a629) SHA1(0c9ea67dc35f93ec65ec91e1dab2e4b6212428bf) )
+	ROM_LOAD( "u40",          0x4000, 0x0400, CRC(df0cc633) SHA1(3725af2e5a6e9ab08dd9ada345630de19c88ce73) )
+	ROM_LOAD( "u39",          0x4400, 0x0400, CRC(31b7692e) SHA1(043880750d134d04311eab55e30ee223977d3d17) )
+	ROM_LOAD( "u38",          0x4800, 0x0400, CRC(50257351) SHA1(5c3eb29f36f04b7fb8f0351ccf9c8cfc7587f927) )
+	ROM_LOAD( "u37",          0x4c00, 0x0400, CRC(8b969f61) SHA1(6d12cacc73c31a897812ccd8de24725ee56dd975) )
+
+	ROM_REGION( 0x0800, "proms", 0 )        // color maps player 1/player 2
+	ROM_LOAD( "82s137.u1",    0x0000, 0x0400, CRC(aac24f34) SHA1(ad110e776547fb48baac568bb50d61854537ca34) )
+	ROM_LOAD( "82s137.u2",    0x0400, 0x0400, CRC(2bdf83a0) SHA1(01ffbd43964c41987e7d44816271308f9a70802b) )
 ROM_END
 
 ROM_START( ozmawarsmr ) // single PCB marked CS 210. No PROMS.
@@ -6090,7 +6142,7 @@ GAME( 1979, galxwarst2,  galxwars, invadpt2,  galxwars,  _8080bw_state,  empty_i
 GAME( 1979, starw,       galxwars, invnomb,   galxwars,  invaders_state, empty_init,    ROT270, "bootleg",                            "Star Wars (bootleg of Galaxy Wars, set 1)",                       MACHINE_SUPPORTS_SAVE )
 GAME( 1979, starw1,      galxwars, starw1,    galxwars,  _8080bw_state,  empty_init,    ROT270, "bootleg (Yamashita)",                "Star Wars (bootleg of Galaxy Wars, set 2)",                       MACHINE_SUPPORTS_SAVE )
 
-GAME( 1979, cosmo,       0,        cosmo,     cosmo,     _8080bw_state,  empty_init,    ROT90,  "TDS & MINTS",                        "Cosmo",                                                           MACHINE_SUPPORTS_SAVE | MACHINE_IMPERFECT_SOUND )
+GAME( 1979, cosmo,       0,        cosmo,     cosmo,     cosmo_state,    empty_init,    ROT90,  "TDS & MINTS",                        "Cosmo",                                                           MACHINE_SUPPORTS_SAVE | MACHINE_IMPERFECT_SOUND )
 
 GAME( 1980?,invrvnge,    0,        invrvnge,  invrvnge,  invrvnge_state, init_invrvnge, ROT270, "Zenitone-Microsec Ltd.",             "Invader's Revenge (set 1)",                                       MACHINE_SUPPORTS_SAVE ) // Copyright is either late-1980, or early-1981
 GAME( 1980?,invrvngea,   invrvnge, invrvnge,  invrvnge,  invrvnge_state, init_invrvnge, ROT270, "Zenitone-Microsec Ltd.",             "Invader's Revenge (set 2)",                                       MACHINE_SUPPORTS_SAVE )
@@ -6104,6 +6156,7 @@ GAME( 1979, rollingc,    0,        rollingc,  rollingc,  rollingc_state, empty_i
 
 GAME( 1979, ozmawars,    0,        ozmawars,  ozmawars,  ozmawars_state, empty_init,    ROT270, "SNK",                                "Ozma Wars (set 1)",                                               MACHINE_SUPPORTS_SAVE )
 GAME( 1979, ozmawars2,   ozmawars, ozmawars,  ozmawars,  ozmawars_state, empty_init,    ROT270, "SNK",                                "Ozma Wars (set 2)",                                               MACHINE_SUPPORTS_SAVE ) // Uses Taito's three board color version of Space Invaders PCB
+GAME( 1979, ozmawars3,   ozmawars, ozmawars,  ozmawars,  ozmawars_state, empty_init,    ROT270, "SNK",                                "Ozma Wars (set 3)",                                               MACHINE_SUPPORTS_SAVE ) // Uses Taito's three board color version of Space Invaders PCB
 GAME( 1979, ozmawarsmr,  ozmawars, invnomb,   ozmawars,  invaders_state, empty_init,    ROT270, "bootleg (Model Racing)",             "Ozma Wars (Model Racing bootleg)",                                MACHINE_SUPPORTS_SAVE )
 GAME( 1979, spaceph,     ozmawars, invnomb,   spaceph,   invaders_state, empty_init,    ROT270, "bootleg? (Zilec Games)",             "Space Phantoms (bootleg of Ozma Wars)",                           MACHINE_SUPPORTS_SAVE )
 GAME( 1979, solfight,    ozmawars, invnomb,   ozmawars,  invaders_state, empty_init,    ROT270, "bootleg",                            "Solar Fight (bootleg of Ozma Wars)",                              MACHINE_SUPPORTS_SAVE )
