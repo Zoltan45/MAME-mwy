@@ -1134,7 +1134,7 @@ ROM_START( umk3w )
 ROM_END
 
 
-ROM_START( umk3wp )
+ROM_START( umk3wk )
 	ROM_REGION16_LE( 0x800000, "dcs", ROMREGION_ERASEFF )   // sound data
 	ROM_LOAD16_BYTE( "l2.0_mortal_kombat_3_u2_ultimate.u2", 0x000000, 0x100000, CRC(3838cfe5) SHA1(e3d2901f3bae1362742fc6ee0aa31c9f63b4dfa3) ) // verified labeled as L2.0
 	ROM_LOAD16_BYTE( "l1_mortal_kombat_3_u3_music_spch.u3", 0x200000, 0x100000, CRC(856fe411) SHA1(6165ebecfce7500e948d84492ffa19eed7f47091) )
