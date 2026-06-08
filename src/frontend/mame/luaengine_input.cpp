@@ -199,7 +199,7 @@ void lua_engine::initialize_input(sol::table &emu)
 				&ioport_manager::input_type_to_token,
 				[] (ioport_manager &im, ioport_type type) { return im.input_type_to_token(type, 0); });
 	ioport_manager_type["types"] = sol::property(&ioport_manager::types);
-	ioport_manager_type["ports"] = sol::property([] (ioport_manager &im) { return tag_object_ptr_map<ioport_list>(im.ports()); });
+	ioport_manager_type["ports"] = sol::property([] (ioport_manager &im) { return make_tag_object_ptr_map(im.ports()); });
 
 
 	auto natkeyboard_type = sol().registry().new_usertype<natural_keyboard>("natkeyboard", sol::no_constructor);
@@ -395,13 +395,13 @@ void lua_engine::initialize_input(sol::table &emu)
 	ioport_field_type["minvalue"] = sol::property(
 			[] (ioport_field const &f)
 			{
-				const bool has_minmax = f.is_analog() || f.type() == IPT_ADJUSTER;
+				const bool has_minmax = f.is_analog() || (f.type() == IPT_ADJUSTER);
 				return has_minmax ? std::make_optional(f.minval()) : std::nullopt;
 			});
 	ioport_field_type["maxvalue"] = sol::property(
 			[] (ioport_field const &f)
 			{
-				const bool has_minmax = f.is_analog() || f.type() == IPT_ADJUSTER;
+				const bool has_minmax = f.is_analog() || (f.type() == IPT_ADJUSTER);
 				return has_minmax ? std::make_optional(f.maxval()) : std::nullopt;
 			});
 	ioport_field_type["sensitivity"] = sol::property(

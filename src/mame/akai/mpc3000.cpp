@@ -17,7 +17,7 @@
         LCD: LC7981
         Quad-UART: TE7774 (3000)
         Panel controller CPU: NEC uPD78C10AGQ @ 12 MHz
-        Sound DSP: L7A1045-L6048
+        Sound DSP: L7A1045-L6028
             DSP's wavedata bus is 16 bits wide and has 24 address bits (32 MiB total sample space)
 
         DMA channel 0 is SCSI, 1 is floppy, 2 is IC31 (some sort of direct-audio stream?), and 3 is the L7A1045 DSP
@@ -218,7 +218,7 @@ void mpc3000_state::mpc3000_io_map(address_map &map)
 	map(0x0020, 0x0020).w("hiledlatch", FUNC(hc259_device::write_nibble_d3));
 	map(0x0060, 0x006f).m(m_dsp, FUNC(l7a1045_sound_device::map));
 	map(0x0080, 0x0087).rw("dioexp", FUNC(i8255_device::read), FUNC(i8255_device::write)).umask16(0x00ff);
-	map(0x00a0, 0x00bf).m("scsi:7:spc", FUNC(mb89352_device::map)).umask16(0x00ff);
+	map(0x00a0, 0x00bf).m("spc", FUNC(mb89352_device::map)).umask16(0x00ff);
 	map(0x00c0, 0x00c7).rw("sio", FUNC(te7774_device::read_cs<0>), FUNC(te7774_device::write_cs<0>)).umask16(0x00ff);
 	map(0x00c8, 0x00cf).rw("sio", FUNC(te7774_device::read_cs<1>), FUNC(te7774_device::write_cs<1>)).umask16(0x00ff);
 	map(0x00d0, 0x00d7).rw("sio", FUNC(te7774_device::read_cs<2>), FUNC(te7774_device::write_cs<2>)).umask16(0x00ff);
@@ -437,8 +437,8 @@ void mpc3000_state::mpc3000(machine_config &config)
 	m_maincpu->in_mem16r_cb().set(FUNC(mpc3000_state::dma_mem16r_cb));
 	m_maincpu->out_mem16w_cb().set(FUNC(mpc3000_state::dma_mem16w_cb));
 	m_maincpu->out_eop_cb().set("tc", FUNC(input_merger_device::in_w<0>));
-	m_maincpu->in_ior_cb<0>().set("scsi:7:spc", FUNC(mb89352_device::dma_r));
-	m_maincpu->out_iow_cb<0>().set("scsi:7:spc", FUNC(mb89352_device::dma_w));
+	m_maincpu->in_ior_cb<0>().set("spc", FUNC(mb89352_device::dma_r));
+	m_maincpu->out_iow_cb<0>().set("spc", FUNC(mb89352_device::dma_w));
 	m_maincpu->in_ior_cb<1>().set(m_fdc, FUNC(upd72069_device::dma_r));
 	m_maincpu->out_iow_cb<1>().set(m_fdc, FUNC(upd72069_device::dma_w));
 	m_maincpu->in_io16r_cb<3>().set(m_dsp, FUNC(l7a1045_sound_device::dma_r16_cb));
@@ -488,6 +488,7 @@ void mpc3000_state::mpc3000(machine_config &config)
 	m_subcpu->an1_func().set(FUNC(mpc3000_state::an1_r));
 	m_subcpu->an2_func().set(FUNC(mpc3000_state::an2_r));
 	m_subcpu->an3_func().set(FUNC(mpc3000_state::an3_r));
+	m_subcpu->an3_func().set(FUNC(mpc3000_state::an4_r));
 
 	screen_device &screen(SCREEN(config, "screen", SCREEN_TYPE_LCD));
 	screen.set_refresh_hz(80);
@@ -537,7 +538,7 @@ void mpc3000_state::mpc3000(machine_config &config)
 
 	midiout_slot(MIDI_PORT(config, "mdout"));
 
-	NSCSI_BUS(config, "scsi");
+	auto &scsi(NSCSI_BUS(config, "scsi"));
 	NSCSI_CONNECTOR(config, "scsi:0", default_scsi_devices, nullptr);
 	NSCSI_CONNECTOR(config, "scsi:1", default_scsi_devices, nullptr);
 	NSCSI_CONNECTOR(config, "scsi:2", default_scsi_devices, nullptr);
@@ -545,15 +546,11 @@ void mpc3000_state::mpc3000(machine_config &config)
 	NSCSI_CONNECTOR(config, "scsi:4", default_scsi_devices, nullptr);
 	NSCSI_CONNECTOR(config, "scsi:5", default_scsi_devices, nullptr);
 	NSCSI_CONNECTOR(config, "scsi:6", default_scsi_devices, nullptr);
-	NSCSI_CONNECTOR(config, "scsi:7").option_set("spc", MB89352).machine_config(
-		[this](device_t *device)
-		{
-			mb89352_device &spc = downcast<mb89352_device &>(*device);
 
-			spc.set_clock(32_MHz_XTAL / 4); // PCLKOUT
-			spc.out_irq_callback().set(":intp3", FUNC(input_merger_device::in_w<1>));
-			spc.out_dreq_callback().set(m_maincpu, FUNC(v53a_device::dreq_w<0>));
-		});
+	auto &spc(MB89352(config, "spc", 32_MHz_XTAL / 4));
+	scsi.set_external_device(7, spc);
+	spc.out_irq_callback().set(":intp3", FUNC(input_merger_device::in_w<1>));
+	spc.out_dreq_callback().set(m_maincpu, FUNC(v53a_device::dreq_w<0>));
 
 	SPEAKER(config, "speaker", 2).front();
 	SPEAKER(config, "outputs", 8).unknown();
@@ -615,7 +612,6 @@ static INPUT_PORTS_START( mpc3000 )
 	PORT_BIT(0x01, IP_ACTIVE_LOW, IPT_KEYBOARD) PORT_NAME("Soft Key 1") PORT_CODE(KEYCODE_F1)
 	PORT_BIT(0x02, IP_ACTIVE_LOW, IPT_KEYBOARD) PORT_NAME("Soft Key 2") PORT_CODE(KEYCODE_F2)
 	PORT_BIT(0x04, IP_ACTIVE_LOW, IPT_KEYBOARD) PORT_NAME("0") PORT_CODE(KEYCODE_0)
-
 	PORT_BIT(0x08, IP_ACTIVE_LOW, IPT_KEYBOARD) PORT_CODE(KEYCODE_STOP) PORT_NAME(".")
 	PORT_BIT(0x10, IP_ACTIVE_LOW, IPT_KEYBOARD) PORT_CODE(KEYCODE_ENTER)
 	PORT_BIT(0x20, IP_ACTIVE_LOW, IPT_KEYBOARD) PORT_NAME("Tempo/Sync") PORT_CODE(KEYCODE_R)
@@ -660,34 +656,34 @@ static INPUT_PORTS_START( mpc3000 )
 	PORT_BIT(0x80, IP_ACTIVE_LOW, IPT_KEYBOARD) PORT_NAME(">>") PORT_CODE(KEYCODE_F9)
 
 	PORT_START("PB0")
-	PORT_BIT(0x10, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Crash") PORT_CODE(KEYCODE_PGUP)
-	PORT_BIT(0x20, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Crash2") PORT_CODE(KEYCODE_NUMLOCK)
-	PORT_BIT(0x40, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Ride Cymbal") PORT_CODE(KEYCODE_SLASH_PAD)
+	PORT_BIT(0x10, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Hihat Loose") PORT_CODE(KEYCODE_3_PAD)
+	PORT_BIT(0x20, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Hihat Pedal") PORT_CODE(KEYCODE_PLUS_PAD)
+	PORT_BIT(0x40, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Floor Tom") PORT_CODE(KEYCODE_9_PAD)
 	PORT_BIT(0x80, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Ride Bell") PORT_CODE(KEYCODE_ASTERISK)
 
 	PORT_START("PB1")
-	PORT_BIT(0x10, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("High Tom") PORT_CODE(KEYCODE_PGDN)
-	PORT_BIT(0x20, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Mid Tom") PORT_CODE(KEYCODE_7_PAD)
+	PORT_BIT(0x10, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Hihat Closed") PORT_CODE(KEYCODE_2_PAD)
+	PORT_BIT(0x20, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Hihat Open") PORT_CODE(KEYCODE_6_PAD)
 	PORT_BIT(0x40, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Low Tom") PORT_CODE(KEYCODE_8_PAD)
-	PORT_BIT(0x80, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Floor Tom") PORT_CODE(KEYCODE_9_PAD)
+	PORT_BIT(0x80, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Ride Cymbal") PORT_CODE(KEYCODE_SLASH_PAD)
 
 	PORT_START("PB2")
-	PORT_BIT(0x10, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Alt Snare") PORT_CODE(KEYCODE_4_PAD)
+	PORT_BIT(0x10, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Bass") PORT_CODE(KEYCODE_1_PAD)
 	PORT_BIT(0x20, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Snare") PORT_CODE(KEYCODE_5_PAD)
-	PORT_BIT(0x40, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Hihat Open") PORT_CODE(KEYCODE_6_PAD)
-	PORT_BIT(0x80, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Hihat Pedal") PORT_CODE(KEYCODE_PLUS_PAD)
+	PORT_BIT(0x40, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Mid Tom") PORT_CODE(KEYCODE_7_PAD)
+	PORT_BIT(0x80, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Crash2") PORT_CODE(KEYCODE_NUMLOCK)
 
 	PORT_START("PB3")
 	PORT_BIT(0x10, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Side Stick") PORT_CODE(KEYCODE_0_PAD)
-	PORT_BIT(0x20, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Bass") PORT_CODE(KEYCODE_1_PAD)
-	PORT_BIT(0x40, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Hihat Closed") PORT_CODE(KEYCODE_2_PAD)
-	PORT_BIT(0x80, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Hihat Loose") PORT_CODE(KEYCODE_3_PAD)
+	PORT_BIT(0x20, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Alt Snare") PORT_CODE(KEYCODE_4_PAD)
+	PORT_BIT(0x40, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("High Tom") PORT_CODE(KEYCODE_PGDN)
+	PORT_BIT(0x80, IP_ACTIVE_HIGH, IPT_KEYBOARD) PORT_NAME("Crash") PORT_CODE(KEYCODE_PGUP)
 
 	PORT_START("VARIATION")
 	PORT_ADJUSTER(100, "NOTE VARIATION") PORT_CHANGED_MEMBER(DEVICE_SELF, FUNC(mpc3000_state::variation_changed), 1)
 
 	PORT_START("DATAENTRY")
-	PORT_BIT( 0xff, 0x00, IPT_DIAL) PORT_SENSITIVITY(100) PORT_KEYDELTA(0)
+	PORT_BIT( 0xff, 0x00, IPT_DIAL) PORT_SENSITIVITY(100) PORT_KEYDELTA(0) PORT_CODE_DEC(KEYCODE_F14) PORT_CODE_INC(KEYCODE_F15)
 INPUT_PORTS_END
 
 ROM_START( mpc3000 )

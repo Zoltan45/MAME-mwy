@@ -1273,7 +1273,7 @@ Too slow during gameplay
 		</part>
 	</software>
 
-	<software name="batmanrn">
+	<software name="batmanrn" supported="partial">
 		<!-- http://redump.org/disc/8168/
 		<rom name="Batman Returns (Europe).cue" size="2460" crc="422f5580" />
 		<rom name="Batman Returns (Europe) (Track 01).bin" size="20363616" crc="58e9e43b" />
@@ -1301,6 +1301,9 @@ Too slow during gameplay
 		<description>Batman Returns (Europe)</description>
 		<year>1993</year>
 		<publisher>Sega</publisher>
+		<notes><![CDATA[
+Batman driving the car is omitted in pre-Act 1 cutscene, following scene sports yellow eyeliner, [CDC]?
+]]></notes>
 		<info name="serial" value="4401"/>
 		<sharedfeat name="compatibility" value="PAL"/>
 		<part name="cdrom" interface="cdrom">
@@ -1311,7 +1314,7 @@ Too slow during gameplay
 		</part>
 	</software>
 
-	<software name="batmanrna" cloneof="batmanrn">
+	<software name="batmanrna" cloneof="batmanrn" supported="partial">
 		<!-- http://redump.org/disc/17556/
 		<rom name="Batman Returns (Europe) (Alt).cue" size="2586" crc="c6efd142" />
 		<rom name="Batman Returns (Europe) (Alt) (Track 01).bin" size="20363616" crc="58e9e43b" />
@@ -1339,6 +1342,9 @@ Too slow during gameplay
 		<description>Batman Returns (Europe, alt)</description>
 		<year>1993</year>
 		<publisher>Sega</publisher>
+		<notes><![CDATA[
+Same as parent
+]]></notes>
 		<info name="serial" value="4401"/>
 		<sharedfeat name="compatibility" value="PAL"/>
 		<part name="cdrom" interface="cdrom">
@@ -1349,7 +1355,7 @@ Too slow during gameplay
 		</part>
 	</software>
 
-	<software name="batmanrnu" cloneof="batmanrn">
+	<software name="batmanrnu" cloneof="batmanrn" supported="partial">
 		<!-- http://redump.org/disc/21447/
 		<rom name="Batman Returns (USA).cue" size="2420" crc="5c5d239a" md5="c2acb5a8054c65a1874f0bb8d64b6627" sha1="03f590d80c03e79ce86a55b786855aebf14fe138"/>
 		<rom name="Batman Returns (USA) (Track 01).bin" size="20363616" crc="2130f186" md5="41717d4e849f86eced7eb79200468507" sha1="018ed3b942f09e813131ca6c755834e58696f0d3"/>
@@ -1377,6 +1383,9 @@ Too slow during gameplay
 		<description>Batman Returns (USA)</description>
 		<year>1993</year>
 		<publisher>Sega</publisher>
+		<notes><![CDATA[
+Same as parent
+]]></notes>
 		<info name="release" value="199303xx" />
 		<info name="serial" value="4401"/>
 		<sharedfeat name="compatibility" value="NTSC-U"/>
@@ -8115,7 +8124,8 @@ Optionally uses [Justifier] gun
 		<part name="cdrom" interface="cdrom">
 			<feature name="cd_matrix" value="SEGAT70095RE R1J"/>
 			<diskarea name="cdrom">
-				<disk name="links - the challenge of golf (usa, alt)" sha1="4fd31dafd2c565d1fdf94cb7e483b13f17da7ae7"/>
+				<!-- baddump: missing indices from track 1 -->
+				<disk name="links - the challenge of golf (usa, alt)" sha1="4fd31dafd2c565d1fdf94cb7e483b13f17da7ae7" status="baddump"/>
 			</diskarea>
 		</part>
 	</software>
@@ -8134,7 +8144,8 @@ Optionally uses [Justifier] gun
 		<part name="cdrom" interface="cdrom">
 			<feature name="cd_matrix" value="SEGAT70095 R1J"/>
 			<diskarea name="cdrom">
-				<disk name="links - the challenge of golf (usa)" sha1="a663bd03db7815b017f7fac039e76f22b4993452"/>
+				<!-- baddump: missing indices from track 1 -->
+				<disk name="links - the challenge of golf (usa)" sha1="a663bd03db7815b017f7fac039e76f22b4993452" status="baddump"/>
 			</diskarea>
 		</part>
 	</software>
@@ -10352,7 +10363,8 @@ XE-1AP seemingly supported in -ctrl2 and in input test, except it won't be recog
 		<part name="cdrom" interface="cdrom">
 			<feature name="cd_matrix" value="T-11014P-00062-R1M V"/>
 			<diskarea name="cdrom">
-				<disk name="night striker (japan, korea)" sha1="0c8ba1a5ca12ec52de6b2febac14abd5d1126c84"/>
+				<!-- baddump: missing indices from track 17 -->
+				<disk name="night striker (japan, korea)" sha1="0c8ba1a5ca12ec52de6b2febac14abd5d1126c84" status="baddump"/>
 			</diskarea>
 		</part>
 	</software>
@@ -11113,7 +11125,8 @@ Glitchy tiles spawning on all FMVs and main menu
 		</part>
 		<part name="cdrom2" interface="cdrom">
 			<diskarea name="cdrom">
-				<disk name="prize fighter (1993)(sega)(pal)(disc 2 of 2)" sha1="cd6bdad994bf0025b8cb0b5feb578d2d55dcf95e"/>
+				<!-- baddump: missing indices from track 1 -->
+				<disk name="prize fighter (1993)(sega)(pal)(disc 2 of 2)" sha1="cd6bdad994bf0025b8cb0b5feb578d2d55dcf95e" status="baddump"/>
 			</diskarea>
 		</part>
 	</software>
@@ -11146,7 +11159,8 @@ Glitchy tiles spawning on all FMVs and main menu
 		</part>
 		<part name="cdrom2" interface="cdrom">
 			<diskarea name="cdrom">
-				<disk name="prize fighter (1993)(sega)(ntsc)(jp)(disc 2 of 2)" sha1="342fd9fad3d5ae6530ea6ce756a2ba6b88858dfc"/>
+				<!-- baddump: missing indices from track 1 -->
+				<disk name="prize fighter (1993)(sega)(ntsc)(jp)(disc 2 of 2)" sha1="342fd9fad3d5ae6530ea6ce756a2ba6b88858dfc" status="baddump"/>
 			</diskarea>
 		</part>
 	</software>
@@ -13229,7 +13243,8 @@ Essentially requires [SRAM cart] for saving (100 blocks)
 		<part name="cdrom" interface="cdrom">
 			<feature name="cd_matrix" value="T-49024P-00016-R2M"/>
 			<diskarea name="cdrom">
-				<disk name="mahou no shoujo - silky lip (1992)(riot)(ntsc)(jp)[t-49024p-00016-r2m]" sha1="38f2f195e4c95e27ff7ceb2f8a554ca71f61b004"/>
+				<!-- baddump: missing indices from track 1 -->
+				<disk name="mahou no shoujo - silky lip (1992)(riot)(ntsc)(jp)[t-49024p-00016-r2m]" sha1="38f2f195e4c95e27ff7ceb2f8a554ca71f61b004" status="baddump"/>
 			</diskarea>
 		</part>
 	</software>
@@ -13283,7 +13298,8 @@ Essentially requires [SRAM cart] for saving (100 blocks)
 		<part name="cdrom" interface="cdrom">
 			<feature name="cd_matrix" value="T-49024P-00016-R1M"/>
 			<diskarea name="cdrom">
-				<disk name="mahou no shoujo - silky lip (1992)(riot)(ntsc)(jp)[t-49024p-00016-r1m]" sha1="a432d30104f55e6fc051cc40e0ce6d416bd7b3fc"/>
+				<!-- baddump: missing indices from track 1 -->
+				<disk name="mahou no shoujo - silky lip (1992)(riot)(ntsc)(jp)[t-49024p-00016-r1m]" sha1="a432d30104f55e6fc051cc40e0ce6d416bd7b3fc" status="baddump"/>
 			</diskarea>
 		</part>
 	</software>
@@ -15252,7 +15268,8 @@ Changes language from English to Cantonese after losing a life
 		<sharedfeat name="compatibility" value="PAL"/>
 		<part name="cdrom" interface="cdrom">
 			<diskarea name="cdrom">
-				<disk name="surgical strike (1995)(sega)(pal)" sha1="5a942b42b5005230c1f8e8df5a704b81757b6a0a"/>
+				<!-- baddump: missing indices from track 1 -->
+				<disk name="surgical strike (1995)(sega)(pal)" sha1="5a942b42b5005230c1f8e8df5a704b81757b6a0a" status="baddump"/>
 			</diskarea>
 		</part>
 	</software>
@@ -15274,7 +15291,8 @@ Requires [32X] add-on, game asks you to plug it in if not present
 		<sharedfeat name="compatibility" value="NTSC-U"/>
 		<part name="cdrom" interface="cdrom">
 			<diskarea name="cdrom">
-				<disk name="surgical strike (bra, 32x)" sha1="857e0602e35e4b45ec3660d8639fb88d2a014230"/>
+				<!-- baddump: missing indices from track 1 -->
+				<disk name="surgical strike (bra, 32x)" sha1="857e0602e35e4b45ec3660d8639fb88d2a014230" status="baddump"/>
 			</diskarea>
 		</part>
 	</software>
@@ -15294,7 +15312,8 @@ Requires [32X] add-on, game asks you to plug it in if not present
 		<part name="cdrom" interface="cdrom">
 			<feature name="cd_matrix" value="CDAC-088700 1"/>
 			<diskarea name="cdrom">
-				<disk name="surgical strike (usa)" sha1="37ba598fdc774b805f89d43962591a176c2215d4"/>
+				<!-- baddump: missing indices from track 1 -->
+				<disk name="surgical strike (usa)" sha1="37ba598fdc774b805f89d43962591a176c2215d4" status="baddump"/>
 			</diskarea>
 		</part>
 	</software>
